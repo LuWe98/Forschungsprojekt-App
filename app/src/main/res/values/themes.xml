@@ -1,0 +1,129 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Splash Theme -->
+    <style name="Theme.Forschungsprojekt.Splash" parent="Theme.Forschungsprojekt.Splash.Light"/>
+    <!-- Base theme -->
+    <style name="Theme.Forschungsprojekt" parent="Theme.Forschungsprojekt.Light"/>
+    <!-- Base BottomSheetDialogTheme -->
+    <style name="Theme.Forschungsprojekt.BottomSheetDialog" parent="Theme.Forschungsprojekt.BottomSheetDialog.Light"/>
+    <!-- Base DialogFragmentTheme -->
+    <style name="Theme.Forschungsprojekt.DialogFragment" parent="Theme.Forschungsprojekt.DialogFragment.Light"/>
+    <!-- Base DialogFragmentLoadingTheme -->
+    <style name="Theme.Forschungsprojekt.DialogFragment.Loading" parent="Theme.Forschungsprojekt.DialogFragment.Loading.Light"/>
+
+    <!-- Light Splash Theme -->
+    <style name="Theme.Forschungsprojekt.Splash.Light" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/hfuDarkGreen</item>
+<!--        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_hfu_logo_splash</item>-->
+        <item name="postSplashScreenTheme">@style/Theme.Forschungsprojekt</item>
+    </style>
+
+
+    <!-- Light Base Theme -->
+    <style name="Theme.Forschungsprojekt.Light" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+
+        <item name="colorAccent">@color/lightColorAccent</item>
+
+        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+        <item name="android:colorBackground">@color/lightBackgroundColor</item>
+        <item name="colorOnBackground">@color/lightBackgroundColor</item>
+
+
+        <item name="colorSecondary">@color/lightColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+
+        <!--<item name="colorOnSurface">@color/white</item>-->
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="colorControlActivated">@color/lightColorControlActivated</item>
+        <item name="colorControlNormal">@color/lightColorControlNormal</item>
+
+        <!-- Customization -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.Forschungsprojekt.BottomSheetDialog</item>
+        <item name="android:dialogTheme">@style/Theme.Forschungsprojekt.DialogFragment</item>
+        <item name="dialogTheme">@style/Theme.Forschungsprojekt.DialogFragment</item>
+    </style>
+
+
+
+    <!-- Light BottomSheetDialogTheme. -->
+    <style name= "Theme.Forschungsprojekt.BottomSheetDialog.Light"  parent="@style/Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+
+        <item name="colorAccent">@color/lightColorAccent</item>
+
+        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+
+        <item name="colorSecondary">@color/lightColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+
+        <item name="android:colorBackground">@color/lightBackgroundColor</item>
+
+        <item name="android:windowLightStatusBar">false</item>
+
+        <item name="colorControlActivated">@color/lightColorControlActivated</item>
+        <item name="colorControlNormal">@color/lightColorControlNormal</item>
+
+        <!-- Customization -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="bottomSheetStyle">@style/Style.ModalBottomSheet.Transparent</item>
+    </style>
+
+
+
+    <!-- Light DialogFragmentTheme. -->
+    <style name="Theme.Forschungsprojekt.DialogFragment.Light" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+
+        <item name="colorAccent">@color/lightColorAccent</item>
+
+        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+
+        <item name="colorSecondary">@color/lightColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+
+        <item name="android:colorBackground">@color/lightBackgroundColor</item>
+
+        <item name="android:windowLightStatusBar">false</item>
+
+        <item name="colorControlActivated">@color/lightColorControlActivated</item>
+        <item name="colorControlNormal">@color/lightColorControlNormal</item>
+
+
+        <!-- Customization -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <item name="android:windowMinWidthMinor">87.5%</item>
+        <item name="android:windowMinWidthMajor">87.5%</item>
+
+        <item name="android:windowAnimationStyle">@style/Style.QuizApp.DialogFragment.Animation</item>
+    </style>
+
+
+    <!-- Light DialogFragmentLoadingTheme. -->
+    <style name="Theme.Forschungsprojekt.DialogFragment.Loading.Light" parent="Theme.Forschungsprojekt.DialogFragment.Light">
+        <item name="android:windowMinWidthMinor">85%</item>
+        <item name="android:windowMinWidthMajor">85%</item>
+    </style>
+</resources>
