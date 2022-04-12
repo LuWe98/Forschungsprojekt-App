@@ -3,12 +3,65 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/nav_graph"
-        app:startDestination="@id/fragmentMain">
+        app:startDestination="@id/fragmentHome">
 
     <fragment
-            android:id="@+id/fragmentMain"
-            android:name="com.serverless.forschungsprojectfaas.view.fragments.FragmentMain"
-            android:label="FragmentMain"
-            tools:layout="@layout/fragment_main"/>
+            android:id="@+id/fragmentHome"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.FragmentHome"
+            android:label="FragmentHome"
+            tools:layout="@layout/fragment_home">
+        <action
+                android:id="@+id/action_fragmentHome_to_fragmentAdd"
+                app:destination="@id/fragmentAdd" />
+        <action
+                android:id="@+id/action_fragmentHome_to_fragmentDetail"
+                app:destination="@id/fragmentDetail" />
+    </fragment>
+
+    <fragment
+            android:id="@+id/fragmentAdd"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.FragmentAdd"
+            android:label="FragmentAdd"
+            tools:layout="@layout/fragment_add" />
+
+    <fragment
+            android:id="@+id/fragmentDetail"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.FragmentDetail"
+            android:label="FragmentDetail"
+            tools:layout="@layout/fragment_detail">
+        <argument
+                android:name="pictureEntry"
+                app:argType="com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry" />
+    </fragment>
+
+    <dialog
+            android:id="@+id/dfLoading"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfLoading"
+            android:label="DfLoading"
+            tools:layout="@layout/df_loading">
+        <argument
+                android:name="messageRes"
+                app:argType="integer" />
+    </dialog>
+
+    <action
+            android:id="@+id/action_global_dfLoading"
+            app:destination="@id/dfLoading" />
+
+
+    <dialog
+            android:id="@+id/bsdfSelection"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfSelection"
+            android:label="BsdfSelection"
+            tools:layout="@layout/bsdf_selection">
+        <argument
+                app:argType="com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType"
+                android:name="selectionType" />
+
+    </dialog>
+
+    <action
+            android:id="@+id/action_global_bsdfSelection"
+            app:destination="@id/bsdfSelection" />
 
 </navigation>

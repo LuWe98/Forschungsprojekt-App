@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/btn_back"
+            app:srcCompat="@drawable/ic_arrow_back"
+            android:layout_margin="@dimen/grid_6"
+            android:padding="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:id="@+id/pageTitle"
+            tools:text="@string/title"
+            style="@style/Style.Forschungsprojekt.BottomSheetHeading.TextAppearance"
+            app:layout_constraintTop_toTopOf="@+id/btn_back"
+            app:layout_constraintBottom_toBottomOf="@id/btn_back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:id="@+id/imageContainer"
+            android:layout_marginTop="@dimen/grid_4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pageTitle">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/iv" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:id="@+id/progress"
+                app:trackCornerRadius="5dp"
+                app:indicatorSize="90dp"
+                android:indeterminate="true"
+                android:indeterminateOnly="true"
+                app:trackThickness="6.5dp"
+                app:trackColor="@color/transparent"
+                app:indicatorColor="?colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sticks"
+            android:id="@+id/tvSticks"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:gravity="center_vertical"
+            android:textSize="17.5sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageContainer"
+            android:layout_marginTop="@dimen/grid_6"
+            android:layout_marginStart="@dimen/grid_8" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="40"
+            android:id="@+id/tvSticksAmount"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:layout_marginStart="@dimen/grid_5"
+            app:layout_constraintStart_toEndOf="@+id/tvSticks"
+            app:layout_constraintTop_toTopOf="@+id/tvSticks"
+            app:layout_constraintBottom_toBottomOf="@+id/tvSticks" />
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/rv"
+            app:layout_constraintTop_toBottomOf="@id/tvSticks"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:paddingHorizontal="@dimen/grid_6"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/grid_4"
+            android:paddingBottom="@dimen/grid_10"
+            tools:listitem="@layout/rvi_entry_mark"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

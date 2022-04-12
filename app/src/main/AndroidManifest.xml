@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         package="com.serverless.forschungsprojectfaas">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="true"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
     <application
             android:allowBackup="true"
             android:name=".OwnApplication"
@@ -12,13 +18,23 @@
             android:theme="@style/Theme.Forschungsprojekt">
         <activity
                 android:name=".view.ActivityMain"
-                android:exported="true">
+                android:exported="true"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <provider
+                android:authorities="com.serverless.forschungsprojectfaas.fileprovider"
+                android:name="androidx.core.content.FileProvider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths" />
+        </provider>
+    </application>
 </manifest>

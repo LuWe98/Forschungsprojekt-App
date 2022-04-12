@@ -16,4 +16,6 @@
     <dimen name="grid_24">96dp</dimen>
     <dimen name="grid_32">128dp</dimen>
 
+    <dimen name="defaultCardCornerRadius">15dp</dimen>
+
 </resources>

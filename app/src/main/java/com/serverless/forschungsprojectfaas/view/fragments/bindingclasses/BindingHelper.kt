@@ -41,9 +41,9 @@ object BindingHelper {
             .invoke(null, LayoutInflater.from(parent.context), parent, false) as VB
 
 
-    fun <VB: ViewBinding> Fragment.getBindingInline(clazz: KClass<VB>) = clazz.java
-        .getMethod(INFLATE_METHOD, LayoutInflater::class.java)
-        .invoke(null, layoutInflater) as VB
+    fun <VB: ViewBinding> getViewHolderBinding(clazz: KClass<VB>, parent: ViewGroup) = clazz.java
+        .getMethod(INFLATE_METHOD, LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.java)
+        .invoke(null, LayoutInflater.from(parent.context), parent, false) as VB
 
 
     fun <VB : ViewBinding> getBinding(fragment: BindingFragment<VB>, relativePosition : Int = 0) =

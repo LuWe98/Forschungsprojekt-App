@@ -4,11 +4,11 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <style name="Style.QuizApp.TextInputEditText.ThemeOverlay">
-        <item name="editTextStyle">@style/Style.QuizApp.TextInputEditText</item>
+    <style name="Style.Forschungsprojekt.TextInputEditText.ThemeOverlay">
+        <item name="editTextStyle">@style/Style.Forschungsprojekt.TextInputEditText</item>
     </style>
 
-    <style name="Style.QuizApp.TextInputEditText" parent="@style/Widget.MaterialComponents.TextInputEditText.FilledBox.Dense">
+    <style name="Style.Forschungsprojekt.TextInputEditText" parent="@style/Widget.MaterialComponents.TextInputEditText.FilledBox.Dense">
         <item name="android:background">@color/transparent</item>
     </style>
 
@@ -18,19 +18,48 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
-    <style name="Style.QuizApp.DialogFragment.Animation" parent="@android:style/Animation.Activity">
+    <style name="Style.Forschungsprojekt.DialogFragment.Animation" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/dialog_fragment_appear</item>
         <item name="android:windowExitAnimation">@anim/dialog_fragment_hide</item>
     </style>
 
-    <style name="Style.QuizApp.MaterialCardView.RoundCornersTop" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/Style.QuizApp.MaterialCardView.RoundCornersTop.ShapeAppearanceOverlay</item>
+    <style name="Style.Forschungsprojekt.MaterialCardView.RoundCornersTop" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/Style.Forschungsprojekt.MaterialCardView.RoundCornersTop.ShapeAppearanceOverlay</item>
     </style>
 
-    <style name="Style.QuizApp.MaterialCardView.RoundCornersTop.ShapeAppearanceOverlay">
+    <style name="Style.Forschungsprojekt.MaterialCardView.RoundCornersTop.ShapeAppearanceOverlay">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">15dp</item>
         <item name="cornerSizeTopRight">15dp</item>
         <item name="android:padding">0dp</item>
+    </style>
+
+
+    <style name="Style.Forschungsprojekt.Heading.TextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/black</item>
+        <item name="autoSizeMaxTextSize">20sp</item>
+        <item name="autoSizeMinTextSize">17sp</item>
+        <item name="autoSizeStepGranularity">0.5dp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="android:gravity">center</item>
+        <item name="maxLines">1</item>
+
+
+        <item name="fontFamily">@font/mallanna_regular</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Style.Forschungsprojekt.BottomSheetHeading.TextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/black</item>
+        <item name="autoSizeMaxTextSize">17.5sp</item>
+        <item name="autoSizeMinTextSize">15sp</item>
+        <item name="autoSizeStepGranularity">0.5dp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="android:gravity">center</item>
+        <item name="maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+
+        <item name="fontFamily">@font/mallanna_regular</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

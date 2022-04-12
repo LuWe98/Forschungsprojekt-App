@@ -97,6 +97,7 @@ dependencies {
     //Hilt
     val hiltVersion: String by project
     implementation("com.google.dagger:hilt-android:$hiltVersion")
+    implementation("androidx.camera:camera-view:1.1.0-beta03")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     val hiltViewModelVersion: String by project
 //    implementation("androidx.hilt:hilt-lifecycle-viewmodel:$hiltViewModelVersion")
@@ -119,10 +120,19 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
 
+    //Room Database
+    val roomVersion: String by project
+    implementation("androidx.room:room-ktx:$roomVersion")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
 
     //Kotlin Serialisation
     val kotlinSerialisationVersion: String by project
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialisationVersion")
+
+    //Preference-Datastore
+    val preferenceDatastoreVersion: String by project
+    implementation("androidx.datastore:datastore-preferences:$preferenceDatastoreVersion")
 
 
     //Splash Screens
@@ -130,7 +140,20 @@ dependencies {
     implementation("androidx.core:core-splashscreen:$splashScreenVersion")
 
 
+    
+    //TODO -> Braucht man nicht mehr!
+    val cameraxVersion: String by project
+    implementation("androidx.camera:camera-core:$cameraxVersion")
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-video:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
 
+
+    //GLIDE for Image display
+    implementation("com.github.bumptech.glide:glide:4.13.0")
+    kapt("com.github.bumptech.glide:compiler:4.13.0")
 
     //Testing
     val jUnitVersion: String by project
