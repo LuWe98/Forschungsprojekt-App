@@ -18,7 +18,7 @@ fun Bitmap.rotate(degree: Int) : Bitmap {
 
 fun Bitmap.saveToInternalStorage(
     context: Context,
-    format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
+    format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
     fileSuffix: String = format.name.lowercase(),
     quality: Int = 100,
     dir: String = "Images",

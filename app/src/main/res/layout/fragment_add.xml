@@ -5,12 +5,13 @@
         android:layout_height="match_parent">
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:id="@+id/btn_back"
             app:srcCompat="@drawable/ic_close"
             android:layout_margin="@dimen/grid_6"
-            android:padding="5dp"
+            android:padding="7.5dp"
+            android:background="?actionBarItemBackground"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -18,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:id="@+id/pageTitle"
-            android:text="@string/add"
+            android:text="@string/addPicture"
             style="@style/Style.Forschungsprojekt.BottomSheetHeading.TextAppearance"
             app:layout_constraintTop_toTopOf="@+id/btn_back"
             app:layout_constraintBottom_toBottomOf="@id/btn_back"
@@ -27,16 +28,17 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="35dp"
             android:id="@+id/btnSave"
-            android:text="@string/done"
+            android:text="@string/evaluate"
             android:gravity="center"
             android:textColor="@color/hfuDarkGreen"
             android:textStyle="bold"
+            android:paddingHorizontal="@dimen/grid_4"
             app:layout_constraintTop_toTopOf="@id/btn_back"
             app:layout_constraintBottom_toBottomOf="@id/btn_back"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="@dimen/grid_8" />
+            android:layout_marginEnd="@dimen/grid_4" />
 
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
@@ -71,6 +73,7 @@
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp"
             android:layout_margin="@dimen/grid_6"
+            app:cardBackgroundColor="@color/transparent"
             app:layout_constraintBottom_toTopOf="@+id/btnCamera">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -87,6 +90,22 @@
                     app:layout_constraintStart_toStartOf="parent"
                     android:id="@+id/imageContainer" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/placeholderLayout"
+                    android:background="@drawable/ripple_dashed_corners_15dp">
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:gravity="center"
+                        android:textStyle="bold|italic"
+                        android:textSize="14sp"
+                        android:text="Click on one of the buttons below\nto take a picture or\nload an image from your files"
+                        android:id="@+id/materialTextView" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -111,6 +130,7 @@
             app:srcCompat="@drawable/ic_rotate_alt"
             android:padding="2.5dp"
             android:elevation="10dp"
+            android:background="?attr/actionBarItemBackground"
             app:layout_constraintStart_toEndOf="@+id/btnCamera"
             app:layout_constraintEnd_toStartOf="@+id/btnFiles"
             app:layout_constraintTop_toTopOf="@+id/btnCamera" />

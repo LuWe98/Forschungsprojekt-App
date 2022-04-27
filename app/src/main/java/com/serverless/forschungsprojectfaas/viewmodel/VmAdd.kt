@@ -1,5 +1,6 @@
 package com.serverless.forschungsprojectfaas.viewmodel
 
+import android.R.attr.bitmap
 import android.app.Application
 import android.content.Intent
 import android.graphics.Bitmap
@@ -9,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
@@ -16,17 +18,20 @@ import androidx.lifecycle.AndroidViewModel
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
-import com.serverless.forschungsprojectfaas.extensions.app
-import com.serverless.forschungsprojectfaas.extensions.launch
-import com.serverless.forschungsprojectfaas.extensions.saveToInternalStorage
+import com.serverless.forschungsprojectfaas.extensions.*
+import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.client.statement.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -34,8 +39,10 @@ import javax.inject.Inject
 @HiltViewModel
 class VmAdd @Inject constructor(
     application: Application,
+    private val scope: CoroutineScope,
     private val navDispatcher: NavigationEventDispatcher,
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository,
+    private val remoteRepo: RemoteRepository
 ) : AndroidViewModel(application) {
 
     private val fragmentMainEventChannel = Channel<FragmentMainEvent>()
@@ -47,6 +54,8 @@ class VmAdd @Inject constructor(
 
     val rotationStateFlow = rotationMutableStateFlow.asStateFlow()
 
+    private val rotation get() = rotationMutableStateFlow.value
+
     private val bitmapMutableStateFlow = MutableStateFlow<Bitmap?>(null)
 
     val bitmapStateFlow = bitmapMutableStateFlow.asStateFlow()
@@ -57,16 +66,15 @@ class VmAdd @Inject constructor(
 
     val title get() = _title
 
-
     private lateinit var currentPath: String
 
-    private var _currentRotation = 0
 
-    val currentRotation get() = _currentRotation
+//    private var _currentRotation = 0
+//
+//    val currentRotation get() = _currentRotation
 
     fun onPictureClicked() = launch(IO) {
-        _currentRotation = if (_currentRotation == 360) 0 else _currentRotation + 90
-        rotationMutableStateFlow.value = _currentRotation
+        rotationMutableStateFlow.value = if (rotation == 360) 90 else rotation + 90
     }
 
     fun onPermissionResultReceived(granted: Boolean) = launch(IO) {
@@ -90,8 +98,7 @@ class VmAdd @Inject constructor(
         result.data?.data?.let { uri ->
             val inputStream = app.contentResolver.openInputStream(uri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
-            val rotatedBy = uriToExifDegrees(uri)
-            rotationMutableStateFlow.value = rotatedBy
+            rotationMutableStateFlow.value = uriToExifDegrees(uri)
             bitmapMutableStateFlow.value = bitmap
         }
     }
@@ -112,14 +119,37 @@ class VmAdd @Inject constructor(
             return@launch
         }
 
-
-        navDispatcher.dispatch(NavigationEvent.NavigateToLoadingDialog(R.string.saving))
+        navDispatcher.dispatch(NavigationEvent.NavigateToLoadingDialog(R.string.evaluating))
 
         runCatching {
+            val rotatedBitmap = currentBitmap!!.rotate(degree = rotationStateFlow.value)
+            //bitmapMutableStateFlow.value = rotatedBitmap
+
             PictureEntry(
-                name = _title,
-                pictureUri = currentBitmap!!.saveToInternalStorage(app)
-            )
+                title = _title,
+                pictureUri = rotatedBitmap.saveToInternalStorage(app)
+            ).also {
+
+//                Das ist der Code um Bitmap zu der Clound function zu senden
+//                launch(scope = scope) {
+//                    log("START")
+//                    val byteArrayOutputStream = ByteArrayOutputStream()
+//                    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+//                    val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
+//                    val stringTest = Base64.encodeToString(byteArray, Base64.DEFAULT)
+//                    val response = remoteRepo.invokeTestFunction(stringTest)
+//
+//                    val responseString = response.bodyAsText()
+//                    val base64StringOnly = responseString
+//                        .substringAfter("\"")
+//                        .substringBefore("\"")
+//                        .replace("\\n", "")
+//                        .replace("\\r", "")
+//                    val decoded = Base64.decode(base64StringOnly, Base64.DEFAULT)
+//                    val returnedBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+//                    bitmapMutableStateFlow.value = returnedBitmap
+//                }
+            }
         }.also {
             navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
         }.onSuccess {

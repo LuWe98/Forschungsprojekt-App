@@ -1,6 +1,5 @@
 package com.serverless.forschungsprojectfaas.viewmodel
 
-import android.graphics.BitmapFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,7 +30,7 @@ class VmDetail @Inject constructor(
 
     val imageUriFlow = pictureEntryStateFlow.map(PictureEntry::pictureUri::get).distinctUntilChanged()
 
-    val entryTitleFlow = pictureEntryStateFlow.map(PictureEntry::name::get).distinctUntilChanged()
+    val entryTitleFlow = pictureEntryStateFlow.map(PictureEntry::title::get).distinctUntilChanged()
 
     fun onBackButtonClicked() = launch(IO) {
         navDispatcher.dispatch(NavigationEvent.NavigateBack)

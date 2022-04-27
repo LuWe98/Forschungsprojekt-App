@@ -25,9 +25,8 @@ class RvaHome : BindingListAdapter<PictureEntry, RviEntryBinding>(PictureEntry.D
     }
 
     override fun bindViews(binding: RviEntryBinding, item: PictureEntry, position: Int) {
-        log("URI: ${item.pictureUri}")
         binding.apply {
-            tvTitle.text = item.name
+            tvTitle.text = item.title
             tvDateAndQuestionAmount.text = item.timeStampAsDate
             tvMark.text = Random.nextInt(30).toString()
         }

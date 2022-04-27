@@ -2,10 +2,11 @@ package com.serverless.forschungsprojectfaas.view.fragments
 
 import android.Manifest
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
 import com.serverless.forschungsprojectfaas.R
@@ -35,7 +36,7 @@ class FragmentAdd : BindingFragment<FragmentAddBinding>() {
         initObservers()
     }
 
-    private fun initViews(){
+    private fun initViews() {
         binding.apply {
             etPictureTitle.setText(vm.title)
         }
@@ -55,10 +56,13 @@ class FragmentAdd : BindingFragment<FragmentAddBinding>() {
 
     private fun initObservers() {
         vm.rotationStateFlow.collectWhenStarted(viewLifecycleOwner) { rotation ->
-            rotateImageView(rotation)
+            vm.bitmapStateFlow.value?.let {
+                rotateImageView(rotation)
+            }
         }
 
         vm.bitmapStateFlow.collectWhenStarted(viewLifecycleOwner) { bitmap ->
+            binding.placeholderLayout.isVisible = bitmap == null
             Glide.with(this).load(bitmap).into(binding.imageContainer)
         }
 
@@ -71,15 +75,18 @@ class FragmentAdd : BindingFragment<FragmentAddBinding>() {
     }
 
     private fun rotateImageView(rotateBy: Int) {
-        binding.imageContainer.apply {
-            rotation = rotateBy.toFloat()
-            updateLayoutParams<ConstraintLayout.LayoutParams> {
-                if (rotateBy == 90 || rotateBy == 270) {
-                    height = resources.displayMetrics.widthPixels
-                    width = binding.imageWrapper.height
-                } else {
-                    height = 0
-                    width = 0
+        binding.apply {
+            imageWrapper.post {
+                imageContainer.rotation = rotateBy.toFloat()
+                imageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    if (rotateBy == 90 || rotateBy == 270) {
+                        //val bitmapRatio = currentBitmap.height.toDouble() / currentBitmap.width.toDouble()
+                        height = imageWrapper.width
+                        width = imageWrapper.height
+                    } else {
+                        height = 0
+                        width = 0
+                    }
                 }
             }
         }
@@ -87,16 +94,15 @@ class FragmentAdd : BindingFragment<FragmentAddBinding>() {
 
     companion object {
         private const val IMAGE_IME_TYPE = "image/*"
+        private const val CHOOSER_TITLE = "Select Image"
 
-        val chooserIntent get() = run {
-            val getIntent = Intent(Intent.ACTION_GET_CONTENT)
-            getIntent.type = IMAGE_IME_TYPE
-
-            val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            pickIntent.type = IMAGE_IME_TYPE
-
-            val chooserIntent = Intent.createChooser(getIntent, "Select Image")
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
-        }
+        val chooserIntent: Intent
+            get() = run {
+                Intent().let { intent ->
+                    intent.type = IMAGE_IME_TYPE
+                    intent.action = Intent.ACTION_GET_CONTENT;
+                    Intent.createChooser(intent, CHOOSER_TITLE)
+                }
+            }
     }
 }

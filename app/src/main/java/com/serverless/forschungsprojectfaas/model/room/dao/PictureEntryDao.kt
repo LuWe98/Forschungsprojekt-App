@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class PictureEntryDao : BaseDao<PictureEntry> {
 
-    @Query("SELECT * FROM PictureTable WHERE name LIKE '%' || :searchQuery || '%' ORDER BY name")
+    @Query("SELECT * FROM PictureTable WHERE title LIKE '%' || :searchQuery || '%' ORDER BY title")
     abstract fun getAllPictureEntries(searchQuery: String): Flow<List<PictureEntry>>
 
     @Query("SELECT * FROM PictureTable WHERE pictureId =:id LIMIT 1")

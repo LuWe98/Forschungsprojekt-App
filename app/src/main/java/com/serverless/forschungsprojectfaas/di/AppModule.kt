@@ -3,15 +3,24 @@ package com.serverless.forschungsprojectfaas.di
 import android.content.Context
 import androidx.room.Room
 import com.serverless.forschungsprojectfaas.OwnApplication
+import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalDatabase
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
+import com.serverless.forschungsprojectfaas.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.*
+import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -37,5 +46,34 @@ object AppModule {
         roomDatabase.getPictureEntryDao(),
         roomDatabase.getStickEntryDao()
     )
+
+    @Provides
+    @Singleton
+    fun provideKtorClient() = HttpClient(Android) {
+        install(DefaultRequest) {
+            url.takeFrom(URLBuilder().takeFrom(RemoteRepository.REMOTE_URL).apply {
+                encodedPath += url.encodedPath
+                protocol = URLProtocol.HTTP
+            })
+            contentType(ContentType.Application.Json)
+        }
+
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
+
+        engine {
+            connectTimeout = 25_000
+            socketTimeout = 25_000
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteRepository(client: HttpClient) = RemoteRepository(client)
 
 }

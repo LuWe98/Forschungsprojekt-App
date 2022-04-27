@@ -2,16 +2,13 @@ package com.serverless.forschungsprojectfaas.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher
-import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher.*
+import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher.SelectionResult
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
-import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.*
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent.*
 import com.serverless.forschungsprojectfaas.dispatcher.selection.OrderByItem
 import com.serverless.forschungsprojectfaas.dispatcher.selection.PictureMoreOptions
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
 import com.serverless.forschungsprojectfaas.extensions.launch
-import com.serverless.forschungsprojectfaas.extensions.log
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
 import dagger.hilt.android.lifecycle.HiltViewModel

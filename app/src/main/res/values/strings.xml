@@ -6,7 +6,7 @@
     <string name="errorCouldNotSafeFile">Could not safe file</string>
 
     <string name="saving">Saving…</string>
-    <string name="add">Add</string>
+    <string name="addPicture">Add</string>
     <string name="sticks">Sticks</string>
     <string name="title">Title</string>
     <string name="done">Done</string>
@@ -15,4 +15,6 @@
     <string name="stickCount">Stick count</string>
     <string name="orderBy">Order by</string>
     <string name="open">Open</string>
+    <string name="evaluate">Evaluate</string>
+    <string name="evaluating">Evaluating</string>
 </resources>

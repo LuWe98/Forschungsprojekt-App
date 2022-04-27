@@ -18,7 +18,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     @Parcelize
     data class PictureMoreOptionsSelection(val entry: PictureEntry) : SelectionRequestType<PictureMoreOptions>(
         recyclerViewList = PictureMoreOptions.values().toList(),
-        titleProvider = { entry.name },
+        titleProvider = { entry.title },
         resultProvider = { SelectionResult.PictureMoreOptionsSelectionResult(entry, it as PictureMoreOptions) }
     )
 

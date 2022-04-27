@@ -16,7 +16,7 @@ class RvaDetails : BindingListAdapter<StickEntry, RviEntryMarkBinding>(StickEntr
 
     override fun bindViews(binding: RviEntryMarkBinding, item: StickEntry, position: Int) {
         binding.apply {
-            tvMark.text = item.designation
+            tvMark.text = Char(position + 65).toString()
             tvCount.text = position.toString()
             val color = Color.argb(255, Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
             tvMark.setBackgroundTint(color)
