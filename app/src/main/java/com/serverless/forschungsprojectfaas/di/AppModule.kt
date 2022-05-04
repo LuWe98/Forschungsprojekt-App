@@ -6,7 +6,6 @@ import com.serverless.forschungsprojectfaas.OwnApplication
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalDatabase
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
-import com.serverless.forschungsprojectfaas.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,6 +26,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+
+    @Provides
+    @Singleton
+    fun provideApplication(@ApplicationContext context: Context) = context as OwnApplication
+
     @Provides
     @Singleton
     fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob())
@@ -43,8 +47,9 @@ object AppModule {
     @Singleton
     fun provideLocalRepository(roomDatabase: LocalDatabase) : LocalRepository = LocalRepository(
         roomDatabase,
-        roomDatabase.getPictureEntryDao(),
-        roomDatabase.getStickEntryDao()
+        roomDatabase.getCapturedPictureDao(),
+        roomDatabase.getBarBatchDao(),
+        roomDatabase.getBarDao()
     )
 
     @Provides

@@ -10,7 +10,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.selection.PictureMoreOpti
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
 import com.serverless.forschungsprojectfaas.extensions.launch
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
-import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
+import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
@@ -44,18 +44,18 @@ class VmHome @Inject constructor(
         searchQueryMutableStatFlow.value = newQuery
     }
 
-    fun onRvaItemClicked(entry: PictureEntry) = launch(IO) {
-        navDispatcher.dispatch(NavigateToDetailScreen(entry))
+    fun onRvaItemClicked(captured: CapturedPicture) = launch(IO) {
+        navDispatcher.dispatch(NavigateToDetailScreen(captured))
     }
 
-    fun onRvaItemMoreOptionsClicked(entry: PictureEntry) = launch(IO) {
-        navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.PictureMoreOptionsSelection(entry)))
+    fun onRvaItemMoreOptionsClicked(captured: CapturedPicture) = launch(IO) {
+        navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.PictureMoreOptionsSelection(captured)))
     }
 
     fun onPictureMoreOptionsResultReceived(result: SelectionResult.PictureMoreOptionsSelectionResult) {
         when(result.selectedItem) {
-            PictureMoreOptions.DELETE -> onDeletePictureEntrySelected(result.calledOnPictureEntry)
-            PictureMoreOptions.OPEN -> onRvaItemClicked(result.calledOnPictureEntry)
+            PictureMoreOptions.DELETE -> onDeletePictureEntrySelected(result.calledOnCapturedPicture)
+            PictureMoreOptions.OPEN -> onRvaItemClicked(result.calledOnCapturedPicture)
         }
     }
 
@@ -63,15 +63,15 @@ class VmHome @Inject constructor(
         navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.OrderBySelection(orderByMutableStateFlow.value)))
     }
 
-    private fun onDeletePictureEntrySelected(entry: PictureEntry) = launch(IO) {
-        entry.pictureUri.path?.let { path ->
+    private fun onDeletePictureEntrySelected(captured: CapturedPicture) = launch(IO) {
+        captured.pictureUri.path?.let { path ->
             File(path).let { file ->
                 if(file.exists()) {
                     file.delete()
                 }
             }
         }
-        localRepository.delete(entry)
+        localRepository.delete(captured)
     }
 
     fun onOrderBySelectionResultReceived(result: SelectionResult.OrderBySelectionResult) = launch(IO) {

@@ -13,13 +13,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Entity(
-    tableName = PictureEntry.TABLE_NAME,
+    tableName = CapturedPicture.TABLE_NAME,
     indices = [
-        Index(value = [PictureEntry.TITLE_COLUMN], unique = true)
+        Index(value = [CapturedPicture.TITLE_COLUMN], unique = true)
     ]
 )
 @Parcelize
-data class PictureEntry(
+data class CapturedPicture(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
     val id: String = UUID.randomUUID().toString(),
@@ -36,7 +36,7 @@ data class PictureEntry(
     val timeStampAsDate get() = SimpleDateFormat.getDateInstance().format(Date(timestamp)).toString()
 
     companion object {
-        val DIFF_CALLBACK = generateDiffItemCallback(PictureEntry::id)
+        val DIFF_CALLBACK = generateDiffItemCallback(CapturedPicture::id)
 
         const val TABLE_NAME = "PictureTable"
 

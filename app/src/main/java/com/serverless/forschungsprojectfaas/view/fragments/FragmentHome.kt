@@ -6,14 +6,14 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.serverless.forschungsprojectfaas.databinding.FragmentHomeBinding
 import com.serverless.forschungsprojectfaas.dispatcher.setFragmentResultEventListener
-import com.serverless.forschungsprojectfaas.extensions.*
-import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
+import com.serverless.forschungsprojectfaas.extensions.collectWhenStarted
+import com.serverless.forschungsprojectfaas.extensions.disableChangeAnimation
+import com.serverless.forschungsprojectfaas.extensions.onClick
+import com.serverless.forschungsprojectfaas.extensions.onTextChanged
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingFragment
 import com.serverless.forschungsprojectfaas.view.recyclerview.RvaHome
 import com.serverless.forschungsprojectfaas.viewmodel.VmHome
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.client.statement.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class FragmentHome : BindingFragment<FragmentHomeBinding>() {

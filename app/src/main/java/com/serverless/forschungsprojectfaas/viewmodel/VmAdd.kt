@@ -1,6 +1,5 @@
 package com.serverless.forschungsprojectfaas.viewmodel
 
-import android.R.attr.bitmap
 import android.app.Application
 import android.content.Intent
 import android.graphics.Bitmap
@@ -10,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
@@ -21,17 +19,14 @@ import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
-import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
+import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.statement.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -125,7 +120,7 @@ class VmAdd @Inject constructor(
             val rotatedBitmap = currentBitmap!!.rotate(degree = rotationStateFlow.value)
             //bitmapMutableStateFlow.value = rotatedBitmap
 
-            PictureEntry(
+            CapturedPicture(
                 title = _title,
                 pictureUri = rotatedBitmap.saveToInternalStorage(app)
             ).also {

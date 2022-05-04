@@ -12,7 +12,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.selection.PictureMoreOpti
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionTypeItemMarker
 import com.serverless.forschungsprojectfaas.dispatcher.selection.OrderByItem
 import com.serverless.forschungsprojectfaas.extensions.currentNavHostFragment
-import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
+import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
 import com.serverless.forschungsprojectfaas.view.ActivityMain
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.parcelize.Parcelize
@@ -56,7 +56,7 @@ class FragmentResultDispatcher @Inject constructor(
 
         @Parcelize
         data class PictureMoreOptionsSelectionResult(
-            val calledOnPictureEntry: PictureEntry,
+            val calledOnCapturedPicture: CapturedPicture,
             override val selectedItem: PictureMoreOptions
         ) : SelectionResult<PictureMoreOptions>()
 

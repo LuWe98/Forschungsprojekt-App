@@ -2,6 +2,7 @@ package com.serverless.forschungsprojectfaas.model.room
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.RectF
 import android.net.Uri
 import androidx.room.TypeConverter
 import java.io.ByteArrayOutputStream
@@ -29,5 +30,4 @@ class RoomTypeConverter {
     fun toUri(uriString: String) : Uri {
         return Uri.parse(uriString)
     }
-
 }

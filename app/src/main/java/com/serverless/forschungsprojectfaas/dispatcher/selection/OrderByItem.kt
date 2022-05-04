@@ -3,7 +3,6 @@ package com.serverless.forschungsprojectfaas.dispatcher.selection
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.serverless.forschungsprojectfaas.R
-import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

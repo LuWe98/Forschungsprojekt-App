@@ -1,26 +1,21 @@
 package com.serverless.forschungsprojectfaas.view.recyclerview
 
-import android.graphics.Color
 import com.serverless.forschungsprojectfaas.databinding.RviEntryMarkBinding
 import com.serverless.forschungsprojectfaas.extensions.setBackgroundTint
-import com.serverless.forschungsprojectfaas.model.room.entities.StickEntry
+import com.serverless.forschungsprojectfaas.model.room.junctions.BarBatchWithBars
 import com.serverless.forschungsprojectfaas.view.recyclerview.generic.BindingListAdapter
-import kotlin.random.Random
 
-class RvaDetails : BindingListAdapter<StickEntry, RviEntryMarkBinding>(StickEntry.DIFF_CALLBACK, RviEntryMarkBinding::class) {
-
+class RvaDetails : BindingListAdapter<BarBatchWithBars, RviEntryMarkBinding>(BarBatchWithBars.DIFF_CALLBACK, RviEntryMarkBinding::class) {
 
     override fun initListeners(binding: RviEntryMarkBinding, vh: BindingListAdapterViewHolder) {
 
     }
 
-    override fun bindViews(binding: RviEntryMarkBinding, item: StickEntry, position: Int) {
+    override fun bindViews(binding: RviEntryMarkBinding, item: BarBatchWithBars, position: Int) {
         binding.apply {
-            tvMark.text = Char(position + 65).toString()
-            tvCount.text = position.toString()
-            val color = Color.argb(255, Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
-            tvMark.setBackgroundTint(color)
+            tvMark.text = item.barBatch.caption
+            tvCount.text = item.bars.size.toString()
+            tvMark.setBackgroundTint(item.barBatch.colorInt)
         }
     }
-
 }

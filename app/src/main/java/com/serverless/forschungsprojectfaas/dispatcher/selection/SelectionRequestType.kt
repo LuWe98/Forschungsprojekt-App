@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Parcelable
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher.SelectionResult
-import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
+import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
 import kotlinx.parcelize.Parcelize
 
 
@@ -16,10 +16,10 @@ sealed class SelectionRequestType<T : Enum<T>>(
 ) : Parcelable {
 
     @Parcelize
-    data class PictureMoreOptionsSelection(val entry: PictureEntry) : SelectionRequestType<PictureMoreOptions>(
+    data class PictureMoreOptionsSelection(val captured: CapturedPicture) : SelectionRequestType<PictureMoreOptions>(
         recyclerViewList = PictureMoreOptions.values().toList(),
-        titleProvider = { entry.title },
-        resultProvider = { SelectionResult.PictureMoreOptionsSelectionResult(entry, it as PictureMoreOptions) }
+        titleProvider = { captured.title },
+        resultProvider = { SelectionResult.PictureMoreOptionsSelectionResult(captured, it as PictureMoreOptions) }
     )
 
     @Parcelize

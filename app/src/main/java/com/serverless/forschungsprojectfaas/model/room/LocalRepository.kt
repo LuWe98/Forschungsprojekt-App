@@ -1,10 +1,11 @@
 package com.serverless.forschungsprojectfaas.model.room
 
+import com.serverless.forschungsprojectfaas.model.room.dao.BarBatchDao
 import com.serverless.forschungsprojectfaas.model.room.dao.BaseDao
-import com.serverless.forschungsprojectfaas.model.room.dao.PictureEntryDao
-import com.serverless.forschungsprojectfaas.model.room.dao.StickEntryDao
-import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
-import com.serverless.forschungsprojectfaas.model.room.entities.StickEntry
+import com.serverless.forschungsprojectfaas.model.room.dao.CapturedPictureDao
+import com.serverless.forschungsprojectfaas.model.room.dao.BarDao
+import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
+import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,14 +14,15 @@ import kotlin.reflect.KClass
 @Singleton
 class LocalRepository @Inject constructor(
     private val localDatabase: LocalDatabase,
-    private val pictureEntryDao: PictureEntryDao,
-    private val stickEntryDao: StickEntryDao
+    private val capturedPictureDao: CapturedPictureDao,
+    private val barBatchDao: BarBatchDao,
+    private val barDao: BarDao
 ) {
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : RoomEntityMarker> getBaseDaoWith(entity: T): BaseDao<T> = when (entity::class as KClass<T>) {
-        PictureEntry::class -> pictureEntryDao
-        StickEntry::class -> stickEntryDao
+        CapturedPicture::class -> capturedPictureDao
+        Bar::class -> barDao
         else -> throw IllegalArgumentException("Entity DAO for entity class '${entity::class.simpleName}' not found! Is it added to the 'getBaseDaoWith' method?")
     } as BaseDao<T>
 
@@ -37,8 +39,8 @@ class LocalRepository @Inject constructor(
     suspend fun <T : RoomEntityMarker> delete(entities: Collection<T>) = entities.firstOrNull()?.let(::getBaseDaoWith)?.delete(entities)
 
 
-    fun getAllPictureEntries(searchQuery: String) = pictureEntryDao.getAllPictureEntries(searchQuery)
+    fun getAllPictureEntries(searchQuery: String) = capturedPictureDao.getAllPictureEntries(searchQuery)
 
-    fun getPictureEntryFlowWithId(id: String): Flow<PictureEntry> = pictureEntryDao.getPictureEntryFlowWithId(id)
+    fun getPictureEntryFlowWithId(id: String): Flow<CapturedPicture> = capturedPictureDao.getPictureEntryFlowWithId(id)
 
 }

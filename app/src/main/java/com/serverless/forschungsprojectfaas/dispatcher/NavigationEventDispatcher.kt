@@ -1,14 +1,13 @@
 package com.serverless.forschungsprojectfaas.dispatcher
 
 import androidx.annotation.StringRes
-import androidx.navigation.NavGraph
 import com.serverless.forschungsprojectfaas.NavGraphDirections
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.base.DispatchEvent
 import com.serverless.forschungsprojectfaas.dispatcher.base.Dispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
 import com.serverless.forschungsprojectfaas.extensions.navController
-import com.serverless.forschungsprojectfaas.model.room.entities.PictureEntry
+import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
 import com.serverless.forschungsprojectfaas.view.ActivityMain
 import com.serverless.forschungsprojectfaas.view.fragments.FragmentHomeDirections
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -35,8 +34,8 @@ class NavigationEventDispatcher @Inject constructor(
             navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentAdd())
         })
 
-        class NavigateToDetailScreen(pictureEntry: PictureEntry): NavigationEvent({
-            navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentDetail(pictureEntry))
+        class NavigateToDetailScreen(capturedPicture: CapturedPicture): NavigationEvent({
+            navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentDetail(capturedPicture))
         })
 
         class NavigateToLoadingDialog(@StringRes messageRes: Int): NavigationEvent({

@@ -28,14 +28,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="300dp"
+            android:layout_height="350dp"
             android:id="@+id/imageContainer"
             android:layout_marginTop="@dimen/grid_4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pageTitle">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.serverless.forschungsprojectfaas.view.custom.DotOverlay
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintStart_toStartOf="parent"
