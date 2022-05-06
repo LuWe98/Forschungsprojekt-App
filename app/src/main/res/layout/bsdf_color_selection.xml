@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@drawable/background_round_corners_top_15dp"
+        android:backgroundTint="@color/white">
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:layout_constraintTop_toTopOf="@+id/btn_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/tvTitle"
+            android:text="Color selection"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_back" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/btn_back"
+            app:srcCompat="@drawable/ic_close"
+            android:layout_margin="@dimen/grid_6"
+            android:padding="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:id="@+id/colorCircle"
+            android:src="@drawable/color_circle"
+            android:background="@color/transparent"
+            android:layout_marginTop="@dimen/grid_4"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/infoContainer"
+            android:layout_marginTop="@dimen/grid_4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/colorCircle">
+
+        <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:id="@+id/relLayoutColorPreview"
+                android:background="@color/transparent"
+                android:weightSum="2"
+                app:layout_constraintWidth_percent="0.7"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/relLayoutOldColor"
+                    android:background="@drawable/color_circle_left_round_corners"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    android:layout_weight="1" />
+
+            <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/relLayoutNewColor"
+                    android:background="@drawable/color_circle_right_round_corners"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    android:layout_weight="1" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/grid_4"
+                android:text="# FFAABB"
+                android:paddingStart="@dimen/grid_6"
+                android:background="@drawable/background_round_corners_15dp"
+                android:backgroundTint="@color/lightBackgroundColor"
+                app:layout_constraintTop_toBottomOf="@id/textViewContainer"
+                android:id="@+id/appCompatEditText"
+                app:layout_constraintStart_toStartOf="@+id/seekBarContainer"
+                app:layout_constraintEnd_toEndOf="@+id/seekBarContainer" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/textViewContainer"
+                android:layout_marginTop="@dimen/grid_2"
+                app:layout_constraintTop_toBottomOf="@+id/relLayoutColorPreview"
+                app:layout_constraintStart_toStartOf="@+id/seekBarContainer"
+                app:layout_constraintEnd_toEndOf="@+id/seekBarContainer">
+
+            <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/textViewRed"
+                    android:textColor="@color/black"
+                    android:textSize="13.5sp"
+                    android:gravity="center_vertical"
+                    android:text="R: 23"
+                    android:paddingStart="@dimen/grid_2_5"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    app:layout_constraintEnd_toStartOf="@id/textViewGreen"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/textViewGreen"
+                    android:textColor="@color/black"
+                    android:textSize="13.5sp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    android:text="G: 233"
+                    android:paddingStart="@dimen/grid_2_5"
+                    android:layout_toEndOf="@+id/textViewRed"
+                    app:layout_constraintEnd_toStartOf="@id/textViewBlue"
+                    app:layout_constraintStart_toEndOf="@+id/textViewRed" />
+
+            <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/textViewBlue"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="13.5sp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    android:text="B: 100"
+                    android:paddingStart="@dimen/grid_2_5"
+                    app:layout_constraintEnd_toStartOf="@id/textViewOpacity"
+                    app:layout_constraintStart_toEndOf="@id/textViewGreen" />
+
+            <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/textViewOpacity"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="13.5sp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    android:text="A: 233"
+                    android:paddingStart="@dimen/grid_2_5"
+                    app:layout_constraintStart_toEndOf="@id/textViewBlue"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/seekBarContainer"
+                android:layout_marginTop="@dimen/grid_6"
+                android:layout_marginHorizontal="@dimen/grid_6"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatEditText">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:id="@+id/redProgressContainer"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    app:layout_constraintTop_toTopOf="parent">
+                <androidx.appcompat.widget.AppCompatSeekBar
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:thumbTint="@color/niceRed"
+                        android:progressTint="@color/niceRed"
+                        android:id="@+id/progressRed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvRed" />
+
+                <TextView
+                        android:layout_width="30dp"
+                        android:layout_height="0dp"
+                        android:id="@+id/tvRed"
+                        android:textColor="@color/black"
+                        android:textSize="13.5sp"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical|end"
+                        android:text="23"
+                        android:layout_marginEnd="@dimen/grid_4"
+                        android:background="@drawable/background_round_corners_45dp"
+                        android:backgroundTint="@color/transparent"
+                        android:layout_alignTop="@+id/progressRed"
+                        android:layout_alignBottom="@+id/progressRed"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/progressRed"
+                        app:layout_constraintBottom_toBottomOf="@+id/progressRed" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    app:layout_constraintTop_toBottomOf="@id/redProgressContainer"
+                    android:layout_marginTop="15dp"
+                    android:thumbTint="@color/green"
+                    android:progressTint="@color/green"
+                    android:id="@+id/seekBarGreen"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tvGreen" />
+
+            <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/tvGreen"
+                    android:textColor="@color/black"
+                    android:textSize="13.5sp"
+                    android:gravity="center_vertical|end"
+                    android:text="243"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/transparent"
+                    android:layout_alignTop="@+id/seekBarGreen"
+                    android:layout_alignBottom="@+id/seekBarGreen"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/seekBarGreen"
+                    app:layout_constraintBottom_toBottomOf="@+id/seekBarGreen" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    app:layout_constraintTop_toBottomOf="@id/seekBarGreen"
+                    android:layout_marginTop="15dp"
+                    android:thumbTint="@color/blue"
+                    android:progressTint="@color/blue"
+                    android:id="@+id/seekBarBlue"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tvBlue" />
+
+            <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/tvBlue"
+                    android:textColor="@color/black"
+                    android:textSize="13.5sp"
+                    android:gravity="center_vertical|end"
+                    android:text="100"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/transparent"
+                    android:layout_alignTop="@+id/seekBarBlue"
+                    android:layout_alignBottom="@+id/seekBarBlue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/seekBarBlue"
+                    app:layout_constraintBottom_toBottomOf="@+id/seekBarBlue" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    app:layout_constraintTop_toBottomOf="@id/seekBarBlue"
+                    android:layout_marginTop="15dp"
+                    android:thumbTint="@color/black"
+                    android:progressTint="@color/black"
+                    android:id="@+id/seekBarOpacity"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tvAlpha" />
+
+            <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/tvAlpha"
+                    android:textColor="@color/black"
+                    android:textSize="13.5sp"
+                    android:gravity="center_vertical|end"
+                    android:text="50"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/transparent"
+                    android:layout_alignTop="@+id/seekBarBlue"
+                    android:layout_alignBottom="@+id/seekBarBlue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/seekBarOpacity"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_below="@+id/seekBarContainer"
+                android:layout_alignParentEnd="true"
+                android:layout_marginHorizontal="@dimen/grid_6"
+                android:layout_marginBottom="@dimen/grid_8"
+                android:text="Save"
+                android:gravity="center"
+                android:background="@drawable/background_round_corners_15dp"
+                android:backgroundTint="@color/hfuLightGreen"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:id="@+id/buttonSave"
+                app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

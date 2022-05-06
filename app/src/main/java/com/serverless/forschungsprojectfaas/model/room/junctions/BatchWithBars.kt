@@ -5,21 +5,21 @@ import androidx.room.Relation
 import com.serverless.forschungsprojectfaas.extensions.div
 import com.serverless.forschungsprojectfaas.extensions.generateDiffItemCallback
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
-import com.serverless.forschungsprojectfaas.model.room.entities.BarBatch
+import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 
-data class BarBatchWithBars(
+data class BatchWithBars(
     @Embedded
-    var barBatch: BarBatch,
+    var batch: Batch,
     @Relation(
         entity = Bar::class,
         entityColumn = Bar.BATCH_ID_COLUMN,
-        parentColumn = BarBatch.ID_COLUMN
+        parentColumn = Batch.ID_COLUMN
     )
     var bars: List<Bar>
 ) {
 
     companion object {
-        val DIFF_CALLBACK = generateDiffItemCallback(BarBatchWithBars::barBatch / BarBatch::id)
+        val DIFF_CALLBACK = generateDiffItemCallback(BatchWithBars::batch / Batch::batchId)
     }
 
 }

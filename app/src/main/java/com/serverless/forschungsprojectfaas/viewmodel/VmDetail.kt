@@ -10,12 +10,16 @@ import androidx.lifecycle.viewModelScope
 import com.serverless.forschungsprojectfaas.OwnApplication
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
+import com.serverless.forschungsprojectfaas.extensions.div
 import com.serverless.forschungsprojectfaas.extensions.launch
+import com.serverless.forschungsprojectfaas.extensions.log
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
-import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
-import com.serverless.forschungsprojectfaas.model.room.entities.BarBatch
+import com.serverless.forschungsprojectfaas.model.room.entities.Pile
+import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
-import com.serverless.forschungsprojectfaas.model.room.junctions.BarBatchWithBars
+import com.serverless.forschungsprojectfaas.model.room.junctions.BarWithBatch
+import com.serverless.forschungsprojectfaas.model.room.junctions.BatchWithBars
+import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBatches
 import com.serverless.forschungsprojectfaas.view.fragments.FragmentDetailArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -36,25 +40,23 @@ class VmDetail @Inject constructor(
     private val args = FragmentDetailArgs.fromSavedStateHandle(state)
 
     private val pictureEntryStateFlow = localRepository
-        .getPictureEntryFlowWithId(args.pictureEntry.id)
-        .stateIn(viewModelScope, SharingStarted.Lazily, args.pictureEntry)
+        .getPileWithBatchesFlow(args.pictureEntry.pileId)
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    private val imageBitmapStateFlow = pictureEntryStateFlow.map { entry ->
-        BitmapFactory.decodeFile(entry.pictureUri.path)
-    }.flowOn(IO).stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    private val pictureEntryNonNullStateFlow = pictureEntryStateFlow.mapNotNull { it }
 
-    val imageBitmapFlow = imageBitmapStateFlow.mapNotNull { it }
+    val imageBitmapStateFlow = pictureEntryNonNullStateFlow.map { entry ->
+        BitmapFactory.decodeFile(entry.pile.pictureUri.path)
+    }.flowOn(IO).stateIn(viewModelScope, SharingStarted.Eagerly, null).mapNotNull { it }
 
-    val entryTitleFlow = pictureEntryStateFlow.map(CapturedPicture::title::get).distinctUntilChanged()
+    val entryTitleFlow = pictureEntryNonNullStateFlow.map(PileWithBatches::pile / Pile::title).distinctUntilChanged()
 
-    private val barBatchWithBarsMutableStateFlow = MutableStateFlow(emptyList<BarBatchWithBars>())
+    val barBatchWithBarsStateFlow = pictureEntryNonNullStateFlow.map {
+        it.batches
+    }
 
-    val barBatchWithBarsStateFlow = barBatchWithBarsMutableStateFlow.asStateFlow()
-
-    var allBarsFlow = barBatchWithBarsMutableStateFlow.map {
-        it.flatMap {
-            it.bars
-        }
+    var allBarsFlow = pictureEntryNonNullStateFlow.map {
+        it.barsWithBatches.map(BarWithBatch::bar)
     }.distinctUntilChanged()
 
 
@@ -62,36 +64,9 @@ class VmDetail @Inject constructor(
         navDispatcher.dispatch(NavigationEvent.NavigateBack)
     }
 
-    init {
-        loadResultRectangles()
-    }
-
-    private fun loadResultRectangles() {
-        val stream = InputStreamReader(app.assets.open("results.csv"))
-        val reader = BufferedReader(stream)
-        val entries = mutableListOf<Bar>()
-        val batchMap = HashMap<String, Pair<BarBatch, MutableList<Bar>>>()
-        reader.lines().forEach { line ->
-            val split = line.split(",")
-            val rect = RectF(
-                split[1].toFloat(),
-                split[2].toFloat(),
-                split[3].toFloat(),
-                split[4].toFloat()
-            )
-            val batch: Pair<BarBatch, MutableList<Bar>> = batchMap.getOrDefault(split[0], Pair(BarBatch(caption = split[0], pictureId = ""), mutableListOf()))
-            batch.second.add(Bar(
-                batchId = batch.first.id,
-                rect = rect
-            ))
-            batchMap[split[0]] = batch
+    fun onGoToBatchSelectionClicked() {
+        launch {
+            navDispatcher.dispatch(NavigationEvent.NavigateToBatchSelection())
         }
-        val batchesWithBars = batchMap.map {
-            val batch = it.value.first
-            val bars = it.value.second
-            BarBatchWithBars(batch, bars)
-        }
-
-        barBatchWithBarsMutableStateFlow.value = batchesWithBars
     }
 }

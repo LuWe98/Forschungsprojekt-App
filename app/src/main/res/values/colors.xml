@@ -11,7 +11,13 @@
     <color name="hfuDarkGreen">#5bb28a</color>
     <color name="hfuBrightGreen">#88c860</color>
     <color name="hfuLightGreen">#bfe0ce</color>
-    <color name="red">#ED4D4D</color>
+    <color name="niceRed">#ED4D4D</color>
+
+
+    <color name="red">#ff0000</color>
+    <color name="green">#00ff00</color>
+    <color name="blue">#0000ff</color>
+
 
 
 

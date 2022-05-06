@@ -1,6 +1,7 @@
 package com.serverless.forschungsprojectfaas.extensions
 
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.view.ActivityMain
@@ -12,3 +13,5 @@ val ActivityMain.navHostFragment get() : NavHostFragment = supportFragmentManage
 val ActivityMain.navController get() = navHostFragment.navController
 
 val ActivityMain.currentNavHostFragment get() = navHostFragment.currentFragment
+
+val NavController.currentDestinationId get(): Int? = currentDestination?.id

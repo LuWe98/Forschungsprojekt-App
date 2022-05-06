@@ -2,6 +2,7 @@ package com.serverless.forschungsprojectfaas.model.room
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.RectF
 import android.net.Uri
 import androidx.room.TypeConverter
@@ -30,4 +31,10 @@ class RoomTypeConverter {
     fun toUri(uriString: String) : Uri {
         return Uri.parse(uriString)
     }
+
+    @TypeConverter
+    fun toColor(colorInt: Long): Int = Color.rgb(2f, 2f,2f)
+
+
+
 }

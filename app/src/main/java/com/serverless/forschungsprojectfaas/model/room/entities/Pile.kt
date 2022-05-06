@@ -13,16 +13,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Entity(
-    tableName = CapturedPicture.TABLE_NAME,
+    tableName = Pile.TABLE_NAME,
     indices = [
-        Index(value = [CapturedPicture.TITLE_COLUMN], unique = true)
+        Index(value = [Pile.TITLE_COLUMN], unique = true)
     ]
 )
 @Parcelize
-data class CapturedPicture(
+data class Pile(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    val id: String = UUID.randomUUID().toString(),
+    val pileId: String = UUID.randomUUID().toString(),
     @ColumnInfo(name = TITLE_COLUMN)
     val title: String,
     @ColumnInfo(name = TIMESTAMP_COLUMN)
@@ -36,11 +36,11 @@ data class CapturedPicture(
     val timeStampAsDate get() = SimpleDateFormat.getDateInstance().format(Date(timestamp)).toString()
 
     companion object {
-        val DIFF_CALLBACK = generateDiffItemCallback(CapturedPicture::id)
+        val DIFF_CALLBACK = generateDiffItemCallback(Pile::pileId)
 
-        const val TABLE_NAME = "PictureTable"
+        const val TABLE_NAME = "PileTable"
 
-        const val ID_COLUMN = "pictureId"
+        const val ID_COLUMN = "pileId"
         const val TITLE_COLUMN = "title"
         const val TIMESTAMP_COLUMN = "timestamp"
         const val COMPRESSED_PICTURE_COLUMN = "picture"

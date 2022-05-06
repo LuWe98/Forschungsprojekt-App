@@ -1,4 +1,4 @@
-package com.serverless.forschungsprojectfaas.view.custom
+package com.serverless.forschungsprojectfaas.view.fragments.old
 
 import android.annotation.SuppressLint
 import android.content.Context

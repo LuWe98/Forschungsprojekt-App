@@ -20,8 +20,8 @@
                 app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="40sp"
-                    android:layout_height="40sp"
+                    android:layout_width="42.5sp"
+                    android:layout_height="42.5sp"
                     android:id="@+id/tvMark"
                     android:gravity="center"
                     app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,7 @@
                     android:backgroundTint="@color/hfuLightGreen"
                     android:textStyle="bold"
                     android:fontFamily="@font/mallanna_regular"
-                    android:layout_marginStart="@dimen/grid_4"
+                    android:layout_marginStart="@dimen/grid_5"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
             <RelativeLayout

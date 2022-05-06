@@ -17,4 +17,10 @@
     <string name="open">Open</string>
     <string name="evaluate">Evaluate</string>
     <string name="evaluating">Evaluating</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="addBatch">Add Batch</string>
+    <string name="editBatch">Edit Batch</string>
+    <string name="caption">Caption</string>
 </resources>

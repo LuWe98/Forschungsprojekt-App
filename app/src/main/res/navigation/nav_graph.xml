@@ -31,7 +31,7 @@
             tools:layout="@layout/fragment_detail">
         <argument
                 android:name="pictureEntry"
-                app:argType="com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture" />
+                app:argType="com.serverless.forschungsprojectfaas.model.room.entities.Pile" />
     </fragment>
 
     <dialog
@@ -63,5 +63,39 @@
     <action
             android:id="@+id/action_global_bsdfSelection"
             app:destination="@id/bsdfSelection" />
+    <dialog
+            android:id="@+id/bsdfBatchSelection"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfBatchSelection"
+            android:label="BsdfBatchSelection"
+            tools:layout="@layout/bsdf_batch_selection" >
+        <action
+                android:id="@+id/action_bsdfBatchSelection_to_dfAddEditBatch"
+                app:destination="@id/dfAddEditBatch" />
+    </dialog>
+    <action
+            android:id="@+id/action_global_bsdfBatchSelection"
+            app:destination="@id/bsdfBatchSelection" />
+    <dialog
+            android:id="@+id/dfAddEditBatch"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAddEditBatch"
+            android:label="DfAddEditBatch"
+            tools:layout="@layout/df_add_edit_batch">
+        <argument
+                android:name="batch"
+                app:argType="com.serverless.forschungsprojectfaas.model.room.entities.Batch"
+                app:nullable="true" />
+        <action
+                android:id="@+id/action_dfAddEditBatch_to_bsdfColorSelection"
+                app:destination="@id/bsdfColorSelection" />
+    </dialog>
+    <dialog
+            android:id="@+id/bsdfColorSelection"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfColorSelection"
+            android:label="BsdfColorSelection"
+            tools:layout="@layout/bsdf_color_selection">
+        <argument
+                android:name="currentColor"
+                app:argType="integer" />
+    </dialog>
 
 </navigation>

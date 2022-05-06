@@ -9,10 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.databinding.FragmentDetailBinding
-import com.serverless.forschungsprojectfaas.extensions.collectWhenStarted
-import com.serverless.forschungsprojectfaas.extensions.disableChangeAnimation
-import com.serverless.forschungsprojectfaas.extensions.hiltNavDestinationViewModels
-import com.serverless.forschungsprojectfaas.extensions.onClick
+import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingFragment
 import com.serverless.forschungsprojectfaas.view.recyclerview.RvaDetails
 import com.serverless.forschungsprojectfaas.viewmodel.VmDetail
@@ -48,6 +45,9 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
     private fun initListeners() {
         binding.apply {
             btnBack.onClick(vm::onBackButtonClicked)
+            btnBack.onLongClick {
+                vm.onGoToBatchSelectionClicked()
+            }
         }
     }
 
@@ -56,13 +56,13 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
             binding.pageTitle.text = title
         }
 
-        vm.imageBitmapFlow.collectWhenStarted(viewLifecycleOwner) { bitmap ->
+        vm.imageBitmapStateFlow.collectWhenStarted(viewLifecycleOwner) { bitmap ->
             binding.progress.isVisible = false
             binding.iv.setImage(ImageSource.bitmap(bitmap))
         }
 
         vm.barBatchWithBarsStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            rva.submitList(it.sortedByDescending { it.bars.size })
+            rva.submitList(it.sortedBy { it.batch.caption })
             binding.iv.setRectangles(it)
         }
 
@@ -70,22 +70,4 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
             binding.tvSticksAmount.text = if (bars.isEmpty()) "-" else bars.size.toString()
         }
     }
-
-//    private fun generateRandomRects(bitmap: Bitmap) = launch {
-//        val rects: MutableList<RectF> = mutableListOf()
-//        val rectSize = bitmap.width / 100f
-//        val maxRectsHeight = bitmap.height / rectSize
-//        for (i in 0..Random.nextInt(1500)) {
-//            val randomNumber = Random.nextInt(100)
-//            val randomHeight = Random.nextInt(maxRectsHeight.toInt())
-//
-//            val left = randomNumber * rectSize
-//            val right = left + rectSize
-//            val bottom = randomHeight * rectSize
-//            val top = bottom + rectSize
-//            val rect = RectF(left, top, right, bottom)
-//            rects.add(rect)
-//        }
-//        binding.iv.setImageDots(rects)
-//    }
 }

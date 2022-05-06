@@ -35,7 +35,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pageTitle">
 
-        <com.serverless.forschungsprojectfaas.view.custom.DotOverlay
+        <com.serverless.forschungsprojectfaas.view.custom.BarBatchDisplay
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +61,6 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -99,6 +98,6 @@
             android:clipToPadding="false"
             android:paddingTop="@dimen/grid_4"
             android:paddingBottom="@dimen/grid_10"
-            tools:listitem="@layout/rvi_entry_mark"/>
+            tools:listitem="@layout/rvi_entry_batch"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

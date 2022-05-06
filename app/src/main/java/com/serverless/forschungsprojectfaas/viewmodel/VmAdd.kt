@@ -4,11 +4,13 @@ import android.app.Application
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.RectF
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
@@ -17,9 +19,13 @@ import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
 import com.serverless.forschungsprojectfaas.extensions.*
+import com.serverless.forschungsprojectfaas.model.EvaluationStatus
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
-import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
+import com.serverless.forschungsprojectfaas.model.room.entities.Bar
+import com.serverless.forschungsprojectfaas.model.room.entities.Batch
+import com.serverless.forschungsprojectfaas.model.room.entities.Pile
+import com.serverless.forschungsprojectfaas.model.room.junctions.BatchWithBars
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -27,7 +33,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import java.io.File
+import java.io.*
 import javax.inject.Inject
 
 
@@ -62,11 +68,6 @@ class VmAdd @Inject constructor(
     val title get() = _title
 
     private lateinit var currentPath: String
-
-
-//    private var _currentRotation = 0
-//
-//    val currentRotation get() = _currentRotation
 
     fun onPictureClicked() = launch(IO) {
         rotationMutableStateFlow.value = if (rotation == 360) 90 else rotation + 90
@@ -104,12 +105,12 @@ class VmAdd @Inject constructor(
 
     //TODO -> Hier dann das Senden an den Server für die Auswertung
     fun onSaveButtonClicked() = launch(IO) {
-        if(currentBitmap == null) {
+        if (currentBitmap == null) {
             fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorNoBitmapSelected))
             return@launch
         }
 
-        if(title.isBlank()) {
+        if (title.isBlank()) {
             fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorTitleIsMissing))
             return@launch
         }
@@ -119,42 +120,26 @@ class VmAdd @Inject constructor(
         runCatching {
             val rotatedBitmap = currentBitmap!!.rotate(degree = rotationStateFlow.value)
             //bitmapMutableStateFlow.value = rotatedBitmap
-
-            CapturedPicture(
+            //base64Tests(rotatedBitmap)
+            Pile(
                 title = _title,
-                pictureUri = rotatedBitmap.saveToInternalStorage(app)
-            ).also {
-
-//                Das ist der Code um Bitmap zu der Clound function zu senden
-//                launch(scope = scope) {
-//                    log("START")
-//                    val byteArrayOutputStream = ByteArrayOutputStream()
-//                    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-//                    val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
-//                    val stringTest = Base64.encodeToString(byteArray, Base64.DEFAULT)
-//                    val response = remoteRepo.invokeTestFunction(stringTest)
-//
-//                    val responseString = response.bodyAsText()
-//                    val base64StringOnly = responseString
-//                        .substringAfter("\"")
-//                        .substringBefore("\"")
-//                        .replace("\\n", "")
-//                        .replace("\\r", "")
-//                    val decoded = Base64.decode(base64StringOnly, Base64.DEFAULT)
-//                    val returnedBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
-//                    bitmapMutableStateFlow.value = returnedBitmap
-//                }
-            }
+                pictureUri = rotatedBitmap.saveToInternalStorage(app),
+                evaluationStatus = EvaluationStatus.NOT_EVALUATED
+            )
         }.also {
             navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
-        }.onSuccess {
-            localRepository.insert(it)
+        }.onSuccess { pile ->
+            //TODO -> Die Insertions direkt machen. Und auch direkt zurücknavigieren. Evaluation Status anpassen und im Home Screen anzeigen
+            localRepository.insert(pile)
+            loadPileBatchesWithBars(pile).let {
+                localRepository.insert(it.map(BatchWithBars::batch))
+                localRepository.insert(it.flatMap(BatchWithBars::bars))
+            }
             navDispatcher.dispatch(NavigationEvent.NavigateBack)
         }.onFailure {
             fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorCouldNotSafeFile))
         }
     }
-
 
     fun onTitleChanged(newTitle: String) {
         _title = newTitle
@@ -206,6 +191,71 @@ class VmAdd @Inject constructor(
     companion object {
         private const val JPG_SUFFIX = ".jpg"
         private const val AUTHORITY = "com.serverless.forschungsprojectfaas.fileprovider"
+    }
+
+
+
+
+    private fun loadPileBatchesWithBars(pile: Pile): List<BatchWithBars> {
+        val stream = InputStreamReader(app.assets.open("results.csv"))
+        val reader = BufferedReader(stream)
+        val batchMap = HashMap<String, Pair<Batch, MutableList<Bar>>>()
+        reader.lines().forEach { line ->
+            val split = line.split(",")
+            val caption = split[0]
+
+            val rect = RectF(
+                split[1].toFloat(),
+                split[2].toFloat(),
+                split[3].toFloat(),
+                split[4].toFloat()
+            )
+
+            val batch: Pair<Batch, MutableList<Bar>> = batchMap.getOrElse(caption) {
+                Pair(Batch(caption = caption), mutableListOf())
+            }
+
+            batch.second.add(
+                Bar(
+                    batchId = batch.first.batchId,
+                    pileId = pile.pileId,
+                    rect = rect
+                )
+            )
+            batchMap[caption] = batch
+        }
+
+        return batchMap.map {
+            BatchWithBars(
+                batch = it.value.first,
+                bars= it.value.second
+            )
+        }
+    }
+
+    private fun base64Tests(bitmap: Bitmap) = launch(scope = scope, dispatcher = IO) {
+        log("START")
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
+        val stringTest = Base64.encodeToString(byteArray, Base64.DEFAULT)
+
+        val file = File(app.filesDir, "my-file-name.txt")
+        FileOutputStream(file).use { stream ->
+            stream.write(byteArray)
+        }
+        log("FILE: $file")
+//                    val response = remoteRepo.invokeTestFunction(stringTest)
+//
+//                    val responseString = response.bodyAsText()
+//                    val base64StringOnly = responseString
+//                        .substringAfter("\"")
+//                        .substringBefore("\"")
+//                        .replace("\\n", "")
+//                        .replace("\\r", "")
+//                    val decoded = Base64.decode(base64StringOnly, Base64.DEFAULT)
+//                    val returnedBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+//                    bitmapMutableStateFlow.value = returnedBitmap
     }
 
 }

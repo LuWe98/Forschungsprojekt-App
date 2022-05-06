@@ -27,7 +27,6 @@ class FragmentAdd : BindingFragment<FragmentAddBinding>() {
 
     private val onBrowseFolderResult = registerForResult { vm.onFilePickerResultReceived(it) }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

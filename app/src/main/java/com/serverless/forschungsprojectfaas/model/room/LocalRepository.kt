@@ -1,28 +1,30 @@
 package com.serverless.forschungsprojectfaas.model.room
 
-import com.serverless.forschungsprojectfaas.model.room.dao.BarBatchDao
+import com.serverless.forschungsprojectfaas.model.room.dao.BatchDao
 import com.serverless.forschungsprojectfaas.model.room.dao.BaseDao
-import com.serverless.forschungsprojectfaas.model.room.dao.CapturedPictureDao
+import com.serverless.forschungsprojectfaas.model.room.dao.PileDao
 import com.serverless.forschungsprojectfaas.model.room.dao.BarDao
-import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
+import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
+import com.serverless.forschungsprojectfaas.model.room.entities.Batch
+import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBatches
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.reflect.KClass
 
 @Singleton
 class LocalRepository @Inject constructor(
     private val localDatabase: LocalDatabase,
-    private val capturedPictureDao: CapturedPictureDao,
-    private val barBatchDao: BarBatchDao,
+    private val pileDao: PileDao,
+    private val batchDao: BatchDao,
     private val barDao: BarDao
 ) {
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : RoomEntityMarker> getBaseDaoWith(entity: T): BaseDao<T> = when (entity::class as KClass<T>) {
-        CapturedPicture::class -> capturedPictureDao
-        Bar::class -> barDao
+    private fun <T : RoomEntityMarker> getBaseDaoWith(entity: T): BaseDao<T> = when (entity) {
+        is Pile -> pileDao
+        is Batch -> batchDao
+        is Bar -> barDao
         else -> throw IllegalArgumentException("Entity DAO for entity class '${entity::class.simpleName}' not found! Is it added to the 'getBaseDaoWith' method?")
     } as BaseDao<T>
 
@@ -39,8 +41,10 @@ class LocalRepository @Inject constructor(
     suspend fun <T : RoomEntityMarker> delete(entities: Collection<T>) = entities.firstOrNull()?.let(::getBaseDaoWith)?.delete(entities)
 
 
-    fun getAllPictureEntries(searchQuery: String) = capturedPictureDao.getAllPictureEntries(searchQuery)
+    fun getAllPilesFlow(searchQuery: String): Flow<List<Pile>> = pileDao.getAllPilesFlow(searchQuery)
 
-    fun getPictureEntryFlowWithId(id: String): Flow<CapturedPicture> = capturedPictureDao.getPictureEntryFlowWithId(id)
+    fun getPileWithBatchesFlow(id: String): Flow<PileWithBatches> = pileDao.getPileWithBatchesFlow(id)
+
+    fun getFilteredBatchesFlow(captionToSearch: String): Flow<List<Batch>> = batchDao.getFilteredBatchesFlow(captionToSearch)
 
 }

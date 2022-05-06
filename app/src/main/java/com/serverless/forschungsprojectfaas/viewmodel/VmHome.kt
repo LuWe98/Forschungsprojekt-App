@@ -10,7 +10,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.selection.PictureMoreOpti
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
 import com.serverless.forschungsprojectfaas.extensions.launch
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
-import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
+import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
@@ -33,7 +33,7 @@ class VmHome @Inject constructor(
         searchQueryMutableStatFlow,
         orderByMutableStateFlow
     ) { query, orderBy ->
-        localRepository.getAllPictureEntries(query)
+        localRepository.getAllPilesFlow(query)
     }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     fun onFabClicked() = launch(IO) {
@@ -44,18 +44,18 @@ class VmHome @Inject constructor(
         searchQueryMutableStatFlow.value = newQuery
     }
 
-    fun onRvaItemClicked(captured: CapturedPicture) = launch(IO) {
+    fun onRvaItemClicked(captured: Pile) = launch(IO) {
         navDispatcher.dispatch(NavigateToDetailScreen(captured))
     }
 
-    fun onRvaItemMoreOptionsClicked(captured: CapturedPicture) = launch(IO) {
+    fun onRvaItemMoreOptionsClicked(captured: Pile) = launch(IO) {
         navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.PictureMoreOptionsSelection(captured)))
     }
 
     fun onPictureMoreOptionsResultReceived(result: SelectionResult.PictureMoreOptionsSelectionResult) {
         when(result.selectedItem) {
-            PictureMoreOptions.DELETE -> onDeletePictureEntrySelected(result.calledOnCapturedPicture)
-            PictureMoreOptions.OPEN -> onRvaItemClicked(result.calledOnCapturedPicture)
+            PictureMoreOptions.DELETE -> onDeletePictureEntrySelected(result.calledOnPile)
+            PictureMoreOptions.OPEN -> onRvaItemClicked(result.calledOnPile)
         }
     }
 
@@ -63,7 +63,7 @@ class VmHome @Inject constructor(
         navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.OrderBySelection(orderByMutableStateFlow.value)))
     }
 
-    private fun onDeletePictureEntrySelected(captured: CapturedPicture) = launch(IO) {
+    private fun onDeletePictureEntrySelected(captured: Pile) = launch(IO) {
         captured.pictureUri.path?.let { path ->
             File(path).let { file ->
                 if(file.exists()) {

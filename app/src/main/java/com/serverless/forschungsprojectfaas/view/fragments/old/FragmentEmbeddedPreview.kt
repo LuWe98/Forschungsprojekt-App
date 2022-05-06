@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import com.serverless.forschungsprojectfaas.databinding.FragmentEmbeddedPreviewBinding
-import com.serverless.forschungsprojectfaas.view.custom.CameraPreview
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.utils.io.errors.*

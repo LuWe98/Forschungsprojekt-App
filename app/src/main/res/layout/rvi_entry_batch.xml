@@ -15,8 +15,8 @@
             android:layout_height="75dp">
 
         <com.google.android.material.textview.MaterialTextView
-                android:layout_width="40sp"
-                android:layout_height="40sp"
+                android:layout_width="42.5sp"
+                android:layout_height="42.5sp"
                 android:id="@+id/tvMark"
                 android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
@@ -25,10 +25,10 @@
                 android:textSize="12.5sp"
                 android:textColor="?colorOnPrimary"
                 android:background="@drawable/background_round_corners_18_5dp"
-                android:backgroundTint="@color/red"
+                android:backgroundTint="@color/hfuLightGreen"
                 android:textStyle="bold"
                 android:fontFamily="@font/mallanna_regular"
-                android:layout_marginStart="@dimen/grid_4"
+                android:layout_marginStart="@dimen/grid_5"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -42,9 +42,22 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:layout_marginHorizontal="@dimen/grid_4"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tvMark"
                 app:layout_constraintTop_toTopOf="@+id/tvMark"
-                app:layout_constraintBottom_toBottomOf="@+id/tvMark" />
+                app:layout_constraintBottom_toBottomOf="@+id/tvMark"
+                app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="?attr/actionBarItemBackground"
+                android:layout_marginEnd="@dimen/grid_3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_more"
+                android:padding="7.5dp"
+                android:elevation="1dp"
+                android:id="@+id/btnMoreOptions"
+                app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

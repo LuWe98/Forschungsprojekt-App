@@ -6,10 +6,14 @@ import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.base.DispatchEvent
 import com.serverless.forschungsprojectfaas.dispatcher.base.Dispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
+import com.serverless.forschungsprojectfaas.extensions.currentDestinationId
 import com.serverless.forschungsprojectfaas.extensions.navController
-import com.serverless.forschungsprojectfaas.model.room.entities.CapturedPicture
+import com.serverless.forschungsprojectfaas.model.room.entities.Batch
+import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.view.ActivityMain
 import com.serverless.forschungsprojectfaas.view.fragments.FragmentHomeDirections
+import com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfBatchSelectionDirections
+import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAddEditBatchDirections
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import javax.inject.Inject
 
@@ -34,16 +38,34 @@ class NavigationEventDispatcher @Inject constructor(
             navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentAdd())
         })
 
-        class NavigateToDetailScreen(capturedPicture: CapturedPicture): NavigationEvent({
-            navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentDetail(capturedPicture))
+        class NavigateToDetailScreen(pile: Pile): NavigationEvent({
+            navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentDetail(pile))
         })
 
         class NavigateToLoadingDialog(@StringRes messageRes: Int): NavigationEvent({
             navController.navigate(NavGraphDirections.actionGlobalDfLoading(messageRes))
         })
 
+        class NavigateToBatchSelection(): NavigationEvent({
+            if(navController.currentDestinationId != R.id.bsdfBatchSelection) {
+                navController.navigate(NavGraphDirections.actionGlobalBsdfBatchSelection())
+            }
+        })
+
+        class FromBatchSelectionToAddEditBatch(batch: Batch? = null): NavigationEvent({
+            if(navController.currentDestinationId != R.id.dfAddEditBatch) {
+                navController.navigate(BsdfBatchSelectionDirections.actionBsdfBatchSelectionToDfAddEditBatch(batch))
+            }
+        })
+
+        class FromAddEditBatchToColorSelection(currentColor: Int): NavigationEvent({
+            if(navController.currentDestinationId != R.id.bsdfColorSelection) {
+                navController.navigate(DfAddEditBatchDirections.actionDfAddEditBatchToBsdfColorSelection(currentColor))
+            }
+        })
+
         object PopLoadingDialog : NavigationEvent({
-            if (navController.backQueue[navController.backQueue.size - 1].destination.id == R.id.dfLoading) {
+            if (navController.currentDestinationId  == R.id.dfLoading) {
                 navController.popBackStack()
             }
         })

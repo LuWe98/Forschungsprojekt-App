@@ -47,8 +47,8 @@ object AppModule {
     @Singleton
     fun provideLocalRepository(roomDatabase: LocalDatabase) : LocalRepository = LocalRepository(
         roomDatabase,
-        roomDatabase.getCapturedPictureDao(),
-        roomDatabase.getBarBatchDao(),
+        roomDatabase.getPileDao(),
+        roomDatabase.getBatchDao(),
         roomDatabase.getBarDao()
     )
 

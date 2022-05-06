@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.SeekBar
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -22,6 +23,16 @@ inline fun View.onLongClick(crossinline action: () -> (Unit)) {
         action.invoke()
         return@setOnLongClickListener true
     }
+}
+
+inline fun SeekBar.onProgressChanged(crossinline action: (Int, Boolean) -> Unit) {
+    setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            action.invoke(progress, fromUser)
+        }
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+    })
 }
 
 inline fun EditText.onTextChanged(crossinline action: (String) -> (Unit)) {
