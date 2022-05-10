@@ -9,6 +9,7 @@ import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingBottomSheetDialogFragment
 import com.serverless.forschungsprojectfaas.view.recyclerview.RvaBatchSelection
 import com.serverless.forschungsprojectfaas.viewmodel.VmBatchSelection
+import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

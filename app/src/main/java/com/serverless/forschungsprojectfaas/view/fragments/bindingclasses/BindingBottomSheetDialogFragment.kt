@@ -1,5 +1,6 @@
 package com.serverless.forschungsprojectfaas.view.fragments.bindingclasses
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +27,15 @@ abstract class BindingBottomSheetDialogFragment <VB : ViewBinding> : BottomSheet
 
     val bottomSheetDialog get() = dialog as BottomSheetDialog?
 
-    val bottomSheetBehaviour get() = bottomSheetDialog?.behavior
+    val behaviour get() = bottomSheetDialog?.behavior
+
+    private var onStateChangedAction: ((View, Int) -> (Unit))? = null
+
+    private var onSlideAction: ((View, Float) -> (Unit))? = null
+
+    private var isContinuousDimEnabled: Boolean = false
+    private var minDim: Float = 0f
+    private var maxDim: Float = 0f
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = getBinding(this).also{ _binding = it }.root
@@ -39,6 +48,27 @@ abstract class BindingBottomSheetDialogFragment <VB : ViewBinding> : BottomSheet
     override fun getTheme() = R.style.Theme_Forschungsprojekt_BottomSheetDialog
 
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).also {
+            (it as BottomSheetDialog).behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    onStateChangedAction?.invoke(bottomSheet, newState)
+                }
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    if(isContinuousDimEnabled) {
+                        val adjustedOffset = 1 + slideOffset
+                        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                            ViewCompat.getWindowInsetsController(dialog!!.window!!.decorView)?.isAppearanceLightStatusBars = adjustedOffset < 0.5f
+                        }
+                        bottomSheetDialog?.window?.setDimAmount(min(maxDim, max(adjustedOffset * maxDim, minDim)))
+                    }
+
+                    onSlideAction?.invoke(bottomSheet, slideOffset)
+                }
+            })
+        }
+    }
+
     fun enableFullscreenMode(){
         view?.updateLayoutParams<FrameLayout.LayoutParams> {
             height = resources.displayMetrics.heightPixels
@@ -47,7 +77,7 @@ abstract class BindingBottomSheetDialogFragment <VB : ViewBinding> : BottomSheet
     }
 
     fun enableNonCollapsing() {
-        bottomSheetBehaviour?.apply {
+        behaviour?.apply {
             skipCollapsed = true
             isFitToContents = false
             state = BottomSheetBehavior.STATE_EXPANDED
@@ -56,23 +86,23 @@ abstract class BindingBottomSheetDialogFragment <VB : ViewBinding> : BottomSheet
 
     fun enableContinuousDim(maxDim: Float = 0.75f, minDim: Float = 0.25f){
         bottomSheetDialog?.window?.setDimAmount(maxDim)
-        addBottomSheetCallBack(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {}
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                val adjustedOffset = 1 + slideOffset
-                if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
-                    ViewCompat.getWindowInsetsController(dialog!!.window!!.decorView)?.isAppearanceLightStatusBars = adjustedOffset < 0.5f
-                }
-                bottomSheetDialog?.window?.setDimAmount(min(maxDim, max(adjustedOffset * maxDim, minDim)))
-            }
-        })
+        this.maxDim = maxDim
+        this.minDim = minDim
+    }
+
+    fun addBottomSheetStateChangedAction(action: ((View, Int) -> (Unit))) {
+        onStateChangedAction = action
+    }
+
+    fun addBottomSheetSlidedAction(action: ((View, Float) -> (Unit))) {
+        onSlideAction = action
     }
 
     fun addBottomSheetCallBack(callBack: BottomSheetBehavior.BottomSheetCallback) {
-        bottomSheetBehaviour?.addBottomSheetCallback(callBack)
+        behaviour?.addBottomSheetCallback(callBack)
     }
 
     fun removeBottomSheetCallBack(callBack: BottomSheetBehavior.BottomSheetCallback) {
-        bottomSheetBehaviour?.removeBottomSheetCallback(callBack)
+        behaviour?.removeBottomSheetCallback(callBack)
     }
 }

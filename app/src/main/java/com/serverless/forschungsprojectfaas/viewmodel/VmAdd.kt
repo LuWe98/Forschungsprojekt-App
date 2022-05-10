@@ -19,13 +19,14 @@ import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
 import com.serverless.forschungsprojectfaas.extensions.*
-import com.serverless.forschungsprojectfaas.model.EvaluationStatus
+import com.serverless.forschungsprojectfaas.model.PileStatus
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.model.room.junctions.BatchWithBars
+import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -69,11 +70,11 @@ class VmAdd @Inject constructor(
 
     private lateinit var currentPath: String
 
-    fun onPictureClicked() = launch(IO) {
+    fun onPictureClicked() = launch {
         rotationMutableStateFlow.value = if (rotation == 360) 90 else rotation + 90
     }
 
-    fun onPermissionResultReceived(granted: Boolean) = launch(IO) {
+    fun onPermissionResultReceived(granted: Boolean) = launch {
         if (granted) {
             takePicture()
         } else {
@@ -81,7 +82,7 @@ class VmAdd @Inject constructor(
         }
     }
 
-    fun onCameraResultReceived(result: ActivityResult) = launch(IO) {
+    fun onCameraResultReceived(result: ActivityResult) = launch {
         val bitmap = BitmapFactory.decodeFile(currentPath)
         File(currentPath).apply {
             if (exists()) delete()
@@ -90,7 +91,7 @@ class VmAdd @Inject constructor(
         bitmapMutableStateFlow.value = bitmap
     }
 
-    fun onFilePickerResultReceived(result: ActivityResult) = launch(IO) {
+    fun onFilePickerResultReceived(result: ActivityResult) = launch {
         result.data?.data?.let { uri ->
             val inputStream = app.contentResolver.openInputStream(uri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
@@ -99,12 +100,12 @@ class VmAdd @Inject constructor(
         }
     }
 
-    fun onBackButtonClicked() = launch(IO) {
+    fun onBackButtonClicked() = launch {
         navDispatcher.dispatch(NavigationEvent.NavigateBack)
     }
 
     //TODO -> Hier dann das Senden an den Server für die Auswertung
-    fun onSaveButtonClicked() = launch(IO) {
+    fun onSaveButtonClicked() = launch {
         if (currentBitmap == null) {
             fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorNoBitmapSelected))
             return@launch
@@ -124,7 +125,7 @@ class VmAdd @Inject constructor(
             Pile(
                 title = _title,
                 pictureUri = rotatedBitmap.saveToInternalStorage(app),
-                evaluationStatus = EvaluationStatus.NOT_EVALUATED
+                pileStatus = PileStatus.NOT_EVALUATED
             )
         }.also {
             navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
@@ -132,7 +133,7 @@ class VmAdd @Inject constructor(
             //TODO -> Die Insertions direkt machen. Und auch direkt zurücknavigieren. Evaluation Status anpassen und im Home Screen anzeigen
             localRepository.insert(pile)
             loadPileBatchesWithBars(pile).let {
-                localRepository.insert(it.map(BatchWithBars::batch))
+                localRepository.insert(it.mapNotNull(BatchWithBars::batch))
                 localRepository.insert(it.flatMap(BatchWithBars::bars))
             }
             navDispatcher.dispatch(NavigationEvent.NavigateBack)
@@ -162,7 +163,7 @@ class VmAdd @Inject constructor(
         }
     }
 
-    private fun takePicture() = launch(IO) {
+    private fun takePicture() = launch {
         createTempImageFile()?.also { imageFile ->
             val imageURI = FileProvider.getUriForFile(app, AUTHORITY, imageFile)
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).let { intent ->

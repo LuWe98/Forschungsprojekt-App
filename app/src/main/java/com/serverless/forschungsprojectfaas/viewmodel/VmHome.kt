@@ -8,11 +8,11 @@ import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.selection.OrderByItem
 import com.serverless.forschungsprojectfaas.dispatcher.selection.PictureMoreOptions
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
-import com.serverless.forschungsprojectfaas.extensions.launch
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
+import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBarCount
+import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import java.io.File
 import javax.inject.Inject
@@ -29,14 +29,15 @@ class VmHome @Inject constructor(
 
     private val orderByMutableStateFlow = MutableStateFlow(OrderByItem.TITLE)
 
-    val pictureEntryFlow = combine(
+    val pilesWithBarCount: StateFlow<List<PileWithBarCount>> = combine(
         searchQueryMutableStatFlow,
         orderByMutableStateFlow
     ) { query, orderBy ->
-        localRepository.getAllPilesFlow(query)
+        localRepository.getPilesWithBarCount(query)
     }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    fun onFabClicked() = launch(IO) {
+
+    fun onFabClicked() = launch {
         navDispatcher.dispatch(NavigateToAddScreen)
     }
 
@@ -44,12 +45,16 @@ class VmHome @Inject constructor(
         searchQueryMutableStatFlow.value = newQuery
     }
 
-    fun onRvaItemClicked(captured: Pile) = launch(IO) {
-        navDispatcher.dispatch(NavigateToDetailScreen(captured))
+    fun onRvaItemClicked(pile: Pile) {
+        launch {
+            navDispatcher.dispatch(NavigateToDetailScreen(pile))
+        }
     }
 
-    fun onRvaItemMoreOptionsClicked(captured: Pile) = launch(IO) {
-        navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.PictureMoreOptionsSelection(captured)))
+    fun onRvaItemMoreOptionsClicked(captured: Pile) {
+        launch {
+            navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.PictureMoreOptionsSelection(captured)))
+        }
     }
 
     fun onPictureMoreOptionsResultReceived(result: SelectionResult.PictureMoreOptionsSelectionResult) {
@@ -59,11 +64,11 @@ class VmHome @Inject constructor(
         }
     }
 
-    fun onSortButtonClicked() = launch(IO) {
+    fun onSortButtonClicked() = launch {
         navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.OrderBySelection(orderByMutableStateFlow.value)))
     }
 
-    private fun onDeletePictureEntrySelected(captured: Pile) = launch(IO) {
+    private fun onDeletePictureEntrySelected(captured: Pile) = launch {
         captured.pictureUri.path?.let { path ->
             File(path).let { file ->
                 if(file.exists()) {
@@ -74,8 +79,8 @@ class VmHome @Inject constructor(
         localRepository.delete(captured)
     }
 
-    fun onOrderBySelectionResultReceived(result: SelectionResult.OrderBySelectionResult) = launch(IO) {
+    fun onOrderBySelectionResultReceived(result: SelectionResult.OrderBySelectionResult) = launch {
         orderByMutableStateFlow.value = result.selectedItem
     }
-    
+
 }

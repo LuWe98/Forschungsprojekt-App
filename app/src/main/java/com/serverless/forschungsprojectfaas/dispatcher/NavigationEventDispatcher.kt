@@ -10,6 +10,7 @@ import com.serverless.forschungsprojectfaas.extensions.currentDestinationId
 import com.serverless.forschungsprojectfaas.extensions.navController
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
+import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBatches
 import com.serverless.forschungsprojectfaas.view.ActivityMain
 import com.serverless.forschungsprojectfaas.view.fragments.FragmentHomeDirections
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfBatchSelectionDirections
@@ -52,9 +53,9 @@ class NavigationEventDispatcher @Inject constructor(
             }
         })
 
-        class FromBatchSelectionToAddEditBatch(batch: Batch? = null): NavigationEvent({
+        class NavigateToAddEditBatch(batch: Batch? = null): NavigationEvent({
             if(navController.currentDestinationId != R.id.dfAddEditBatch) {
-                navController.navigate(BsdfBatchSelectionDirections.actionBsdfBatchSelectionToDfAddEditBatch(batch))
+                navController.navigate(NavGraphDirections.actionGlobalDfAddEditBatch(batch))
             }
         })
 

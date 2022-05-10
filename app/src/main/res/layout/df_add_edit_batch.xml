@@ -27,6 +27,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginHorizontal="@dimen/grid_6" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/btnDelete"
+                app:srcCompat="@drawable/ic_delete"
+                app:layout_constraintTop_toTopOf="@+id/tvTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="@dimen/grid_6"
+                android:padding="5dp"
+                app:tint="@color/niceRed"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/tvTitle" />
+
+
         <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -22,7 +22,7 @@
                 android:indeterminateOnly="true"
                 app:trackThickness="6.5dp"
                 app:trackColor="?android:colorBackground"
-                app:indicatorColor="?colorPrimary"
+                app:indicatorColor="@color/ndw_blue"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>

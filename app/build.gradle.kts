@@ -160,6 +160,12 @@ dependencies {
 
     implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
 
+
+
+    //EIGENE LIBRARY
+    implementation("com.github.LucaWeinmann:AndroidCoroutineFlowUtils:1.0.5")
+
+
     //Testing
     val jUnitVersion: String by project
     testImplementation("junit:junit:$jUnitVersion")

@@ -4,14 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
-import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.*
+import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionTypeItemMarker
-import com.serverless.forschungsprojectfaas.extensions.launch
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfSelectionArgs
+import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,11 +25,13 @@ class VmSelectionDialog @Inject constructor(
 
     val selectionType: SelectionRequestType<*> get() = args.selectionType
 
-    fun onItemSelected(item: SelectionTypeItemMarker<*>) = launch(IO, applicationScope) {
-        navDispatcher.dispatch(NavigationEvent.NavigateBack)
+    fun onItemSelected(item: SelectionTypeItemMarker<*>) {
+        launch(scope = applicationScope) {
+            navDispatcher.dispatch(NavigationEvent.NavigateBack)
 
-        selectionType.resultProvider(item).let { result ->
-            fragmentResultDispatcher.dispatch(result)
+            selectionType.resultProvider(item).let { result ->
+                fragmentResultDispatcher.dispatch(result)
+            }
         }
     }
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:background="@drawable/background_round_corners_top_15dp"
         android:backgroundTint="@color/white">
 
@@ -41,128 +41,115 @@
             android:layout_marginTop="@dimen/grid_4"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/infoContainer"
-            android:layout_marginTop="@dimen/grid_4"
+            android:layout_marginTop="@dimen/grid_6"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/colorCircle">
 
-        <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:id="@+id/relLayoutColorPreview"
-                android:background="@color/transparent"
-                android:weightSum="2"
-                app:layout_constraintWidth_percent="0.7"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-            <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/relLayoutOldColor"
-                    android:background="@drawable/color_circle_left_round_corners"
-                    android:backgroundTint="@color/lightBackgroundColor"
-                    android:layout_weight="1" />
-
-            <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/relLayoutNewColor"
-                    android:background="@drawable/color_circle_right_round_corners"
-                    android:backgroundTint="@color/lightBackgroundColor"
-                    android:layout_weight="1" />
-        </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatEditText
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="@dimen/grid_4"
-                android:text="# FFAABB"
-                android:paddingStart="@dimen/grid_6"
-                android:background="@drawable/background_round_corners_15dp"
-                android:backgroundTint="@color/lightBackgroundColor"
-                app:layout_constraintTop_toBottomOf="@id/textViewContainer"
-                android:id="@+id/appCompatEditText"
-                app:layout_constraintStart_toStartOf="@+id/seekBarContainer"
-                app:layout_constraintEnd_toEndOf="@+id/seekBarContainer" />
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:id="@+id/textViewContainer"
-                android:layout_marginTop="@dimen/grid_2"
-                app:layout_constraintTop_toBottomOf="@+id/relLayoutColorPreview"
-                app:layout_constraintStart_toStartOf="@+id/seekBarContainer"
-                app:layout_constraintEnd_toEndOf="@+id/seekBarContainer">
+                android:layout_height="wrap_content"
+                android:id="@+id/colorDisplayLayout"
+                android:layout_marginHorizontal="@dimen/grid_6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/textViewRed"
-                    android:textColor="@color/black"
-                    android:textSize="13.5sp"
-                    android:gravity="center_vertical"
-                    android:text="R: 23"
-                    android:paddingStart="@dimen/grid_2_5"
-                    android:background="@drawable/background_round_corners_45dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="110dp"
+                    android:layout_height="120dp"
+                    android:id="@+id/oldColorLayout"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/newColorLayout"
+                    android:background="@drawable/background_round_corners_15dp"
+                    android:backgroundTint="@color/lightBackgroundColor">
+
+                <com.google.android.material.card.MaterialCardView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/oldColorCard"
+                        app:cardBackgroundColor="@color/niceRed"
+                        app:cardCornerRadius="50dp"
+                        app:strokeWidth="3dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/white"
+                        android:layout_marginTop="@dimen/grid_2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/oldColorText" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:drawableStart="@drawable/ic_number"
+                        android:text="FFFFFFFF"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHeight_percent="0.5"
+                        android:id="@+id/oldColorText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="110dp"
+                    android:layout_height="120dp"
+                    android:id="@+id/newColorLayout"
+                    android:layout_marginStart="@dimen/grid_4"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@drawable/background_round_corners_15dp"
                     android:backgroundTint="@color/lightBackgroundColor"
-                    app:layout_constraintEnd_toStartOf="@id/textViewGreen"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toEndOf="@+id/oldColorLayout"
+                    app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/textViewGreen"
-                    android:textColor="@color/black"
-                    android:textSize="13.5sp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/background_round_corners_45dp"
-                    android:backgroundTint="@color/lightBackgroundColor"
-                    android:text="G: 233"
-                    android:paddingStart="@dimen/grid_2_5"
-                    android:layout_toEndOf="@+id/textViewRed"
-                    app:layout_constraintEnd_toStartOf="@id/textViewBlue"
-                    app:layout_constraintStart_toEndOf="@+id/textViewRed" />
+                <com.google.android.material.card.MaterialCardView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/newColorCard"
+                        app:cardBackgroundColor="@color/green"
+                        app:cardCornerRadius="50dp"
+                        app:strokeWidth="3dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/white"
+                        android:layout_marginTop="@dimen/grid_2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/etHexValue" />
 
-            <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/textViewBlue"
-                    android:layout_marginStart="5dp"
-                    android:textColor="@color/black"
-                    android:textSize="13.5sp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/background_round_corners_45dp"
-                    android:backgroundTint="@color/lightBackgroundColor"
-                    android:text="B: 100"
-                    android:paddingStart="@dimen/grid_2_5"
-                    app:layout_constraintEnd_toStartOf="@id/textViewOpacity"
-                    app:layout_constraintStart_toEndOf="@id/textViewGreen" />
-
-            <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/textViewOpacity"
-                    android:layout_marginStart="5dp"
-                    android:textColor="@color/black"
-                    android:textSize="13.5sp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/background_round_corners_45dp"
-                    android:backgroundTint="@color/lightBackgroundColor"
-                    android:text="A: 233"
-                    android:paddingStart="@dimen/grid_2_5"
-                    app:layout_constraintStart_toEndOf="@id/textViewBlue"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
+                <androidx.appcompat.widget.AppCompatEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:drawableStart="@drawable/ic_number"
+                        tools:hint="FFFFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="?colorControlNormal"
+                        android:paddingStart="@dimen/grid_1"
+                        android:paddingEnd="0dp"
+                        android:gravity="center"
+                        android:background="@drawable/background_round_corners_15dp"
+                        android:backgroundTint="@color/lightBackgroundColor"
+                        android:id="@+id/etHexValue"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/newColorLayout"
+                        app:layout_constraintStart_toStartOf="@+id/newColorLayout"
+                        app:layout_constraintTop_toBottomOf="@+id/newColorCard" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -170,7 +157,7 @@
                 android:id="@+id/seekBarContainer"
                 android:layout_marginTop="@dimen/grid_6"
                 android:layout_marginHorizontal="@dimen/grid_6"
-                app:layout_constraintTop_toBottomOf="@+id/appCompatEditText">
+                app:layout_constraintTop_toBottomOf="@+id/colorDisplayLayout">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -179,6 +166,7 @@
                     android:background="@drawable/background_round_corners_45dp"
                     android:backgroundTint="@color/lightBackgroundColor"
                     app:layout_constraintTop_toTopOf="parent">
+
                 <androidx.appcompat.widget.AppCompatSeekBar
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -189,15 +177,14 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tvRed" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                         android:layout_width="30dp"
                         android:layout_height="0dp"
                         android:id="@+id/tvRed"
-                        android:textColor="@color/black"
                         android:textSize="13.5sp"
                         android:textStyle="bold"
                         android:gravity="center_vertical|end"
-                        android:text="23"
+                        android:text="0"
                         android:layout_marginEnd="@dimen/grid_4"
                         android:background="@drawable/background_round_corners_45dp"
                         android:backgroundTint="@color/transparent"
@@ -208,92 +195,116 @@
                         app:layout_constraintBottom_toBottomOf="@+id/progressRed" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatSeekBar
-                    android:layout_width="0dp"
-                    android:layout_height="25dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:id="@+id/greenProgressContainer"
                     android:background="@drawable/background_round_corners_45dp"
                     android:backgroundTint="@color/lightBackgroundColor"
-                    app:layout_constraintTop_toBottomOf="@id/redProgressContainer"
-                    android:layout_marginTop="15dp"
-                    android:thumbTint="@color/green"
-                    android:progressTint="@color/green"
-                    android:id="@+id/seekBarGreen"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tvGreen" />
+                    android:layout_marginTop="@dimen/grid_3"
+                    app:layout_constraintTop_toBottomOf="@id/redProgressContainer">
 
-            <TextView
-                    android:layout_width="40dp"
-                    android:layout_height="25dp"
-                    android:id="@+id/tvGreen"
-                    android:textColor="@color/black"
-                    android:textSize="13.5sp"
-                    android:gravity="center_vertical|end"
-                    android:text="243"
-                    android:background="@drawable/background_round_corners_45dp"
-                    android:backgroundTint="@color/transparent"
-                    android:layout_alignTop="@+id/seekBarGreen"
-                    android:layout_alignBottom="@+id/seekBarGreen"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/seekBarGreen"
-                    app:layout_constraintBottom_toBottomOf="@+id/seekBarGreen" />
+                <androidx.appcompat.widget.AppCompatSeekBar
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:thumbTint="@color/green"
+                        android:progressTint="@color/green"
+                        android:id="@+id/progressGreen"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvGreen" />
 
-            <androidx.appcompat.widget.AppCompatSeekBar
-                    android:layout_width="0dp"
-                    android:layout_height="25dp"
-                    android:background="@drawable/background_round_corners_45dp"
-                    android:backgroundTint="@color/lightBackgroundColor"
-                    app:layout_constraintTop_toBottomOf="@id/seekBarGreen"
-                    android:layout_marginTop="15dp"
-                    android:thumbTint="@color/blue"
-                    android:progressTint="@color/blue"
-                    android:id="@+id/seekBarBlue"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tvBlue" />
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="30dp"
+                        android:layout_height="0dp"
+                        android:id="@+id/tvGreen"
+                        android:textSize="13.5sp"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical|end"
+                        android:text="0"
+                        android:layout_marginEnd="@dimen/grid_4"
+                        android:background="@drawable/background_round_corners_45dp"
+                        android:backgroundTint="@color/transparent"
+                        android:layout_alignTop="@+id/progressGreen"
+                        android:layout_alignBottom="@+id/progressGreen"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/progressGreen"
+                        app:layout_constraintBottom_toBottomOf="@+id/progressGreen" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                    android:layout_width="40dp"
-                    android:layout_height="25dp"
-                    android:id="@+id/tvBlue"
-                    android:textColor="@color/black"
-                    android:textSize="13.5sp"
-                    android:gravity="center_vertical|end"
-                    android:text="100"
-                    android:background="@drawable/background_round_corners_45dp"
-                    android:backgroundTint="@color/transparent"
-                    android:layout_alignTop="@+id/seekBarBlue"
-                    android:layout_alignBottom="@+id/seekBarBlue"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/seekBarBlue"
-                    app:layout_constraintBottom_toBottomOf="@+id/seekBarBlue" />
-
-            <androidx.appcompat.widget.AppCompatSeekBar
-                    android:layout_width="0dp"
-                    android:layout_height="25dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:id="@+id/blueProgressContainer"
                     android:background="@drawable/background_round_corners_45dp"
                     android:backgroundTint="@color/lightBackgroundColor"
-                    app:layout_constraintTop_toBottomOf="@id/seekBarBlue"
-                    android:layout_marginTop="15dp"
-                    android:thumbTint="@color/black"
-                    android:progressTint="@color/black"
-                    android:id="@+id/seekBarOpacity"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tvAlpha" />
+                    android:layout_marginTop="@dimen/grid_3"
+                    app:layout_constraintTop_toBottomOf="@id/greenProgressContainer">
 
-            <TextView
-                    android:layout_width="40dp"
-                    android:layout_height="25dp"
-                    android:id="@+id/tvAlpha"
-                    android:textColor="@color/black"
-                    android:textSize="13.5sp"
-                    android:gravity="center_vertical|end"
-                    android:text="50"
+                <androidx.appcompat.widget.AppCompatSeekBar
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:thumbTint="@color/blue"
+                        android:progressTint="@color/blue"
+                        android:id="@+id/progressBlue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvBlue" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="30dp"
+                        android:layout_height="0dp"
+                        android:id="@+id/tvBlue"
+                        android:textSize="13.5sp"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical|end"
+                        android:text="0"
+                        android:layout_marginEnd="@dimen/grid_4"
+                        android:background="@drawable/background_round_corners_45dp"
+                        android:backgroundTint="@color/transparent"
+                        android:layout_alignTop="@+id/progressBlue"
+                        android:layout_alignBottom="@+id/progressBlue"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/progressBlue"
+                        app:layout_constraintBottom_toBottomOf="@+id/progressBlue" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:id="@+id/alphaProgressContainer"
                     android:background="@drawable/background_round_corners_45dp"
-                    android:backgroundTint="@color/transparent"
-                    android:layout_alignTop="@+id/seekBarBlue"
-                    android:layout_alignBottom="@+id/seekBarBlue"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/seekBarOpacity"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    android:backgroundTint="@color/lightBackgroundColor"
+                    android:layout_marginTop="@dimen/grid_3"
+                    app:layout_constraintTop_toBottomOf="@id/blueProgressContainer">
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:thumbTint="@color/black"
+                        android:progressTint="@color/black"
+                        android:id="@+id/progressAlpha"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvAlpha" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="30dp"
+                        android:layout_height="0dp"
+                        android:id="@+id/tvAlpha"
+                        android:textSize="13.5sp"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical|end"
+                        android:text="0"
+                        android:layout_marginEnd="@dimen/grid_4"
+                        android:background="@drawable/background_round_corners_45dp"
+                        android:backgroundTint="@color/transparent"
+                        android:layout_alignTop="@+id/progressAlpha"
+                        android:layout_alignBottom="@+id/progressAlpha"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/progressAlpha"
+                        app:layout_constraintBottom_toBottomOf="@+id/progressAlpha" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textview.MaterialTextView
@@ -306,11 +317,11 @@
                 android:text="Save"
                 android:gravity="center"
                 android:background="@drawable/background_round_corners_15dp"
-                android:backgroundTint="@color/hfuLightGreen"
-                android:textColor="@color/black"
+                android:backgroundTint="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:id="@+id/buttonSave"
+                android:id="@+id/btnSave"
                 app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

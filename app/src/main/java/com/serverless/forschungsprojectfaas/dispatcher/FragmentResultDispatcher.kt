@@ -48,6 +48,12 @@ class FragmentResultDispatcher @Inject constructor(
                 putParcelable(resultKey, this@FragmentResult)
             })
         }
+
+        @Parcelize
+        data class ColorPickerResult(val selectedColor: Int): FragmentResult()
+
+        @Parcelize
+        data class BatchSelectionResult(val batchId: String): FragmentResult()
     }
 
     sealed class SelectionResult<SelectedItemType : Enum<SelectedItemType>> : FragmentResult() {

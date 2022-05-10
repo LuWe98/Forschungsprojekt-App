@@ -6,13 +6,13 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.serverless.forschungsprojectfaas.databinding.FragmentHomeBinding
 import com.serverless.forschungsprojectfaas.dispatcher.setFragmentResultEventListener
-import com.serverless.forschungsprojectfaas.extensions.collectWhenStarted
 import com.serverless.forschungsprojectfaas.extensions.disableChangeAnimation
 import com.serverless.forschungsprojectfaas.extensions.onClick
 import com.serverless.forschungsprojectfaas.extensions.onTextChanged
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingFragment
 import com.serverless.forschungsprojectfaas.view.recyclerview.RvaHome
 import com.serverless.forschungsprojectfaas.viewmodel.VmHome
+import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,7 +58,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
     }
 
     private fun initObservers() {
-        vm.pictureEntryFlow.collectWhenStarted(viewLifecycleOwner) {
+        vm.pilesWithBarCount.collectWhenStarted(viewLifecycleOwner) {
             rva.submitList(it)
         }
     }

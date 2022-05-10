@@ -12,4 +12,7 @@ abstract class BatchDao: BaseDao<Batch> {
     @Query("SELECT * FROM BatchTable WHERE caption LIKE '%' || :captionToSearch || '%' ORDER BY caption")
     abstract fun getFilteredBatchesFlow(captionToSearch: String): Flow<List<Batch>>
 
+    @Query("SELECT * FROM BatchTable WHERE caption = :captionToSearch LIMIT 1")
+    abstract fun findBatchWithCaption(captionToSearch: String): Batch?
+
 }

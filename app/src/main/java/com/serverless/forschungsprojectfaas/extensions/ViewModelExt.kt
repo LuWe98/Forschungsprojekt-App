@@ -5,19 +5,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.serverless.forschungsprojectfaas.OwnApplication
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 
-inline fun ViewModel.launch(
-    dispatcher: CoroutineContext = EmptyCoroutineContext,
-    scope: CoroutineScope = viewModelScope,
-    crossinline block: suspend CoroutineScope.() -> Unit
-) {
-    scope.launch(dispatcher) {
-        block.invoke(this)
-    }
-}
+//inline fun ViewModel.launch(
+//    dispatcher: CoroutineContext = Dispatchers.IO,
+//    scope: CoroutineScope = viewModelScope,
+//    crossinline block: suspend CoroutineScope.() -> Unit
+//) {
+//    scope.launch(dispatcher) {
+//        block.invoke(this)
+//    }
+//}
 
 val AndroidViewModel.app get() = getApplication<OwnApplication>()

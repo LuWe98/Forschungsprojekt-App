@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.DispatchEventPublisher
-import com.serverless.forschungsprojectfaas.extensions.collectWhenStarted
+import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

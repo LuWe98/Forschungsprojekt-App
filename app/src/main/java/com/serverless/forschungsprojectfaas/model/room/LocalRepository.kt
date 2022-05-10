@@ -7,6 +7,7 @@ import com.serverless.forschungsprojectfaas.model.room.dao.BarDao
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
+import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBarCount
 import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBatches
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -45,6 +46,12 @@ class LocalRepository @Inject constructor(
 
     fun getPileWithBatchesFlow(id: String): Flow<PileWithBatches> = pileDao.getPileWithBatchesFlow(id)
 
+    suspend fun getPileWithBatches(id: String): PileWithBatches = pileDao.getPileWithBatches(id)
+
     fun getFilteredBatchesFlow(captionToSearch: String): Flow<List<Batch>> = batchDao.getFilteredBatchesFlow(captionToSearch)
+
+    fun findBatchWithCaption(captionToSearch: String): Batch? = batchDao.findBatchWithCaption(captionToSearch)
+
+    fun getPilesWithBarCount(searchQuery: String): Flow<List<PileWithBarCount>> = pileDao.getPilesWithBarCount(searchQuery)
 
 }

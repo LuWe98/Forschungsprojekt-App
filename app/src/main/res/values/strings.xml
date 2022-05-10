@@ -8,6 +8,7 @@
     <string name="saving">Saving…</string>
     <string name="addPicture">Add</string>
     <string name="sticks">Sticks</string>
+    <string name="bars">Bars</string>
     <string name="title">Title</string>
     <string name="done">Done</string>
     <string name="delete">Delete</string>
@@ -23,4 +24,8 @@
     <string name="addBatch">Add Batch</string>
     <string name="editBatch">Edit Batch</string>
     <string name="caption">Caption</string>
+
+    <string name="errorCaptionAlreadyUsed">Caption already used</string>
+    <string name="errorCaptionCannotBeEmpty">Caption is empty</string>
+    <string name="updateBatchData">Update batch data?</string>
 </resources>

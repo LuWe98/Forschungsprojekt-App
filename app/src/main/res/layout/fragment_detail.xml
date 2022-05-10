@@ -1,103 +1,351 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/btn_back"
-            app:srcCompat="@drawable/ic_arrow_back"
-            android:layout_margin="@dimen/grid_6"
-            android:padding="5dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textview.MaterialTextView
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:id="@+id/pageTitle"
-            tools:text="@string/title"
-            style="@style/Style.Forschungsprojekt.BottomSheetHeading.TextAppearance"
-            app:layout_constraintTop_toTopOf="@+id/btn_back"
-            app:layout_constraintBottom_toBottomOf="@id/btn_back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="350dp"
-            android:id="@+id/imageContainer"
-            android:layout_marginTop="@dimen/grid_4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pageTitle">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/contentLayout">
 
-        <com.serverless.forschungsprojectfaas.view.custom.BarBatchDisplay
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:id="@+id/topBar"
+                app:layout_constraintTop_toTopOf="parent">
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/btn_back"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    android:layout_marginStart="@dimen/grid_6"
+                    android:padding="5dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/pageTitle"
+                    tools:text="@string/title"
+                    android:visibility="invisible"
+                    style="@style/Style.Forschungsprojekt.BottomSheetHeading.TextAppearance"
+                    app:layout_constraintTop_toTopOf="@+id/btn_back"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:srcCompat="@drawable/ic_layers_clear"
+                    app:tint="@color/image_view_icon_color_selector"
+                    android:id="@+id/btnClearSelection"
+                    android:padding="7.5dp"
+                    android:background="?actionBarItemBackground"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    app:layout_constraintEnd_toStartOf="@id/btnSwap"
+                    app:layout_constraintTop_toTopOf="@+id/btn_back"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_back" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:srcCompat="@drawable/ic_change_circle"
+                    app:tint="@color/image_view_icon_color_selector"
+                    android:id="@+id/btnSwap"
+                    android:padding="7.5dp"
+                    android:background="?actionBarItemBackground"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    app:layout_constraintEnd_toStartOf="@id/btnConnect"
+                    app:layout_constraintTop_toTopOf="@+id/btn_back"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_back" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:srcCompat="@drawable/ic_connect_in_line"
+                    app:tint="@color/image_view_icon_color_selector"
+                    android:id="@+id/btnConnect"
+                    android:padding="7.5dp"
+                    android:background="?actionBarItemBackground"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    app:layout_constraintEnd_toStartOf="@id/btnDelete"
+                    app:layout_constraintTop_toTopOf="@+id/btn_back"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_back" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:srcCompat="@drawable/ic_delete"
+                    app:tint="@color/image_view_icon_color_selector"
+                    android:id="@+id/btnDelete"
+                    android:padding="7.5dp"
+                    android:background="?actionBarItemBackground"
+                    android:layout_marginEnd="@dimen/grid_4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btn_back"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_back" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
+                android:layout_height="375dp"
+                android:id="@+id/imageContainer"
+                android:background="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/topBar">
+
+            <com.serverless.forschungsprojectfaas.view.custom.BarBatchDisplay
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/iv" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:id="@+id/progress"
+                    app:trackCornerRadius="5dp"
+                    app:indicatorSize="90dp"
+                    android:indeterminate="true"
+                    android:indeterminateOnly="true"
+                    app:trackThickness="6.5dp"
+                    app:trackColor="@color/transparent"
+                    app:indicatorColor="@color/ndw_blue"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageContainer"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:id="@+id/iv" />
+                android:id="@+id/adjustmentLayout"
+                android:layout_marginTop="@dimen/grid_4"
+                android:layout_marginHorizontal="@dimen/grid_6">
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:id="@+id/progress"
-                app:trackCornerRadius="5dp"
-                app:indicatorSize="90dp"
-                android:indeterminate="true"
-                android:indeterminateOnly="true"
-                app:trackThickness="6.5dp"
-                app:trackColor="@color/transparent"
-                app:indicatorColor="?colorPrimary"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Box Opacity"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/mallanna_regular"
+                    android:id="@+id/tvBoxOpacityTitle"
+                    android:layout_marginStart="@dimen/grid_2"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.appcompat.widget.AppCompatSeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:thumbTint="@color/ndw_blue"
+                    android:progressTint="@color/ndw_blue"
+                    android:id="@+id/progressOpacity"
+                    android:background="@drawable/background_round_corners_45dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvBoxOpacityTitle" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Box Stroke"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/mallanna_regular"
+                    android:id="@+id/tvBoxStrokeTitle"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:layout_marginTop="@dimen/grid_2"
+                    app:layout_constraintTop_toBottomOf="@+id/progressOpacity" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:thumbTint="@color/ndw_blue"
+                    android:progressTint="@color/ndw_blue"
+                    android:id="@+id/progressStroke"
+                    android:background="@drawable/background_round_corners_45dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvBoxStrokeTitle" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Box Width"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/mallanna_regular"
+                    android:id="@+id/tvWidthTitle"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:layout_marginTop="@dimen/grid_2"
+                    app:layout_constraintTop_toBottomOf="@+id/progressStroke" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:thumbTint="@color/ndw_blue"
+                    android:progressTint="@color/ndw_blue"
+                    android:id="@+id/progressWidth"
+                    android:background="@drawable/background_round_corners_45dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvWidthTitle" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Box Height"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/mallanna_regular"
+                    android:id="@+id/tvHeightTitle"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:layout_marginTop="@dimen/grid_2"
+                    app:layout_constraintTop_toBottomOf="@+id/progressWidth" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:thumbTint="@color/ndw_blue"
+                    android:progressTint="@color/ndw_blue"
+                    android:id="@+id/progressHeight"
+                    android:background="@drawable/background_round_corners_45dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvHeightTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sticks"
-            android:id="@+id/tvSticks"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:gravity="center_vertical"
-            android:textSize="17.5sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageContainer"
-            android:layout_marginTop="@dimen/grid_6"
-            android:layout_marginStart="@dimen/grid_8" />
 
-    <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="40"
-            android:id="@+id/tvSticksAmount"
-            android:gravity="center_vertical"
-            android:textSize="16sp"
-            android:layout_marginStart="@dimen/grid_5"
-            app:layout_constraintStart_toEndOf="@+id/tvSticks"
-            app:layout_constraintTop_toTopOf="@+id/tvSticks"
-            app:layout_constraintBottom_toBottomOf="@+id/tvSticks" />
 
-    <androidx.recyclerview.widget.RecyclerView
+
+
+
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/rv"
-            app:layout_constraintTop_toBottomOf="@id/tvSticks"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:paddingHorizontal="@dimen/grid_6"
-            android:clipToPadding="false"
-            android:paddingTop="@dimen/grid_4"
-            android:paddingBottom="@dimen/grid_10"
-            tools:listitem="@layout/rvi_entry_batch"/>
+            android:layout_height="match_parent"
+            android:elevation="5dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            android:id="@+id/sheetLayout"
+            android:background="@color/niceBlack">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:id="@+id/sheetHeader"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnExpandSheet"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/ic_arrow_up"
+                    android:tint="@color/white"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="@dimen/grid_4"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bars"
+                    android:id="@+id/tvSticks"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:gravity="center_vertical"
+                    android:textSize="17.5sp"
+                    android:layout_marginStart="@dimen/grid_4"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/btnExpandSheet" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="40"
+                    android:id="@+id/tvSticksAmount"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/lightBackgroundColor"
+                    android:layout_marginStart="@dimen/grid_3"
+                    app:layout_constraintStart_toEndOf="@+id/tvSticks"
+                    app:layout_constraintTop_toTopOf="@+id/tvSticks"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvSticks" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:id="@+id/searchBar"
+                android:background="@drawable/background_round_corners_15dp"
+                android:elevation="2.5dp"
+                android:layout_marginHorizontal="@dimen/grid_6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sheetHeader">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnSearch"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_search"
+                    android:padding="7.5dp"
+                    android:layout_marginStart="@dimen/grid_3" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/etSearchQuery"
+                    android:hint="Search batch..."
+                    android:background="@android:color/transparent"
+                    android:layout_marginHorizontal="@dimen/grid_1"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toTopOf="@+id/btnSearch"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnSearch"
+                    app:layout_constraintStart_toEndOf="@+id/btnSearch"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/rv"
+                app:layout_constraintTop_toBottomOf="@id/searchBar"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:paddingHorizontal="@dimen/grid_6"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/grid_10"
+                android:paddingTop="@dimen/grid_6"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"
+                tools:listitem="@layout/rvi_batch" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

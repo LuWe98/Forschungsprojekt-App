@@ -39,17 +39,17 @@ fun Fragment.registerForResult(action: (ActivityResult) -> Unit) = registerForAc
 
 fun Fragment.getThemeColor(@AttrRes themeAttrId: Int) = requireContext().getThemeColor(themeAttrId)
 
-inline fun Fragment.launch(
-    dispatcher: CoroutineContext = EmptyCoroutineContext,
-    scope: CoroutineScope = lifecycleScope,
-    startDelay: Long = 0,
-    crossinline block: suspend CoroutineScope.() -> Unit
-) {
-    scope.launch(dispatcher) {
-        delay(startDelay)
-        block.invoke(this)
-    }
-}
+//inline fun Fragment.launch(
+//    dispatcher: CoroutineContext = EmptyCoroutineContext,
+//    scope: CoroutineScope = lifecycleScope,
+//    startDelay: Long = 0,
+//    crossinline block: suspend CoroutineScope.() -> Unit
+//) {
+//    scope.launch(dispatcher) {
+//        delay(startDelay)
+//        block.invoke(this)
+//    }
+//}
 
 @MainThread
 inline fun <reified VM : ViewModel> Fragment.hiltNavDestinationViewModels(

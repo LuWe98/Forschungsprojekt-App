@@ -30,7 +30,7 @@
             android:label="FragmentDetail"
             tools:layout="@layout/fragment_detail">
         <argument
-                android:name="pictureEntry"
+                android:name="pile"
                 app:argType="com.serverless.forschungsprojectfaas.model.room.entities.Pile" />
     </fragment>
 
@@ -67,11 +67,7 @@
             android:id="@+id/bsdfBatchSelection"
             android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfBatchSelection"
             android:label="BsdfBatchSelection"
-            tools:layout="@layout/bsdf_batch_selection" >
-        <action
-                android:id="@+id/action_bsdfBatchSelection_to_dfAddEditBatch"
-                app:destination="@id/dfAddEditBatch" />
-    </dialog>
+            tools:layout="@layout/bsdf_batch_selection" />
     <action
             android:id="@+id/action_global_bsdfBatchSelection"
             app:destination="@id/bsdfBatchSelection" />
@@ -96,6 +92,11 @@
         <argument
                 android:name="currentColor"
                 app:argType="integer" />
+
     </dialog>
+
+    <action
+            android:id="@+id/action_global_dfAddEditBatch"
+            app:destination="@id/dfAddEditBatch" />
 
 </navigation>

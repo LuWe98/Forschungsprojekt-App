@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.serverless.forschungsprojectfaas.extensions.generateDiffItemCallback
-import com.serverless.forschungsprojectfaas.model.EvaluationStatus
+import com.serverless.forschungsprojectfaas.model.PileStatus
 import com.serverless.forschungsprojectfaas.model.room.RoomEntityMarker
 import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
@@ -30,7 +30,7 @@ data class Pile(
     @ColumnInfo(name = COMPRESSED_PICTURE_COLUMN)
     val pictureUri: Uri,
     @ColumnInfo(name = EVALUATION_STATUS_COLUMN)
-    val evaluationStatus: EvaluationStatus = EvaluationStatus.NOT_EVALUATED
+    val pileStatus: PileStatus = PileStatus.NOT_EVALUATED
 ) : RoomEntityMarker {
 
     val timeStampAsDate get() = SimpleDateFormat.getDateInstance().format(Date(timestamp)).toString()

@@ -30,7 +30,7 @@
                     android:textSize="15sp"
                     android:textColor="?colorOnPrimary"
                     android:background="@drawable/background_round_corners_18_5dp"
-                    android:backgroundTint="@color/hfuLightGreen"
+                    android:backgroundTint="@color/niceBlack"
                     android:textStyle="bold"
                     android:fontFamily="@font/mallanna_regular"
                     android:layout_marginStart="@dimen/grid_5"
@@ -44,7 +44,7 @@
                     app:layout_constraintStart_toEndOf="@+id/tvMark"
                     app:layout_constraintTop_toTopOf="@+id/tvMark"
                     app:layout_constraintBottom_toBottomOf="@+id/tvMark"
-                    app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions">
+                    app:layout_constraintEnd_toStartOf="@+id/btnStatus">
 
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
@@ -65,6 +65,18 @@
                         android:layout_below="@id/tvTitle" />
 
             </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="?attr/actionBarItemBackground"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_error"
+                    android:padding="7.5dp"
+                    android:elevation="1dp"
+                    android:id="@+id/btnStatus"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions" />
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"

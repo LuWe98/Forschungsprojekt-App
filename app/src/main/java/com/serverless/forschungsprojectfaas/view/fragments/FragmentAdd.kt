@@ -14,6 +14,7 @@ import com.serverless.forschungsprojectfaas.databinding.FragmentAddBinding
 import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingFragment
 import com.serverless.forschungsprojectfaas.viewmodel.VmAdd
+import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

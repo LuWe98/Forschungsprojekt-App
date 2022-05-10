@@ -15,7 +15,7 @@ import java.util.*
             parentColumns = [Batch.ID_COLUMN],
             childColumns = [Bar.BATCH_ID_COLUMN],
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.SET_NULL
         ),
         ForeignKey(
             entity = Pile::class,
@@ -36,7 +36,7 @@ data class Bar(
     @ColumnInfo(name = ID_COLUMN)
     val barId: String = UUID.randomUUID().toString(),
     @ColumnInfo(name = BATCH_ID_COLUMN)
-    val batchId: String,
+    val batchId: String? = null,
     @ColumnInfo(name = PILE_ID_COLUMN)
     val pileId: String,
     @Embedded

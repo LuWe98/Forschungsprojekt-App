@@ -8,6 +8,7 @@ import android.widget.SeekBar
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator

@@ -32,7 +32,7 @@
             android:id="@+id/btnSave"
             android:text="@string/evaluate"
             android:gravity="center"
-            android:textColor="@color/hfuDarkGreen"
+            android:textColor="@color/ndw_blue"
             android:textStyle="bold"
             android:paddingHorizontal="@dimen/grid_4"
             app:layout_constraintTop_toTopOf="@id/btn_back"
@@ -119,6 +119,7 @@
             app:layout_constraintEnd_toStartOf="@id/btnRotate"
             android:padding="@dimen/grid_6"
             android:layout_marginBottom="@dimen/grid_6"
+            app:tint="@color/ndw_blue"
             android:background="@drawable/ripple_dashed_corners_15dp"
             app:srcCompat="@drawable/ic_camera" />
 
@@ -144,6 +145,7 @@
             app:layout_constraintStart_toEndOf="@id/btnRotate"
             android:padding="@dimen/grid_6"
             android:layout_marginBottom="@dimen/grid_6"
+            app:tint="@color/ndw_blue"
             android:background="@drawable/ripple_dashed_corners_15dp"
             app:srcCompat="@drawable/ic_load_from_files" />
 
