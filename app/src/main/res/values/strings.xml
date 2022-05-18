@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ForschungsprojektApp</string>
+    <string name="app_name">NDW-Knüppel</string>
     <string name="permissionNotGrantedError">Permission was not granted!</string>
     <string name="errorTitleIsMissing">Title is missing</string>
     <string name="errorNoBitmapSelected">Please select an image to proceed</string>

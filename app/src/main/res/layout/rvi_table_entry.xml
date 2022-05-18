@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="@dimen/grid_2"
+        android:background="@drawable/background_round_corners_45dp"
+        android:backgroundTint="@color/lightBackgroundColor"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            app:layout_constraintWidth_percent="0.2"
+            android:id="@+id/tvRow"
+            tools:text="0"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:layout_constraintStart_toEndOf="@id/tvRow"
+            app:layout_constraintStart_toStartOf="@id/tvCaption"/>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            app:layout_constraintWidth_percent="0.2"
+            tools:text="FR"
+            android:gravity="center"
+            android:id="@+id/tvCaption"
+            app:layout_constraintStart_toEndOf="@id/tvRow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:layout_constraintStart_toEndOf="@id/tvCaption"
+            app:layout_constraintStart_toStartOf="@id/tvAmount"/>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            app:layout_constraintWidth_percent="0.2"
+            tools:text="12"
+            android:gravity="center"
+            android:id="@+id/tvAmount"
+            app:layout_constraintStart_toEndOf="@id/tvCaption"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:layout_constraintStart_toEndOf="@id/tvAmount"
+            app:layout_constraintStart_toStartOf="@id/tvFrom"/>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            app:layout_constraintWidth_percent="0.2"
+            tools:text="0"
+            android:gravity="center"
+            android:id="@+id/tvFrom"
+            app:layout_constraintStart_toEndOf="@id/tvAmount"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:layout_constraintStart_toEndOf="@id/tvFrom"
+            app:layout_constraintStart_toStartOf="@id/tvTo"/>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            app:layout_constraintWidth_percent="0.2"
+            tools:text="12"
+            android:gravity="center"
+            android:id="@+id/tvTo"
+            app:layout_constraintStart_toEndOf="@id/tvFrom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

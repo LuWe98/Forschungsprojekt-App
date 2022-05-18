@@ -8,6 +8,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.selection.OrderByItem
 import com.serverless.forschungsprojectfaas.dispatcher.selection.PictureMoreOptions
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
+import com.serverless.forschungsprojectfaas.model.PileStatus
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBarCount
@@ -51,15 +52,38 @@ class VmHome @Inject constructor(
         }
     }
 
-    fun onRvaItemMoreOptionsClicked(captured: Pile) {
+    fun onRvaItemMoreOptionsClicked(pile: Pile) {
         launch {
-            navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.PictureMoreOptionsSelection(captured)))
+            navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.PictureMoreOptionsSelection(pile)))
         }
     }
 
-    fun onPictureMoreOptionsResultReceived(result: SelectionResult.PictureMoreOptionsSelectionResult) {
+    //TODO -> Aktionen dann durchführen hier
+    fun onRvaStatusButtonClicked(pile: Pile) {
+        launch {
+            when(pile.pileStatus) {
+                PileStatus.FAILED -> {
+
+                }
+                PileStatus.NOT_EVALUATED -> {
+
+                }
+                PileStatus.EVALUATING -> {
+
+                }
+                PileStatus.LOCALLY_CHANGED -> {
+
+                }
+                PileStatus.UPLOADED -> {
+
+                }
+            }
+        }
+    }
+
+    fun onPileMoreOptionsResultReceived(result: SelectionResult.PictureMoreOptionsSelectionResult) {
         when(result.selectedItem) {
-            PictureMoreOptions.DELETE -> onDeletePictureEntrySelected(result.calledOnPile)
+            PictureMoreOptions.DELETE -> onDeletePileEntrySelected(result.calledOnPile)
             PictureMoreOptions.OPEN -> onRvaItemClicked(result.calledOnPile)
         }
     }
@@ -68,7 +92,7 @@ class VmHome @Inject constructor(
         navDispatcher.dispatch(NavigateToSelectionDialog(SelectionRequestType.OrderBySelection(orderByMutableStateFlow.value)))
     }
 
-    private fun onDeletePictureEntrySelected(captured: Pile) = launch {
+    private fun onDeletePileEntrySelected(captured: Pile) = launch {
         captured.pictureUri.path?.let { path ->
             File(path).let { file ->
                 if(file.exists()) {

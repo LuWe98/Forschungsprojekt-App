@@ -4,8 +4,6 @@ import android.app.Application
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.RectF
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -14,18 +12,20 @@ import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.AndroidViewModel
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
 import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.model.PileStatus
+import com.serverless.forschungsprojectfaas.model.ktor.ProcessedBox
+import com.serverless.forschungsprojectfaas.model.ktor.ProcessedPilesResponse
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
-import com.serverless.forschungsprojectfaas.model.room.junctions.BatchWithBars
 import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +34,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.withContext
 import java.io.*
 import javax.inject.Inject
 
@@ -46,6 +47,11 @@ class VmAdd @Inject constructor(
     private val localRepository: LocalRepository,
     private val remoteRepo: RemoteRepository
 ) : AndroidViewModel(application) {
+
+    companion object {
+        private const val JPG_SUFFIX = ".jpg"
+        private const val AUTHORITY = "com.serverless.forschungsprojectfaas.fileprovider"
+    }
 
     private val fragmentMainEventChannel = Channel<FragmentMainEvent>()
 
@@ -91,7 +97,7 @@ class VmAdd @Inject constructor(
         bitmapMutableStateFlow.value = bitmap
     }
 
-    fun onFilePickerResultReceived(result: ActivityResult) = launch {
+    fun onFilePickerResultReceived(result: ActivityResult) = launch(IO) {
         result.data?.data?.let { uri ->
             val inputStream = app.contentResolver.openInputStream(uri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
@@ -127,15 +133,16 @@ class VmAdd @Inject constructor(
                 pictureUri = rotatedBitmap.saveToInternalStorage(app),
                 pileStatus = PileStatus.NOT_EVALUATED
             )
+
+            //TODO -> Im Application Scope eine coroutine Aufrufen um ein Ergebnis zu erhalten.
         }.also {
             navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
         }.onSuccess { pile ->
             //TODO -> Die Insertions direkt machen. Und auch direkt zurücknavigieren. Evaluation Status anpassen und im Home Screen anzeigen
             localRepository.insert(pile)
-            loadPileBatchesWithBars(pile).let {
-                localRepository.insert(it.mapNotNull(BatchWithBars::batch))
-                localRepository.insert(it.flatMap(BatchWithBars::bars))
-            }
+
+            //Das ist wird später durch dynamische
+            insertBatchesAndBarsFromResponse(pile)
             navDispatcher.dispatch(NavigationEvent.NavigateBack)
         }.onFailure {
             fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorCouldNotSafeFile))
@@ -189,49 +196,72 @@ class VmAdd @Inject constructor(
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : FragmentMainEvent()
     }
 
-    companion object {
-        private const val JPG_SUFFIX = ".jpg"
-        private const val AUTHORITY = "com.serverless.forschungsprojectfaas.fileprovider"
+
+    private suspend fun insertBatchesAndBarsFromResponse(pile: Pile) = withContext(IO) {
+        // Das ist die emulierte Response! -> Das wird von der Function zurückgeliefert
+        val response =generateFunctionResponse()
+
+        val groupedByCaption = response.processedBoxes.groupBy(ProcessedBox::caption)
+        val localBatches = localRepository.findBatchesWithCaptions(groupedByCaption.keys)
+
+        val batchesToInsert = mutableListOf<Batch>()
+        val barsToInsert = mutableListOf<Bar>()
+
+        groupedByCaption.forEach { (caption, boxes) ->
+            // Es wird gecheckt, ob schon ein Batch mit der Caption in der Datenbank vorhanden ist
+            // Plausibilitätsprüfungen hier durchführen -> Oder auch schon vor dem Group by !
+            val batchId: String? = if(caption.length != 2) {
+                null
+            } else {
+                localBatches.firstOrNull { it.caption == caption } ?: Batch(caption = caption).also(batchesToInsert::add)
+            }?.batchId
+
+            boxes.map { box ->
+                Bar(
+                    batchId = batchId,
+                    pileId = pile.pileId,
+                    rect = box.rect
+                )
+            }.also(barsToInsert::addAll)
+        }
+
+        //Inserted die Daten in einer Transaktion -> Nur alle Insert Operationen gelingen oder keine.
+        val newBars = runValidityChecks(barsToInsert)
+
+        localRepository.insertBatchesAndBars(
+            batchesToInsert,
+            barsToInsert
+        )
     }
 
+    //TODO -> Die checks noch einbauen
+    //Checks the boxes of the Response for validity
+    // explanation:
+    // -> Captions With Single Letter
+    // -> Captions wich are lonely unterwegs -> Find the ones that are lonely and find most ones in a row
+    private fun runValidityChecks(bars: List<Bar>) : List<Bar> {
+        //response.findEnclosedEmptySpaces()
+        return bars
+    }
 
-
-
-    private fun loadPileBatchesWithBars(pile: Pile): List<BatchWithBars> {
+    //Die Methode ist nur dafür da, um eine beispielhafte Response eines Function Aufrufes zu simulieren
+    private fun generateFunctionResponse(): ProcessedPilesResponse {
         val stream = InputStreamReader(app.assets.open("results.csv"))
-        val reader = BufferedReader(stream)
-        val batchMap = HashMap<String, Pair<Batch, MutableList<Bar>>>()
-        reader.lines().forEach { line ->
-            val split = line.split(",")
-            val caption = split[0]
-
-            val rect = RectF(
-                split[1].toFloat(),
-                split[2].toFloat(),
-                split[3].toFloat(),
-                split[4].toFloat()
-            )
-
-            val batch: Pair<Batch, MutableList<Bar>> = batchMap.getOrElse(caption) {
-                Pair(Batch(caption = caption), mutableListOf())
-            }
-
-            batch.second.add(
-                Bar(
-                    batchId = batch.first.batchId,
-                    pileId = pile.pileId,
-                    rect = rect
+        val processedBoxes: List<ProcessedBox> = BufferedReader(stream).lineSequence().map { line ->
+            line.split(",").let { columns ->
+                ProcessedBox(
+                    caption = columns[0],
+                    left = columns[1].toFloat(),
+                    top = columns[2].toFloat(),
+                    right = columns[3].toFloat(),
+                    bottom = columns[4].toFloat()
                 )
-            )
-            batchMap[caption] = batch
-        }
+            }
+        }.toList()
 
-        return batchMap.map {
-            BatchWithBars(
-                batch = it.value.first,
-                bars= it.value.second
-            )
-        }
+        // Das ist die emulierte Response! -> Das wird von der Function zurückgeliefert
+        return ProcessedPilesResponse(processedBoxes)
+
     }
 
     private fun base64Tests(bitmap: Bitmap) = launch(scope = scope, dispatcher = IO) {

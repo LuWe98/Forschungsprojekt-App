@@ -1,5 +1,6 @@
 package com.serverless.forschungsprojectfaas.model.room
 
+import androidx.room.withTransaction
 import com.serverless.forschungsprojectfaas.model.room.dao.BatchDao
 import com.serverless.forschungsprojectfaas.model.room.dao.BaseDao
 import com.serverless.forschungsprojectfaas.model.room.dao.PileDao
@@ -9,7 +10,9 @@ import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBarCount
 import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBatches
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,8 +53,17 @@ class LocalRepository @Inject constructor(
 
     fun getFilteredBatchesFlow(captionToSearch: String): Flow<List<Batch>> = batchDao.getFilteredBatchesFlow(captionToSearch)
 
-    fun findBatchWithCaption(captionToSearch: String): Batch? = batchDao.findBatchWithCaption(captionToSearch)
+    suspend fun findBatchWithCaption(captionToSearch: String): Batch? = batchDao.findBatchWithCaption(captionToSearch)
+
+    suspend fun findBatchesWithCaptions(captions: Collection<String>): List<Batch> = batchDao.findBatchesWithCaptions(captions)
 
     fun getPilesWithBarCount(searchQuery: String): Flow<List<PileWithBarCount>> = pileDao.getPilesWithBarCount(searchQuery)
 
+
+    suspend fun insertBatchesAndBars(batches: List<Batch>, bars: List<Bar>) = withContext(Dispatchers.IO) {
+        localDatabase.withTransaction {
+            insert(batches)
+            insert(bars)
+        }
+    }
 }

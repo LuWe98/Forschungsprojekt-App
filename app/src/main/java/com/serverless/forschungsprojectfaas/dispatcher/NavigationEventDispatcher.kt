@@ -12,6 +12,8 @@ import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBatches
 import com.serverless.forschungsprojectfaas.view.ActivityMain
+import com.serverless.forschungsprojectfaas.view.fragments.FragmentDetail
+import com.serverless.forschungsprojectfaas.view.fragments.FragmentDetailDirections
 import com.serverless.forschungsprojectfaas.view.fragments.FragmentHomeDirections
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfBatchSelectionDirections
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAddEditBatchDirections
@@ -62,6 +64,12 @@ class NavigationEventDispatcher @Inject constructor(
         class FromAddEditBatchToColorSelection(currentColor: Int): NavigationEvent({
             if(navController.currentDestinationId != R.id.bsdfColorSelection) {
                 navController.navigate(DfAddEditBatchDirections.actionDfAddEditBatchToBsdfColorSelection(currentColor))
+            }
+        })
+
+        object FromDetailsToRowMappingDialog: NavigationEvent({
+            if(navController.currentDestinationId != R.id.bsdfRowMappingResults) {
+                navController.navigate(FragmentDetailDirections.actionFragmentDetailToBsdfRowMappingResults())
             }
         })
 

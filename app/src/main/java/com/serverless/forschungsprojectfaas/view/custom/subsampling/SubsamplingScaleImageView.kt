@@ -22,8 +22,12 @@ import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.extensions.log
 import com.serverless.forschungsprojectfaas.view.custom.subsampling.ImageSource.Companion.asset
 import com.serverless.forschungsprojectfaas.view.custom.subsampling.ImageSource.Companion.resource
-import com.serverless.forschungsprojectfaas.view.custom.subsampling.states.ImageOrientation
+import com.serverless.forschungsprojectfaas.view.custom.subsampling.states.*
+import com.serverless.forschungsprojectfaas.view.custom.subsampling.states.ImageEasingStyle.*
 import com.serverless.forschungsprojectfaas.view.custom.subsampling.states.ImageOrientation.*
+import com.serverless.forschungsprojectfaas.view.custom.subsampling.states.ImagePanLimit.*
+import com.serverless.forschungsprojectfaas.view.custom.subsampling.states.ImageScaleType.*
+import com.serverless.forschungsprojectfaas.view.custom.subsampling.states.ImageZoomStyle.*
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.Executor
@@ -54,7 +58,7 @@ import kotlin.math.sqrt
  * [View project on GitHub](https://github.com/davemorrissey/subsampling-scale-image-view)
  *
  */
-open class SubsamplingScaleImageView: View {
+open class SubsamplingScaleImageView : View {
 
     // Bitmap (preview or full image)
     private var bitmap: Bitmap? = null
@@ -110,10 +114,23 @@ open class SubsamplingScaleImageView: View {
     private var executor = AsyncTask.THREAD_POOL_EXECUTOR
 
     // Whether tiles should be loaded while gestures and animations are still in progress
-    private var eagerLoadingEnabled = true
+    var isEagerLoadingEnabled = true
 
     // Gesture detection settings
-    private var panEnabled = true
+    var isPanEnabled = true
+        set(value) {
+            field = value
+            if (!value && vTranslate != null) {
+                vTranslate!!.x = width / 2 - scale * (sWidth() / 2)
+                vTranslate!!.y = height / 2 - scale * (sHeight() / 2)
+                if (isReady) {
+                    refreshRequiredTiles(true)
+                    invalidate()
+                }
+            }
+        }
+
+
     /**
      * Returns true if zoom gesture detection is enabled.
      * @return true if zoom gesture detection is enabled.
@@ -266,9 +283,9 @@ open class SubsamplingScaleImageView: View {
     //The logical density of the display
     private val density: Float = resources.displayMetrics.density
 
-    constructor(context: Context): this(context, null)
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attr: AttributeSet?): super(context, attr) {
+    constructor(context: Context, attr: AttributeSet?) : super(context, attr) {
         setMinimumDpi(160)
         setDoubleTapZoomDpi(160)
         setMinimumTileDpi(320)
@@ -298,7 +315,7 @@ open class SubsamplingScaleImageView: View {
                 }
             }
             if (typedAttr.hasValue(R.styleable.SubsamplingScaleImageView_panEnabled)) {
-                setPanEnabled(typedAttr.getBoolean(R.styleable.SubsamplingScaleImageView_panEnabled, true))
+                isPanEnabled = typedAttr.getBoolean(R.styleable.SubsamplingScaleImageView_panEnabled, true)
             }
             if (typedAttr.hasValue(R.styleable.SubsamplingScaleImageView_zoomEnabled)) {
                 isZoomEnabled = typedAttr.getBoolean(R.styleable.SubsamplingScaleImageView_zoomEnabled, true)
@@ -313,7 +330,6 @@ open class SubsamplingScaleImageView: View {
         }
         quickScaleThreshold = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, context.resources.displayMetrics)
     }
-
 
 
     /**
@@ -376,8 +392,9 @@ open class SubsamplingScaleImageView: View {
      */
     fun setImage(imageSource: ImageSource, previewSource: ImageSource?, state: ImageViewState?) {
         reset(true)
-        state?.let { restoreState(it) }
-        if (previewSource != null) {
+        state?.let(::restoreState)
+
+        previewSource?.let {
             require(imageSource.bitmap == null) { "Preview image cannot be used when a bitmap is provided for the main image" }
             require(!(imageSource.sWidth <= 0 || imageSource.sHeight <= 0)) { "Preview image cannot be used unless dimensions are provided for the main image" }
             sWidth = imageSource.sWidth
@@ -395,39 +412,28 @@ open class SubsamplingScaleImageView: View {
                 execute(task)
             }
         }
+
         if (imageSource.bitmap != null && imageSource.sRegion != null) {
-            onImageLoaded(
-                Bitmap.createBitmap(
-                    imageSource.bitmap,
-                    imageSource.sRegion!!.left,
-                    imageSource.sRegion!!.top,
-                    imageSource.sRegion!!.width(),
-                    imageSource.sRegion!!.height()
-                ),
-                ORIENTATION_0,
-                false
-            )
-        } else if (imageSource.bitmap != null) {
-            onImageLoaded(
-                imageSource.bitmap,
-                ORIENTATION_0,
-                imageSource.isCached
-            )
+            onImageLoaded(imageSource.createBitmap(), ORIENTATION_0, false)
+            return
+        }
+        if (imageSource.bitmap != null) {
+            onImageLoaded(imageSource.bitmap, ORIENTATION_0, imageSource.isCached)
+            return
+        }
+
+        sRegion = imageSource.sRegion
+        uri = imageSource.uri
+        if (uri == null && imageSource.resource != null) {
+            uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + imageSource.resource)
+        }
+
+        if (imageSource.tile || sRegion != null) {
+            // Load the bitmap using tile decoding.
+            execute(TilesInitTask(this, context, regionDecoderFactory, uri))
         } else {
-            sRegion = imageSource.sRegion
-            uri = imageSource.uri
-            if (uri == null && imageSource.resource != null) {
-                uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + imageSource.resource)
-            }
-            if (imageSource.tile || sRegion != null) {
-                // Load the bitmap using tile decoding.
-                val task = TilesInitTask(this, context, regionDecoderFactory, uri)
-                execute(task)
-            } else {
-                // Load the bitmap as a single image.
-                val task = BitmapLoadTask(this, context, bitmapDecoderFactory, uri, false)
-                execute(task)
-            }
+            // Load the bitmap as a single image.
+            execute(BitmapLoadTask(this, context, bitmapDecoderFactory, uri, false))
         }
     }
 
@@ -506,7 +512,7 @@ open class SubsamplingScaleImageView: View {
     private fun setGestureDetector(context: Context) {
         detector = GestureDetector(context, object : SimpleOnGestureListener() {
             override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-                if (panEnabled && isReady && vTranslate != null && (abs(e1.x - e2.x) > 50 || abs(e1.y - e2.y) > 50) && (abs(
+                if (isPanEnabled && isReady && vTranslate != null && (abs(e1.x - e2.x) > 50 || abs(e1.y - e2.y) > 50) && (abs(
                         velocityX
                     ) > 500 || abs(velocityY) > 500) && !isZooming
                 ) {
@@ -698,7 +704,7 @@ open class SubsamplingScaleImageView: View {
                                 vCenterEndX,
                                 vCenterStart!!.y,
                                 vCenterEndY
-                            ) > 5 || Math.abs(vDistEnd - vDistStart) > 5 || isPanning)
+                            ) > 5 || abs(vDistEnd - vDistStart) > 5 || isPanning)
                         ) {
                             isZooming = true
                             isPanning = true
@@ -711,7 +717,7 @@ open class SubsamplingScaleImageView: View {
                                 scaleStart = minScale()
                                 vCenterStart!![vCenterEndX] = vCenterEndY
                                 vTranslateStart!!.set(vTranslate!!)
-                            } else if (panEnabled) {
+                            } else if (isPanEnabled) {
                                 // Translate to place the source image coordinate that was at the center of the pinch at the start
                                 // at the center of the pinch now, to give simultaneous pan + zoom.
                                 val vLeftStart = vCenterStart!!.x - vTranslateStart!!.x
@@ -737,7 +743,7 @@ open class SubsamplingScaleImageView: View {
                                 vTranslate!!.y = height / 2 - scale * (sHeight() / 2)
                             }
                             fitToBounds(true)
-                            refreshRequiredTiles(eagerLoadingEnabled)
+                            refreshRequiredTiles(isEagerLoadingEnabled)
                         }
                     } else if (isQuickScaling) {
                         // One finger zoom
@@ -757,7 +763,7 @@ open class SubsamplingScaleImageView: View {
                             }
                             val previousScale = scale.toDouble()
                             scale = minScale().coerceAtLeast(maxScale.coerceAtMost(scale * multiplier))
-                            if (panEnabled) {
+                            if (isPanEnabled) {
                                 val vLeftStart = vCenterStart!!.x - vTranslateStart!!.x
                                 val vTopStart = vCenterStart!!.y - vTranslateStart!!.y
                                 val vLeftNow = vLeftStart * (scale / scaleStart)
@@ -783,7 +789,7 @@ open class SubsamplingScaleImageView: View {
                         }
                         quickScaleLastDistance = dist
                         fitToBounds(true)
-                        refreshRequiredTiles(eagerLoadingEnabled)
+                        refreshRequiredTiles(isEagerLoadingEnabled)
                         consumed = true
                     } else if (!isZooming) {
                         // One finger pan - translate the image. We do this calculation even with pan disabled so click
@@ -813,12 +819,12 @@ open class SubsamplingScaleImageView: View {
                                 mHandler.removeMessages(MESSAGE_LONG_CLICK)
                                 requestDisallowInterceptTouchEvent(false)
                             }
-                            if (!panEnabled) {
+                            if (!isPanEnabled) {
                                 vTranslate!!.x = vTranslateStart!!.x
                                 vTranslate!!.y = vTranslateStart!!.y
                                 requestDisallowInterceptTouchEvent(false)
                             }
-                            refreshRequiredTiles(eagerLoadingEnabled)
+                            refreshRequiredTiles(isEagerLoadingEnabled)
                         }
                     }
                 }
@@ -881,7 +887,7 @@ open class SubsamplingScaleImageView: View {
      * quick scale is enabled.
      */
     private fun doubleTapZoom(sCenter: PointF?, vFocus: PointF?) {
-        if (!panEnabled) {
+        if (!isPanEnabled) {
             if (sRequestedCenter != null) {
                 // With a center specified from code, zoom around that point.
                 sCenter!!.x = sRequestedCenter!!.x
@@ -897,10 +903,10 @@ open class SubsamplingScaleImageView: View {
         val targetScale = if (zoomIn) doubleTapZoomScale else minScale()
         if (doubleTapZoomStyle == ZOOM_FOCUS_CENTER_IMMEDIATE) {
             setScaleAndCenter(targetScale, sCenter)
-        } else if (doubleTapZoomStyle == ZOOM_FOCUS_CENTER || !zoomIn || !panEnabled) {
-            AnimationBuilder(targetScale, sCenter).withInterruptible(false).withDuration(doubleTapZoomDuration.toLong()).withOrigin(ORIGIN_DOUBLE_TAP_ZOOM).start()
+        } else if (doubleTapZoomStyle == ZOOM_FOCUS_CENTER || !zoomIn || !isPanEnabled) {
+            AnimationBuilder(targetScale, sCenter).withInterruptable(false).withDuration(doubleTapZoomDuration.toLong()).withOrigin(ORIGIN_DOUBLE_TAP_ZOOM).start()
         } else if (doubleTapZoomStyle == ZOOM_FOCUS_FIXED) {
-            AnimationBuilder(targetScale, sCenter!!, vFocus).withInterruptible(false).withDuration(doubleTapZoomDuration.toLong()).withOrigin(ORIGIN_DOUBLE_TAP_ZOOM).start()
+            AnimationBuilder(targetScale, sCenter!!, vFocus).withInterruptable(false).withDuration(doubleTapZoomDuration.toLong()).withOrigin(ORIGIN_DOUBLE_TAP_ZOOM).start()
         }
         invalidate()
     }
@@ -972,7 +978,6 @@ open class SubsamplingScaleImageView: View {
         if (tileMap != null && isBaseLayerReady) {
             // Optimum sample size for current scale
             val sampleSize = fullImageSampleSize.coerceAtMost(calculateInSampleSize(scale))
-
             // First check for missing tiles - if there are any we need the base layer underneath to avoid gaps
             var hasMissingTiles = false
             for ((key, value) in tileMap!!) {
@@ -1276,12 +1281,14 @@ open class SubsamplingScaleImageView: View {
             decoder!!.recycle()
             decoder = null
             val task = BitmapLoadTask(this, context, bitmapDecoderFactory, uri, false)
+            log("BITMAP LOAD TASK TRIGGERED")
             execute(task)
         } else {
             initialiseTileMap(maxTileDimensions)
             val baseGrid = tileMap!![fullImageSampleSize]!!
             for (baseTile in baseGrid) {
                 val task = TileLoadTask(this, decoder, baseTile)
+                log("TILE LOAD TASK TRIGGERED")
                 execute(task)
             }
             refreshRequiredTiles(true)
@@ -1301,8 +1308,8 @@ open class SubsamplingScaleImageView: View {
 
         // Load tiles of the correct sample size that are on screen. Discard tiles off screen, and those that are higher
         // resolution than required, or lower res than required but not the base layer, so the base layer is always present.
-        for ((_, value) in tileMap!!) {
-            for (tile in value) {
+        for (tiles in tileMap!!.values) {
+            for (tile in tiles) {
                 if (tile.sampleSize < sampleSize || tile.sampleSize > sampleSize && tile.sampleSize != fullImageSampleSize) {
                     tile.visible = false
                     if (tile.bitmap != null) {
@@ -1501,18 +1508,16 @@ open class SubsamplingScaleImageView: View {
             val tileGrid: MutableList<Tile> = ArrayList(xTiles * yTiles)
             for (x in 0 until xTiles) {
                 for (y in 0 until yTiles) {
-                    val tile = Tile()
-                    tile.sampleSize = sampleSize
-                    tile.visible = sampleSize == fullImageSampleSize
-                    tile.sRect = Rect(
-                        x * sTileWidth,
-                        y * sTileHeight,
-                        if (x == xTiles - 1) sWidth() else (x + 1) * sTileWidth,
-                        if (y == yTiles - 1) sHeight() else (y + 1) * sTileHeight
-                    )
-                    tile.vRect = Rect(0, 0, 0, 0)
-                    tile.fileSRect = Rect(tile.sRect)
-                    tileGrid.add(tile)
+                    tileGrid.add(Tile(
+                        sampleSize = sampleSize,
+                        visible = sampleSize == fullImageSampleSize,
+                        sRect = Rect(
+                            x * sTileWidth,
+                            y * sTileHeight,
+                            if (x == xTiles - 1) sWidth() else (x + 1) * sTileWidth,
+                            if (y == yTiles - 1) sHeight() else (y + 1) * sTileHeight
+                        )
+                    ))
                 }
             }
             tileMap?.set(sampleSize, tileGrid)
@@ -1806,7 +1811,7 @@ open class SubsamplingScaleImageView: View {
      */
     @Synchronized
     private fun onImageLoaded(bitmap: Bitmap?, sOrientation: ImageOrientation, bitmapIsCached: Boolean) {
-        debug("onImageLoaded")
+        log("onImageLoaded")
         // If actual dimensions don't match the declared size, reset everything.
         if (sWidth > 0 && sHeight > 0 && (sWidth != bitmap!!.width || sHeight != bitmap.height)) {
             reset(false)
@@ -1861,13 +1866,7 @@ open class SubsamplingScaleImageView: View {
             try {
                 val exifInterface = ExifInterface(sourceUri.substring(ImageSource.FILE_SCHEME.length - 1))
                 val orientationAttr = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-                exifOrientation = when (orientationAttr) {
-                    ExifInterface.ORIENTATION_NORMAL, ExifInterface.ORIENTATION_UNDEFINED -> ORIENTATION_0
-                    ExifInterface.ORIENTATION_ROTATE_90 -> ORIENTATION_90
-                    ExifInterface.ORIENTATION_ROTATE_180 -> ORIENTATION_180
-                    ExifInterface.ORIENTATION_ROTATE_270 -> ORIENTATION_270
-                    else -> exifOrientation
-                }
+                exifOrientation = ImageOrientation.fromExifOrientation(orientationAttr) ?: exifOrientation
             } catch (e: Exception) {
                 Log.w(TAG, "Could not get EXIF orientation of image")
             }
@@ -1879,17 +1878,16 @@ open class SubsamplingScaleImageView: View {
         asyncTask.executeOnExecutor(executor)
     }
 
-    private class Tile {
-        var sRect: Rect? = null
-        var sampleSize = 0
-        var bitmap: Bitmap? = null
-        var loading = false
-        var visible = false
-
+    private data class Tile(
+        var sRect: Rect? = null,
+        var sampleSize: Int = 0,
+        var bitmap: Bitmap? = null,
+        var loading: Boolean = false,
+        var visible: Boolean = false,
         // Volatile fields instantiated once then updated before use to reduce GC.
-        var vRect: Rect? = null
-        var fileSRect: Rect? = null
-    }
+        var vRect: Rect = Rect(),
+        var fileSRect: Rect? = Rect(sRect)
+    )
 
     private class Anim {
         // Scale at start of anim
@@ -2251,7 +2249,7 @@ open class SubsamplingScaleImageView: View {
 
     /**
      * Apply a selected type of easing.
-     * @param type Easing type, from static fields
+     * @param easingStyle Easing type, from static fields
      * @param time Elapsed time
      * @param from Start value
      * @param change Target value
@@ -2259,15 +2257,14 @@ open class SubsamplingScaleImageView: View {
      * @return Current value
      */
     private fun ease(
-        type: Int,
+        easingStyle: ImageEasingStyle,
         time: Long,
         from: Float,
         change: Float,
         duration: Long
-    ): Float = when (type) {
+    ): Float = when (easingStyle) {
         EASE_IN_OUT_QUAD -> easeInOutQuad(time, from, change, duration)
         EASE_OUT_QUAD -> easeOutQuad(time, from, change, duration)
-        else -> throw IllegalStateException("Unexpected easing type: $type")
     }
 
     /**
@@ -2314,9 +2311,7 @@ open class SubsamplingScaleImageView: View {
     /**
      * For debug overlays. Scale pixel value according to screen density.
      */
-    private fun px(px: Int): Int {
-        return (density * px).toInt()
-    }
+    private fun px(px: Int): Int = (density * px).toInt()
 
     /**
      *
@@ -2326,7 +2321,6 @@ open class SubsamplingScaleImageView: View {
      * @param regionDecoderClass The [ImageRegionDecoder] implementation to use.
      */
     fun setRegionDecoderClass(regionDecoderClass: Class<out ImageRegionDecoder>) {
-        requireNotNull(regionDecoderClass) { "Decoder class cannot be set to null" }
         regionDecoderFactory = CompatDecoderFactory(regionDecoderClass)
     }
 
@@ -2337,7 +2331,6 @@ open class SubsamplingScaleImageView: View {
      * instances.
      */
     fun setRegionDecoderFactory(regionDecoderFactory: DecoderFactory<out ImageRegionDecoder>) {
-        requireNotNull(regionDecoderFactory) { "Decoder factory cannot be set to null" }
         this.regionDecoderFactory = regionDecoderFactory
     }
 
@@ -2348,7 +2341,6 @@ open class SubsamplingScaleImageView: View {
      * @param bitmapDecoderClass The [ImageDecoder] implementation to use.
      */
     fun setBitmapDecoderClass(bitmapDecoderClass: Class<out ImageDecoder>) {
-        requireNotNull(bitmapDecoderClass) { "Decoder class cannot be set to null" }
         bitmapDecoderFactory = CompatDecoderFactory(bitmapDecoderClass)
     }
 
@@ -2358,7 +2350,6 @@ open class SubsamplingScaleImageView: View {
      * @param bitmapDecoderFactory The [DecoderFactory] implementation that produces [ImageDecoder] instances.
      */
     fun setBitmapDecoderFactory(bitmapDecoderFactory: DecoderFactory<out ImageDecoder>) {
-        requireNotNull(bitmapDecoderFactory) { "Decoder factory cannot be set to null" }
         this.bitmapDecoderFactory = bitmapDecoderFactory
     }
 
@@ -2398,8 +2389,7 @@ open class SubsamplingScaleImageView: View {
      * Set the pan limiting style. See static fields. Normally [.PAN_LIMIT_INSIDE] is best, for image galleries.
      * @param panLimit a pan limit constant. See static fields.
      */
-    fun setPanLimit(panLimit: Int) {
-        require(VALID_PAN_LIMITS.contains(panLimit)) { "Invalid pan limit: $panLimit" }
+    fun setPanLimit(panLimit: ImagePanLimit) {
         this.panLimit = panLimit
         if (isReady) {
             fitToBounds(true)
@@ -2411,8 +2401,7 @@ open class SubsamplingScaleImageView: View {
      * Set the minimum scale type. See static fields. Normally [.SCALE_TYPE_CENTER_INSIDE] is best, for image galleries.
      * @param scaleType a scale type constant. See static fields.
      */
-    fun setMinimumScaleType(scaleType: Int) {
-        require(VALID_SCALE_TYPES.contains(scaleType)) { "Invalid scale type: $scaleType" }
+    fun setMinimumScaleType(scaleType: ImageScaleType) {
         minimumScaleType = scaleType
         if (isReady) {
             fitToBounds(true)
@@ -2558,31 +2547,6 @@ open class SubsamplingScaleImageView: View {
         } else null
 
     /**
-     * Returns true if pan gesture detection is enabled.
-     * @return true if pan gesture detection is enabled.
-     */
-    fun isPanEnabled(): Boolean {
-        return panEnabled
-    }
-
-    /**
-     * Enable or disable pan gesture detection. Disabling pan causes the image to be centered. Pan
-     * can still be changed from code.
-     * @param panEnabled true to enable panning, false to disable.
-     */
-    fun setPanEnabled(panEnabled: Boolean) {
-        this.panEnabled = panEnabled
-        if (!panEnabled && vTranslate != null) {
-            vTranslate!!.x = width / 2 - scale * (sWidth() / 2)
-            vTranslate!!.y = height / 2 - scale * (sHeight() / 2)
-            if (isReady) {
-                refreshRequiredTiles(true)
-                invalidate()
-            }
-        }
-    }
-
-    /**
      * Set a solid color to render behind tiles, useful for displaying transparent PNGs.
      * @param tileBgColor Background color for tiles.
      */
@@ -2621,11 +2585,10 @@ open class SubsamplingScaleImageView: View {
 
     /**
      * Set the type of zoom animation to be used for double taps. See static fields.
-     * @param doubleTapZoomStyle New value for zoom style.
+     * @param zoomStyle New value for zoom style.
      */
-    fun setDoubleTapZoomStyle(doubleTapZoomStyle: Int) {
-        require(VALID_ZOOM_STYLES.contains(doubleTapZoomStyle)) { "Invalid zoom style: $doubleTapZoomStyle" }
-        this.doubleTapZoomStyle = doubleTapZoomStyle
+    fun setDoubleTapZoomStyle(zoomStyle: ImageZoomStyle) {
+        this.doubleTapZoomStyle = zoomStyle
     }
 
     /**
@@ -2633,7 +2596,7 @@ open class SubsamplingScaleImageView: View {
      * @param durationMs Duration in milliseconds.
      */
     fun setDoubleTapZoomDuration(durationMs: Int) {
-        doubleTapZoomDuration = Math.max(0, durationMs)
+        doubleTapZoomDuration = 0.coerceAtLeast(durationMs)
     }
 
     /**
@@ -2657,19 +2620,6 @@ open class SubsamplingScaleImageView: View {
      */
     fun setExecutor(executor: Executor) {
         this.executor = executor
-    }
-
-    /**
-     * Enable or disable eager loading of tiles that appear on screen during gestures or animations,
-     * while the gesture or animation is still in progress. By default this is enabled to improve
-     * responsiveness, but it can result in tiles being loaded and discarded more rapidly than
-     * necessary and reduce the animation frame rate on old/cheap devices. Disable this on older
-     * devices if you see poor performance. Tiles will then be loaded only when gestures and animations
-     * are completed.
-     * @param eagerLoadingEnabled true to enable loading during gestures, false to delay loading until gestures end
-     */
-    fun setEagerLoadingEnabled(eagerLoadingEnabled: Boolean) {
-        this.eagerLoadingEnabled = eagerLoadingEnabled
     }
 
     /**
@@ -2812,11 +2762,11 @@ open class SubsamplingScaleImageView: View {
 
         /**
          * Whether the animation can be interrupted with a touch. Default is true.
-         * @param interruptible interruptible flag.
+         * @param interruptable interruptible flag.
          * @return this builder for method chaining.
          */
-        fun withInterruptible(interruptible: Boolean): AnimationBuilder {
-            this.interruptible = interruptible
+        fun withInterruptable(interruptable: Boolean): AnimationBuilder {
+            this.interruptible = interruptable
             return this
         }
 
@@ -2825,8 +2775,7 @@ open class SubsamplingScaleImageView: View {
          * @param easing easing style.
          * @return this builder for method chaining.
          */
-        fun withEasing(easing: Int): AnimationBuilder {
-            require(VALID_EASING_STYLES.contains(easing)) { "Unknown easing type: $easing" }
+        fun withEasing(easing: ImageEasingStyle): AnimationBuilder {
             this.easing = easing
             return this
         }
@@ -3061,49 +3010,6 @@ open class SubsamplingScaleImageView: View {
     companion object {
 
         private val TAG = SubsamplingScaleImageView::class.java.simpleName
-
-        /** During zoom animation, keep the point of the image that was tapped in the same place, and scale the image around it.  */
-        const val ZOOM_FOCUS_FIXED = 1
-
-        /** During zoom animation, move the point of the image that was tapped to the center of the screen.  */
-        const val ZOOM_FOCUS_CENTER = 2
-
-        /** Zoom in to and center the tapped point immediately without animating.  */
-        const val ZOOM_FOCUS_CENTER_IMMEDIATE = 3
-
-        private val VALID_ZOOM_STYLES = listOf(ZOOM_FOCUS_FIXED, ZOOM_FOCUS_CENTER, ZOOM_FOCUS_CENTER_IMMEDIATE)
-
-        /** Quadratic ease out. Not recommended for scale animation, but good for panning.  */
-        const val EASE_OUT_QUAD = 1
-
-        /** Quadratic ease in and out.  */
-        const val EASE_IN_OUT_QUAD = 2
-        private val VALID_EASING_STYLES = listOf(EASE_IN_OUT_QUAD, EASE_OUT_QUAD)
-
-        /** Don't allow the image to be panned off screen. As much of the image as possible is always displayed, centered in the view when it is smaller. This is the best option for galleries.  */
-        const val PAN_LIMIT_INSIDE = 1
-
-        /** Allows the image to be panned until it is just off screen, but no further. The edge of the image will stop when it is flush with the screen edge.  */
-        const val PAN_LIMIT_OUTSIDE = 2
-
-        /** Allows the image to be panned until a corner reaches the center of the screen but no further. Useful when you want to pan any spot on the image to the exact center of the screen.  */
-        const val PAN_LIMIT_CENTER = 3
-
-        private val VALID_PAN_LIMITS = listOf(PAN_LIMIT_INSIDE, PAN_LIMIT_OUTSIDE, PAN_LIMIT_CENTER)
-
-        /** Scale the image so that both dimensions of the image will be equal to or less than the corresponding dimension of the view. The image is then centered in the view. This is the default behaviour and best for galleries.  */
-        const val SCALE_TYPE_CENTER_INSIDE = 1
-
-        /** Scale the image uniformly so that both dimensions of the image will be equal to or larger than the corresponding dimension of the view. The image is then centered in the view.  */
-        const val SCALE_TYPE_CENTER_CROP = 2
-
-        /** Scale the image so that both dimensions of the image will be equal to or less than the maxScale and equal to or larger than minScale. The image is then centered in the view.  */
-        const val SCALE_TYPE_CUSTOM = 3
-
-        /** Scale the image so that both dimensions of the image will be equal to or larger than the corresponding dimension of the view. The top left is shown.  */
-        const val SCALE_TYPE_START = 4
-
-        private val VALID_SCALE_TYPES = listOf(SCALE_TYPE_CENTER_CROP, SCALE_TYPE_CENTER_INSIDE, SCALE_TYPE_CUSTOM, SCALE_TYPE_START)
 
         /** State change originated from animation.  */
         const val ORIGIN_ANIM = 1

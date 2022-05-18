@@ -9,6 +9,7 @@
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable-v24/background_round_corners_45dp.xml" value="0.32" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable-v24/background_round_corners_top_15dp.xml" value="0.32" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable-v24/ic_add.xml" value="0.546" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.32" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable-v24/ic_more.xml" value="0.546" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable-v24/ic_search.xml" value="0.546" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable-v24/ic_sort.xml" value="0.546" />
@@ -17,34 +18,44 @@
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/background_round_dashed_corners_10dp.xml" value="0.546" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/background_round_dashed_corners_15dp.xml" value="0.546" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_check_circle.xml" value="0.32" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_circle.xml" value="0.343" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_cloud_upload.xml" value="0.32" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_delete.xml" value="0.5525" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_error.xml" value="0.32" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_ndw_icon.xml" value="0.32" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_refresh.xml" value="0.32" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_sync.xml" value="0.32" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_text.xml" value="0.546" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ic_time.xml" value="0.32" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ix_ndw_centered.xml" value="0.319" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/drawable/ripple_dashed_corners_15dp.xml" value="0.546" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/activity_main.xml" value="0.559375" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/bsdf_batch_selection.xml" value="0.4591705857203933" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/bsdf_color_selection.xml" value="0.661134163208852" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/bsdf_row_mapping_results.xml" value="0.4583155194527576" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/bsdf_selection.xml" value="0.4591705857203933" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/df_add_edit_batch.xml" value="0.4591705857203933" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/df_loading.xml" value="0.4591705857203933" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_add.xml" value="0.33" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_camera_x.xml" value="0.559375" />
-        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_detail.xml" value="0.33" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_detail.xml" value="0.6123147092360319" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_detail_batches_page.xml" value="0.45251160827353315" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_detail_row_mapping_page.xml" value="0.5" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_device_cam.xml" value="0.33" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_embedded_preview.xml" value="0.559375" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_home.xml" value="0.559375" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/fragment_main.xml" value="0.559375" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_batch.xml" value="0.4591705857203933" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_batch_browse.xml" value="0.4591705857203933" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_batch_new.xml" value="0.4591705857203933" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_entry.xml" value="0.1" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_entry_batch.xml" value="0.4591705857203933" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_entry_mark.xml" value="0.559375" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_menu.xml" value="0.4591705857203933" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_pile.xml" value="0.75" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/layout/rvi_table_entry.xml" value="0.4583155194527576" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.5365" />
+        <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.5365" />
         <entry key="..\:/Programming/AndroidStudioProjects/ForschungsprojektApp/app/src/main/res/xml/file_paths.xml" value="0.3171875" />
       </map>
     </option>

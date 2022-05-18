@@ -36,6 +36,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
             onItemClicked = vm::onRvaItemClicked
             onMoreOptionsClicked = vm::onRvaItemMoreOptionsClicked
             onItemLongClicked = vm::onRvaItemMoreOptionsClicked
+            onStatusButtonClicked = vm::onRvaStatusButtonClicked
         }
 
         binding.rv.apply {
@@ -47,7 +48,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
     }
 
     private fun initListeners() {
-        setFragmentResultEventListener(vm::onPictureMoreOptionsResultReceived)
+        setFragmentResultEventListener(vm::onPileMoreOptionsResultReceived)
         setFragmentResultEventListener(vm::onOrderBySelectionResultReceived)
 
         binding.apply {

@@ -13,6 +13,9 @@ abstract class BatchDao: BaseDao<Batch> {
     abstract fun getFilteredBatchesFlow(captionToSearch: String): Flow<List<Batch>>
 
     @Query("SELECT * FROM BatchTable WHERE caption = :captionToSearch LIMIT 1")
-    abstract fun findBatchWithCaption(captionToSearch: String): Batch?
+    abstract suspend fun findBatchWithCaption(captionToSearch: String): Batch?
+
+    @Query("SELECT * FROM BatchTable WHERE caption IN(:captions)")
+    abstract suspend fun findBatchesWithCaptions(captions: Collection<String>): List<Batch>
 
 }

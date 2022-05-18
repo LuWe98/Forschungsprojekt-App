@@ -14,9 +14,9 @@ import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
 import com.serverless.forschungsprojectfaas.extensions.div
 import com.serverless.forschungsprojectfaas.extensions.log
-import com.serverless.forschungsprojectfaas.model.BoxDimension
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
+import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.model.room.junctions.BatchWithBars
 import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBatches
@@ -24,12 +24,12 @@ import com.serverless.forschungsprojectfaas.view.custom.BarBatchDisplay
 import com.serverless.forschungsprojectfaas.view.fragments.FragmentDetailArgs
 import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import kotlin.math.max
 
-@RequiresApi(Build.VERSION_CODES.N)
 @HiltViewModel
 class VmDetail @Inject constructor(
     private val app: OwnApplication,
@@ -42,19 +42,41 @@ class VmDetail @Inject constructor(
 
     private val pileStateFlow: StateFlow<PileWithBatches?> = localRepository
         .getPileWithBatchesFlow(args.pile.pileId)
+        .flowOn(IO)
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    private val nonNullPileFlow = pileStateFlow.mapNotNull { it }
+    private val nonNullPileFlow = pileStateFlow
+        .mapNotNull { it }
+        .flowOn(IO)
 
-    private val imagePathFlow = nonNullPileFlow.map { it.pile.pictureUri.path }.distinctUntilChanged()
+    private val imagePathFlow = nonNullPileFlow
+        .map { it.pile.pictureUri.path }
+        .flowOn(IO)
+        .distinctUntilChanged()
 
-    val imageBitmapStateFlow = imagePathFlow.map(BitmapFactory::decodeFile).flowOn(IO).stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    val imageBitmapStateFlow = imagePathFlow.map(BitmapFactory::decodeFile)
+        .flowOn(IO)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    val pileTitleFlow = nonNullPileFlow.map(PileWithBatches::pile / Pile::title).distinctUntilChanged()
+    val pileTitleFlow = nonNullPileFlow
+        .map(PileWithBatches::pile / Pile::title)
+        .flowOn(IO)
+        .distinctUntilChanged()
 
-    val barBatchWithBarsStateFlow = nonNullPileFlow.map(PileWithBatches::batches::get)
+    val barBatchWithBarsStateFlow = nonNullPileFlow
+        .map(PileWithBatches::batchWithBars::get)
+        .flowOn(IO)
 
-    var allBarsFlow = nonNullPileFlow.map(PileWithBatches::bars::get).distinctUntilChanged()
+    var allBarsFlow = nonNullPileFlow
+        .map(PileWithBatches::bars::get)
+        .flowOn(IO)
+        .distinctUntilChanged()
+
+    val evaluatedBarResultsStateFlow = nonNullPileFlow
+        .map(PileWithBatches::getBarRowWithBatch)
+        .flowOn(IO)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
 
     private val selectedBarIdsMutableStateFlow: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
 
@@ -65,9 +87,11 @@ class VmDetail @Inject constructor(
     val selectedBarsStateFlow: StateFlow<List<Bar>> = combine(
         flow = selectedBarIdsMutableStateFlow,
         flow2 = allBarsFlow
-    ) { ids, bars ->
-        bars.filter { ids.contains(it.barId) }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    ) { ids, bars -> bars.filter { ids.contains(it.barId) } }
+        .flowOn(IO)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+
 
     private val selectedBars get() = selectedBarsStateFlow.value
 
@@ -90,11 +114,10 @@ class VmDetail @Inject constructor(
         }.sortedBy {
             it.batch?.caption
         }
-    }
+    }.flowOn(IO).stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
     fun isBarSelected(bar: Bar) = selectedBarIds.contains(bar.barId)
-
 
     fun onImageClicked(bar: Bar?, point: PointF) {
         bar?.let {
@@ -155,28 +178,11 @@ class VmDetail @Inject constructor(
      */
     fun onSelectBarsInLineClicked() = launch {
         if (selectedBarIds.size != 2) return@launch
-        selectedBars.let {
-            val left: Bar
-            val right: Bar
 
-            if (it[0].rect.left < it[1].rect.left) {
-                left = it[0]
-                right = it[1]
-            } else {
-                left = it[1]
-                right = it[0]
-            }
-
-            val leftOfRightBars = pileStateFlow.value!!.findNearestLeftBars(right)
-            val rightOfLeftBars = pileStateFlow.value!!.findNearestRightBars(left)
-            val ids = leftOfRightBars.filter { bar ->
-                rightOfLeftBars.contains(bar)
-            }
-
+        selectedBars.let { bars ->
+            val barsBetween = pileStateFlow.value?.findBarsBetween(bars[0], bars[1]) ?: emptyList()
             selectedBarIdsMutableStateFlow.value = selectedBarIds.toMutableSet().apply {
-                addAll(ids.map { bar ->
-                    bar.barId
-                })
+                addAll(barsBetween.map(Bar::barId))
             }
         }
     }
@@ -205,6 +211,10 @@ class VmDetail @Inject constructor(
         if (selectedBarIds.isEmpty()) return@launch
         localRepository.delete(selectedBars)
         onClearSelectionClicked()
+    }
+
+    fun onShowRowMappingDialogClicked() = launch {
+        navDispatcher.dispatch(NavigationEvent.FromDetailsToRowMappingDialog)
     }
 
 
@@ -245,29 +255,28 @@ class VmDetail @Inject constructor(
 
         launch {
             selectedBars.first().let { bar ->
-                bar.rect.set(
-                    bar.rect.left,
-                    bar.rect.centerY() - progress / 2f,
-                    bar.rect.right,
-                    bar.rect.centerY() + progress / 2f
-                )
-                localRepository.update(bar)
+                localRepository.update(bar.copy(
+                    rect = RectF(
+                        bar.rect.left,
+                        bar.rect.centerY() - (progress / 2f),
+                        bar.rect.right,
+                        bar.rect.centerY() + (progress / 2f)
+                    )
+                ))
             }
         }
     }
 
+    fun onBatchLongClicked(batch: Batch?) {
+        if(batch == null) return
+        launch {
+            navDispatcher.dispatch(NavigationEvent.NavigateToAddEditBatch(batch))
+        }
+    }
 
-//
-//    private fun onLongClickedTest(bar: Bar) {
-//        pileStateFlow.value!!.findBarsInLine(bar).let { bars ->
-//            selectedBarIdsMutableStateFlow.value = selectedBarIds.toMutableSet().apply {
-//                val ids = bars.map { it.barId }
-//                if (selectedBarIds.any { ids.contains(it) }) {
-//                    removeAll(ids)
-//                } else {
-//                    addAll(ids)
-//                }
-//            }
-//        }
-//    }
+    fun areBarsInSameRow(selectedIds: Set<String>) : Boolean {
+        if(selectedIds.size != 2) return false
+        val ids = selectedIds.toList()
+        return pileStateFlow.value?.areBarsInSameRow(ids[0], ids[1]) ?: false
+    }
 }

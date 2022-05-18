@@ -56,6 +56,7 @@
                 android:inputType="textMultiLine"
                 android:layout_marginTop="@dimen/grid_6"
                 android:layout_marginHorizontal="@dimen/grid_4"
+                android:maxLength="2"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/colorCircle" />

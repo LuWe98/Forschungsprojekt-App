@@ -12,6 +12,7 @@ import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.junctions.BatchWithBars
 import com.serverless.forschungsprojectfaas.utils.Constants
 import com.serverless.forschungsprojectfaas.view.custom.subsampling.SubsamplingScaleImageView
+import kotlin.math.max
 
 class BarBatchDisplay : SubsamplingScaleImageView,
     View.OnTouchListener,
@@ -95,8 +96,6 @@ class BarBatchDisplay : SubsamplingScaleImageView,
 
         bars.filter {
             targetRect.containsPartial(it.rect)
-        }.also {
-            log("BAR COUNT TO DISPLAY: ${it.size}")
         }.forEach { bar ->
             val batch: Batch? = batches.firstOrNull { it.batch?.batchId == bar.batchId }?.batch
             val color = if (isBarSelected?.invoke(bar) == true) Color.RED else batch?.colorInt ?: Constants.UNASSIGNED_BAR_COLOR
@@ -134,7 +133,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
     }
 
     fun setBoxStroke(stroke: Int) {
-        boxPaintStroke = stroke / 10f
+        boxPaintStroke = max(stroke / 10f, 0.000_000_1f)
         invalidate()
     }
 

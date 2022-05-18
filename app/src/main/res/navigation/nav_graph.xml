@@ -32,6 +32,9 @@
         <argument
                 android:name="pile"
                 app:argType="com.serverless.forschungsprojectfaas.model.room.entities.Pile" />
+        <action
+                android:id="@+id/action_fragmentDetail_to_bsdfRowMappingResults"
+                app:destination="@id/bsdfRowMappingResults" />
     </fragment>
 
     <dialog
@@ -98,5 +101,10 @@
     <action
             android:id="@+id/action_global_dfAddEditBatch"
             app:destination="@id/dfAddEditBatch" />
+    <dialog
+            android:id="@+id/bsdfRowMappingResults"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfRowMappingResults"
+            android:label="BsdfRowMappingResults"
+            tools:layout="@layout/bsdf_row_mapping_results"/>
 
 </navigation>

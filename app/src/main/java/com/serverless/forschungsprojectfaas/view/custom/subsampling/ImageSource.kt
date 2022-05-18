@@ -119,12 +119,22 @@ class ImageSource {
         return this
     }
 
+    fun createBitmap(): Bitmap = Bitmap.createBitmap(
+        bitmap!!,
+        sRegion!!.left,
+        sRegion!!.top,
+        sRegion!!.width(),
+        sRegion!!.height()
+    )
+
     private fun setInvariants() {
         if (sRegion == null) return
         tile = true
         sWidth = sRegion!!.width()
         sHeight = sRegion!!.height()
     }
+
+
 
     companion object {
         const val FILE_SCHEME = "file:///"

@@ -158,13 +158,14 @@ dependencies {
     kapt("com.github.bumptech.glide:compiler:4.13.0")
 
 
-    implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
-
-
 
     //EIGENE LIBRARY
     implementation("com.github.LucaWeinmann:AndroidCoroutineFlowUtils:1.0.5")
 
+
+
+    //Image Scale Library
+    implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
 
     //Testing
     val jUnitVersion: String by project
@@ -175,5 +176,4 @@ dependencies {
 
     val espressoVersion: String by project
     androidTestImplementation("androidx.test.espresso:espresso-core:$espressoVersion")
-
 }

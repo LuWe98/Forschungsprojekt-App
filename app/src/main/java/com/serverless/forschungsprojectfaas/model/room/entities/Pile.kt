@@ -15,7 +15,10 @@ import java.util.*
 @Entity(
     tableName = Pile.TABLE_NAME,
     indices = [
-        Index(value = [Pile.TITLE_COLUMN], unique = true)
+        Index(
+            value = [Pile.TITLE_COLUMN],
+            unique = true
+        )
     ]
 )
 @Parcelize
@@ -33,7 +36,7 @@ data class Pile(
     val pileStatus: PileStatus = PileStatus.NOT_EVALUATED
 ) : RoomEntityMarker {
 
-    val timeStampAsDate get() = SimpleDateFormat.getDateInstance().format(Date(timestamp)).toString()
+    val timeStampAsDateString get() = SimpleDateFormat.getDateInstance().format(Date(timestamp)).toString()
 
     companion object {
         val DIFF_CALLBACK = generateDiffItemCallback(Pile::pileId)

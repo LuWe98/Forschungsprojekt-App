@@ -12,7 +12,10 @@ import kotlin.random.Random
 @Entity(
     tableName = Batch.TABLE_NAME,
     indices = [
-        Index(value = [Batch.CAPTION_COLUMN], unique = true)
+        Index(
+            value = [Batch.CAPTION_COLUMN],
+            unique = true
+        )
     ]
 )
 data class Batch(

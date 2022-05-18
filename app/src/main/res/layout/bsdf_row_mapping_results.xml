@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_round_corners_top_15dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/topLayout"
+            android:elevation="2dp"
+            android:background="@drawable/background_round_corners_top_15dp">
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/btn_back"
+                app:srcCompat="@drawable/ic_close"
+                android:layout_margin="@dimen/grid_6"
+                android:padding="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                app:layout_constraintTop_toTopOf="@+id/btn_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/tvTitle"
+                android:text="Row Mapping"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_back" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="70dp"
+                android:id="@+id/tableHeader"
+                android:background="@color/white"
+                android:paddingHorizontal="@dimen/grid_4"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    app:layout_constraintWidth_percent="0.2"
+                    android:id="@+id/tvRow"
+                    android:text="Zeile"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    app:layout_constraintWidth_percent="0.2"
+                    android:text="Kürzel"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:id="@+id/tvCaption"
+                    app:layout_constraintStart_toEndOf="@id/tvRow"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    app:layout_constraintWidth_percent="0.2"
+                    android:text="Anzahl"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:id="@+id/tvAmount"
+                    app:layout_constraintStart_toEndOf="@id/tvCaption"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    app:layout_constraintWidth_percent="0.2"
+                    android:text="Von"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:id="@+id/tvFrom"
+                    app:layout_constraintStart_toEndOf="@id/tvAmount"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    app:layout_constraintWidth_percent="0.2"
+                    android:text="Bis"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:id="@+id/tvTo"
+                    app:layout_constraintStart_toEndOf="@id/tvFrom"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingHorizontal="@dimen/grid_4"
+            android:background="@color/white"
+            android:paddingBottom="@dimen/grid_16"
+            android:paddingTop="@dimen/grid_2"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toBottomOf="@id/topLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:listitem="@layout/rvi_table_entry"
+            android:id="@+id/rv"
+            tools:layout_editor_absoluteX="0dp"
+            app:layout_constraintVertical_bias="0.0" />
+</androidx.constraintlayout.widget.ConstraintLayout>

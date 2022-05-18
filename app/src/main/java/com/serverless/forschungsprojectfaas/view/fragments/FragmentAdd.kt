@@ -2,7 +2,6 @@ package com.serverless.forschungsprojectfaas.view.fragments
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -13,9 +12,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="60dp"
                 android:id="@+id/topBar"
                 app:layout_constraintTop_toTopOf="parent">
+
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
@@ -39,6 +39,42 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    app:layout_constraintEnd_toStartOf="@id/btnClearSelection"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:srcCompat="@drawable/ic_grid_empty"
+                        app:tint="@color/image_view_icon_color_selector"
+                        android:padding="10dp"
+                        android:layout_marginStart="@dimen/grid_1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tvSelectedNumber"
+                        android:id="@+id/ivSelectedBarsIcon" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvSelectedNumber"
+                        tools:text="0000"
+                        android:gravity="center"
+                        android:minWidth="30dp"
+                        android:paddingEnd="@dimen/grid_2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
@@ -46,7 +82,8 @@
                     app:tint="@color/image_view_icon_color_selector"
                     android:id="@+id/btnClearSelection"
                     android:padding="7.5dp"
-                    android:background="?actionBarItemBackground"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/white"
                     android:layout_marginEnd="@dimen/grid_2"
                     app:layout_constraintEnd_toStartOf="@id/btnSwap"
                     app:layout_constraintTop_toTopOf="@+id/btn_back"
@@ -55,11 +92,12 @@
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    app:srcCompat="@drawable/ic_change_circle"
+                    app:srcCompat="@drawable/ic_sync"
                     app:tint="@color/image_view_icon_color_selector"
                     android:id="@+id/btnSwap"
                     android:padding="7.5dp"
-                    android:background="?actionBarItemBackground"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/white"
                     android:layout_marginEnd="@dimen/grid_2"
                     app:layout_constraintEnd_toStartOf="@id/btnConnect"
                     app:layout_constraintTop_toTopOf="@+id/btn_back"
@@ -72,7 +110,8 @@
                     app:tint="@color/image_view_icon_color_selector"
                     android:id="@+id/btnConnect"
                     android:padding="7.5dp"
-                    android:background="?actionBarItemBackground"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/white"
                     android:layout_marginEnd="@dimen/grid_2"
                     app:layout_constraintEnd_toStartOf="@id/btnDelete"
                     app:layout_constraintTop_toTopOf="@+id/btn_back"
@@ -85,7 +124,8 @@
                     app:tint="@color/image_view_icon_color_selector"
                     android:id="@+id/btnDelete"
                     android:padding="7.5dp"
-                    android:background="?actionBarItemBackground"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="@color/white"
                     android:layout_marginEnd="@dimen/grid_4"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/btn_back"
@@ -230,13 +270,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-
-
-
-
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -258,6 +291,7 @@
                     android:layout_height="35dp"
                     android:id="@+id/btnExpandSheet"
                     android:padding="5dp"
+                    android:background="?attr/actionBarItemBackground"
                     app:srcCompat="@drawable/ic_arrow_up"
                     android:tint="@color/white"
                     app:layout_constraintTop_toTopOf="parent"
@@ -291,61 +325,74 @@
                     app:layout_constraintStart_toEndOf="@+id/tvSticks"
                     app:layout_constraintTop_toTopOf="@+id/tvSticks"
                     app:layout_constraintBottom_toBottomOf="@+id/tvSticks" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="55dp"
-                android:id="@+id/searchBar"
-                android:background="@drawable/background_round_corners_15dp"
-                android:elevation="2.5dp"
-                android:layout_marginHorizontal="@dimen/grid_6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sheetHeader">
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:id="@+id/btnSearch"
+                    android:id="@+id/btnShowRowMappingScreen"
+                    android:padding="8.5dp"
+                    app:srcCompat="@drawable/ic_table_rows"
+                    android:background="?attr/actionBarItemBackground"
+                    android:tint="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:srcCompat="@drawable/ic_search"
-                    android:padding="7.5dp"
-                    android:layout_marginStart="@dimen/grid_3" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/etSearchQuery"
-                    android:hint="Search batch..."
-                    android:background="@android:color/transparent"
-                    android:layout_marginHorizontal="@dimen/grid_1"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:textSize="16sp"
-                    app:layout_constraintTop_toTopOf="@+id/btnSearch"
-                    app:layout_constraintBottom_toBottomOf="@+id/btnSearch"
-                    app:layout_constraintStart_toEndOf="@+id/btnSearch"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
+                    android:layout_marginEnd="@dimen/grid_4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:id="@+id/rv"
-                app:layout_constraintTop_toBottomOf="@id/searchBar"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:paddingHorizontal="@dimen/grid_6"
-                android:clipToPadding="false"
-                android:paddingBottom="@dimen/grid_10"
-                android:paddingTop="@dimen/grid_6"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="3"
-                tools:listitem="@layout/rvi_batch" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:id="@+id/searchBar"
+                        android:background="@drawable/background_round_corners_15dp"
+                        android:elevation="2.5dp"
+                        android:layout_marginHorizontal="@dimen/grid_6"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/sheetHeader">
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:id="@+id/btnSearch"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:srcCompat="@drawable/ic_search"
+                            android:padding="7.5dp"
+                            android:layout_marginStart="@dimen/grid_3" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/etSearchQuery"
+                            android:hint="Search batch..."
+                            android:background="@android:color/transparent"
+                            android:layout_marginHorizontal="@dimen/grid_1"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:ellipsize="end"
+                            android:textSize="16sp"
+                            app:layout_constraintTop_toTopOf="@+id/btnSearch"
+                            app:layout_constraintBottom_toBottomOf="@+id/btnSearch"
+                            app:layout_constraintStart_toEndOf="@+id/btnSearch"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:id="@+id/rv"
+                        app:layout_constraintTop_toBottomOf="@id/searchBar"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:paddingHorizontal="@dimen/grid_6"
+                        android:clipToPadding="false"
+                        android:paddingBottom="@dimen/grid_10"
+                        android:paddingTop="@dimen/grid_6"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="3"
+                        tools:itemCount="20"
+                        tools:listitem="@layout/rvi_batch" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,8 +1,10 @@
 package com.serverless.forschungsprojectfaas.view.fragments
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -19,6 +21,7 @@ import com.serverless.forschungsprojectfaas.viewmodel.VmDetail
 import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 
+//TODO -> Liste reverten, auf der hauptseite sollen nur die Bars agenezigt werden. -> Die Liste wird in einem separaten Fenster angezeigt mit button press
 @RequiresApi(Build.VERSION_CODES.N)
 @AndroidEntryPoint
 class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
@@ -29,6 +32,9 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
         private const val MAX_BOX_WIDTH = 150
         private const val SPAN_COUNT = 3
         private const val MAX_ARROW_ROTATION = 180
+
+        private const val MIN_VALUE = 50
+        private const val WHITE_COLOR_FULL = 255 - MIN_VALUE
     }
 
     private val vm: VmDetail by hiltNavDestinationViewModels(R.id.fragmentDetail)
@@ -60,7 +66,7 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
         }
 
         rva = RvaPileBatches().apply {
-
+            onItemLongClicked = vm::onBatchLongClicked
         }
 
         binding.rv.apply {
@@ -89,6 +95,7 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
             btnClearSelection.onClick(vm::onClearSelectionClicked)
             btnSwap.onClick(vm::onSwapBatchOfSelectedBarsClicked)
             btnDelete.onClick(vm::onDeleteSelectedBarsClicked)
+            btnShowRowMappingScreen.onClick(vm::onShowRowMappingDialogClicked)
 
             progressOpacity.onProgressChanged { progress, _ ->
                 vm.onOpacityProgressChanged(progress)
@@ -111,12 +118,22 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
 
             etSearchQuery.onTextChanged(vm::onBatchSearchQueryChanged)
 
-            behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) = Unit
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    binding.btnExpandSheet.rotation = slideOffset * MAX_ARROW_ROTATION
-                }
-            })
+            behavior.addBottomSheetCallback(bottomSheetBehaviour)
+        }
+    }
+
+    private val bottomSheetBehaviour = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) = Unit
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            binding.btnExpandSheet.rotation = slideOffset * MAX_ARROW_ROTATION
+//                    val color = (WHITE_COLOR_FULL * slideOffset).toInt() + MIN_VALUE
+//                    requireActivity().window.apply {
+//                        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//                        statusBarColor = color
+//                    }
+//                    binding.sheetHeader.setBackgroundColor(Color.rgb(color, color, color))
+
+            //binding.sheetBackgroundDim.alpha = (1 - slideOffset).pow(10)
         }
     }
 
@@ -131,26 +148,19 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
     private fun initObservers() {
         setFragmentResultEventListener(vm::onBatchSelectionResultReceived)
 
-        vm.pileTitleFlow.collectWhenStarted(viewLifecycleOwner) { title ->
-            binding.pageTitle.text = title
-        }
-
         vm.imageBitmapStateFlow.collectWhenStarted(viewLifecycleOwner) { bitmap ->
-            binding.progress.isVisible = false
             bitmap?.let {
-                binding.iv.apply {
-                    setImage(ImageSource.bitmap(it.copy(it.config, false)), state)
+                binding.iv.setImage(ImageSource.bitmap(it.copy(it.config, false)), binding.iv.state).apply {
+                    binding.progress.isVisible = false
                 }
             }
         }
 
-        vm.barBatchWithBarsStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.iv.setBoxes(it)
-        }
+        vm.pileTitleFlow.collectWhenStarted(viewLifecycleOwner, collector = binding.pageTitle::setText)
 
-        vm.filteredBatchWithBarsFlow.collectWhenStarted(viewLifecycleOwner) {
-            rva.submitList(it)
-        }
+        vm.barBatchWithBarsStateFlow.collectWhenStarted(viewLifecycleOwner, collector = binding.iv::setBoxes)
+
+        vm.filteredBatchWithBarsFlow.collectWhenStarted(viewLifecycleOwner,250,  rva::submitList)
 
         vm.allBarsFlow.collectWhenStarted(viewLifecycleOwner) { bars ->
             binding.tvSticksAmount.text = if (bars.isEmpty()) "-" else bars.size.toString()
@@ -158,10 +168,18 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
 
         vm.selectedBarIdsStateFlow.collectWhenStarted(viewLifecycleOwner) { selectedIds ->
             binding.apply {
-                btnClearSelection.isEnabled = selectedIds.isNotEmpty()
-                btnSwap.isEnabled = selectedIds.isNotEmpty()
-                btnDelete.isEnabled = selectedIds.isNotEmpty()
-                btnConnect.isEnabled = selectedIds.size == 2
+                tvSelectedNumber.text = selectedIds.size.toString()
+                ivSelectedBarsIcon.setImageDrawable(if (selectedIds.isEmpty()) R.drawable.ic_grid_empty else R.drawable.ic_grid_filled)
+
+                selectedIds.isNotEmpty().let { isNotEmpty ->
+                    tvSelectedNumber.isEnabled = isNotEmpty
+                    ivSelectedBarsIcon.isEnabled = isNotEmpty
+                    btnClearSelection.isEnabled = isNotEmpty
+                    btnSwap.isEnabled = isNotEmpty
+                    btnDelete.isEnabled = isNotEmpty
+                }
+
+                btnConnect.isEnabled = vm.areBarsInSameRow(selectedIds)
                 iv.invalidate()
             }
         }
@@ -174,12 +192,17 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
                 tvHeightTitle.isVisible = bars.size == 1
             }
 
-            if(bars.size == 1){
+            if (bars.size == 1) {
                 binding.apply {
                     progressWidth.progress = bars.first().rect.width().toInt()
                     progressHeight.progress = bars.first().rect.height().toInt()
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        behavior.removeBottomSheetCallback(bottomSheetBehaviour)
+        super.onDestroyView()
     }
 }

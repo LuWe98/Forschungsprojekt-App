@@ -1,9 +1,11 @@
 package com.serverless.forschungsprojectfaas.view.recyclerview
 
+import androidx.core.view.isVisible
 import com.serverless.forschungsprojectfaas.databinding.RviPileBinding
 import com.serverless.forschungsprojectfaas.extensions.onClick
 import com.serverless.forschungsprojectfaas.extensions.onLongClick
 import com.serverless.forschungsprojectfaas.extensions.setImageDrawable
+import com.serverless.forschungsprojectfaas.model.PileStatus.*
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBarCount
 import com.serverless.forschungsprojectfaas.view.recyclerview.generic.BindingListAdapter
@@ -16,19 +18,52 @@ class RvaHome : BindingListAdapter<PileWithBarCount, RviPileBinding>(PileWithBar
 
     var onMoreOptionsClicked: ((Pile) -> (Unit))? = null
 
+    var onStatusButtonClicked: ((Pile) -> (Unit))? = null
+
     override fun initListeners(binding: RviPileBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
-            root.onClick { onItemClicked?.invoke(getItem(vh).pile) }
+            root.onClick {
+                onItemClicked?.invoke( getItem(vh).pile)
+
+//                getItem(vh).pile.let { pile ->
+//                    if(pile.pileStatus == UPLOADED || pile.pileStatus == LOCALLY_CHANGED) {
+//                        onItemClicked?.invoke(pile)
+//                    }
+//                }
+            }
+            root.onLongClick {
+                onItemLongClicked?.invoke( getItem(vh).pile)
+
+//                getItem(vh).pile.let { pile ->
+//                    if(pile.pileStatus == UPLOADED || pile.pileStatus == LOCALLY_CHANGED) {
+//                        onItemLongClicked?.invoke(pile)
+//                    }
+//                }
+            }
             btnMoreOptions.onClick { onMoreOptionsClicked?.invoke(getItem(vh).pile) }
-            root.onLongClick { onItemLongClicked?.invoke(getItem(vh).pile) }
+            btnStatus.onClick { onStatusButtonClicked?.invoke(getItem(vh).pile) }
         }
     }
 
     override fun bindViews(binding: RviPileBinding, item: PileWithBarCount, position: Int) {
         binding.apply {
             tvTitle.text = item.pile.title
-            tvDateAndQuestionAmount.text = item.pile.timeStampAsDate
-            tvMark.text = item.count.toString()
+            tvDateAndQuestionAmount.text = item.pile.timeStampAsDateString
+
+            if(item.pile.pileStatus == EVALUATING){
+                tvMark.text = ""
+                btnStatus.isEnabled = false
+                root.isEnabled = false
+                btnMoreOptions.isEnabled = false
+                progress.isVisible = true
+            } else {
+                tvMark.text = if(item.count == 0) "-" else item.count.toString()
+                btnStatus.isEnabled = true
+                btnMoreOptions.isEnabled = true
+                progress.isVisible = false
+                root.isEnabled = true
+            }
+
             btnStatus.setImageDrawable(item.pile.pileStatus.iconRes)
         }
     }
