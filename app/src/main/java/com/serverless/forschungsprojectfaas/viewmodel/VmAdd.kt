@@ -199,7 +199,7 @@ class VmAdd @Inject constructor(
 
     private suspend fun insertBatchesAndBarsFromResponse(pile: Pile) = withContext(IO) {
         // Das ist die emulierte Response! -> Das wird von der Function zurückgeliefert
-        val response =generateFunctionResponse()
+        val response = generateFunctionResponse()
 
         val groupedByCaption = response.processedBoxes.groupBy(ProcessedBox::caption)
         val localBatches = localRepository.findBatchesWithCaptions(groupedByCaption.keys)
@@ -210,7 +210,7 @@ class VmAdd @Inject constructor(
         groupedByCaption.forEach { (caption, boxes) ->
             // Es wird gecheckt, ob schon ein Batch mit der Caption in der Datenbank vorhanden ist
             // Plausibilitätsprüfungen hier durchführen -> Oder auch schon vor dem Group by !
-            val batchId: String? = if(caption.length != 2) {
+            val batchId: String? = if (caption.length != 2) {
                 null
             } else {
                 localBatches.firstOrNull { it.caption == caption } ?: Batch(caption = caption).also(batchesToInsert::add)
@@ -226,11 +226,9 @@ class VmAdd @Inject constructor(
         }
 
         //Inserted die Daten in einer Transaktion -> Nur alle Insert Operationen gelingen oder keine.
-        val newBars = runValidityChecks(barsToInsert)
-
         localRepository.insertBatchesAndBars(
-            batchesToInsert,
-            barsToInsert
+            batches = batchesToInsert,
+            bars = runValidityChecks(barsToInsert, batchesToInsert)
         )
     }
 
@@ -239,10 +237,44 @@ class VmAdd @Inject constructor(
     // explanation:
     // -> Captions With Single Letter
     // -> Captions wich are lonely unterwegs -> Find the ones that are lonely and find most ones in a row
-    private fun runValidityChecks(bars: List<Bar>) : List<Bar> {
+    private fun runValidityChecks(bars: List<Bar>, batches: List<Batch>): List<Bar> {
         //response.findEnclosedEmptySpaces()
-        return bars
+        val averageBarDimensions = bars.averageBarDimensions
+        val adjustedBarWidths = bars.map {
+            if (it.rect.width() > averageBarDimensions.width * 1.05) {
+                val nearestLeftBar = bars.findClosestLeftBar(it)
+                val nearestRightBar = bars.findClosestRightBar(it)
+                val distanceToLeftBar = it.rect.left - (nearestLeftBar?.rect?.right ?: it.rect.left)
+                val distanceToRightBar = it.rect.right - (nearestRightBar?.rect?.left ?: it.rect.right)
+
+                val sizeDiff = it.rect.width() - averageBarDimensions.width
+                if (distanceToLeftBar < distanceToRightBar) {
+                    it.copy(rect = it.rect.setLeft(it.rect.left + sizeDiff))
+                } else {
+                    it.copy(rect = it.rect.setRight(it.rect.right - sizeDiff))
+                }
+            } else it
+        }
+
+        val adjustedBarHeight = adjustedBarWidths.map {
+            if (it.rect.height() < averageBarDimensions.height * 0.95) {
+                val nearestTopBar = bars.findClosestTopBar(it)
+                val nearestBottomBar = bars.findClosestBottomBar(it)
+                val distanceToTopBar = it.rect.top - (nearestTopBar?.rect?.bottom ?: it.rect.top)
+                val distanceToBottomBar = it.rect.bottom - (nearestBottomBar?.rect?.top ?: it.rect.bottom)
+
+                val sizeDiff = it.rect.height() - averageBarDimensions.height
+                if (distanceToTopBar > distanceToBottomBar) {
+                    it.copy(rect = it.rect.setTop(it.rect.top + sizeDiff))
+                } else {
+                    it.copy(rect = it.rect.setBottom(it.rect.bottom - sizeDiff))
+                }
+            } else it
+        }
+
+        return adjustedBarHeight
     }
+
 
     //Die Methode ist nur dafür da, um eine beispielhafte Response eines Function Aufrufes zu simulieren
     private fun generateFunctionResponse(): ProcessedPilesResponse {

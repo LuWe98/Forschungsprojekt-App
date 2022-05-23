@@ -3,8 +3,6 @@ package com.serverless.forschungsprojectfaas.viewmodel
 import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.graphics.RectF
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,8 +10,7 @@ import com.serverless.forschungsprojectfaas.OwnApplication
 import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher.FragmentResult
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
-import com.serverless.forschungsprojectfaas.extensions.div
-import com.serverless.forschungsprojectfaas.extensions.log
+import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
@@ -24,7 +21,6 @@ import com.serverless.forschungsprojectfaas.view.custom.BarBatchDisplay
 import com.serverless.forschungsprojectfaas.view.fragments.FragmentDetailArgs
 import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -73,7 +69,7 @@ class VmDetail @Inject constructor(
         .distinctUntilChanged()
 
     val evaluatedBarResultsStateFlow = nonNullPileFlow
-        .map(PileWithBatches::getBarRowWithBatch)
+        .map(PileWithBatches::evaluatedPileResult::get)
         .flowOn(IO)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
@@ -151,11 +147,12 @@ class VmDetail @Inject constructor(
 
     private fun addNewBarToPile(point: PointF) = launch {
         pileStateFlow.value?.let { pile ->
+            val averageBarDimensions = pile.bars.averageBarDimensions
             val rectToInsert = RectF(
-                max(point.x - pile.averageBoxSize.width / 2, 0f),
-                max(point.y - pile.averageBoxSize.height / 2, 0f),
-                point.x + pile.averageBoxSize.width / 2,
-                point.y + pile.averageBoxSize.height / 2
+                max(point.x - averageBarDimensions.width / 2, 0f),
+                max(point.y - averageBarDimensions.height / 2, 0f),
+                point.x + averageBarDimensions.width / 2,
+                point.y + averageBarDimensions.height / 2
             )
             val barToInsert = Bar(
                 pileId = pile.pile.pileId,
@@ -180,7 +177,7 @@ class VmDetail @Inject constructor(
         if (selectedBarIds.size != 2) return@launch
 
         selectedBars.let { bars ->
-            val barsBetween = pileStateFlow.value?.findBarsBetween(bars[0], bars[1]) ?: emptyList()
+            val barsBetween = pileStateFlow.value?.bars?.findBarsBetween(bars[0], bars[1]) ?: emptyList()
             selectedBarIdsMutableStateFlow.value = selectedBarIds.toMutableSet().apply {
                 addAll(barsBetween.map(Bar::barId))
             }
@@ -277,6 +274,6 @@ class VmDetail @Inject constructor(
     fun areBarsInSameRow(selectedIds: Set<String>) : Boolean {
         if(selectedIds.size != 2) return false
         val ids = selectedIds.toList()
-        return pileStateFlow.value?.areBarsInSameRow(ids[0], ids[1]) ?: false
+        return pileStateFlow.value?.bars?.areBarsInSameRow(ids[0], ids[1]) ?: false
     }
 }
