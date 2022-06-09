@@ -24,8 +24,16 @@
     <string name="addBatch">Add Batch</string>
     <string name="editBatch">Edit Batch</string>
     <string name="caption">Caption</string>
+    <string name="exportToCsv">Export to CSV</string>
+    <string name="fileName">Filename</string>
+    <string name="includeHeaderInformation">Include header</string>
 
+    <string name="batchSaveError">Save error</string>
     <string name="errorCaptionAlreadyUsed">Caption already used</string>
     <string name="errorCaptionCannotBeEmpty">Caption is empty</string>
+
+    <string name="errorCsvFileAlreadyPresentTitle">Duplicate filename</string>
+    <string name="errorCsvFileAlreadyPresentText">There is already a file with the given name</string>
+
     <string name="updateBatchData">Update batch data?</string>
 </resources>

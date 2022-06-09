@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="?colorOnPrimary"
+        app:cardCornerRadius="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:id="@+id/ivErrorIcon"
+                android:src="@drawable/ic_error"
+                android:tint="@color/ndw_blue"
+                android:layout_marginStart="@dimen/grid_4"
+                app:layout_constraintTop_toTopOf="@id/tvTitle"
+                app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:id="@+id/tvTitle"
+                tools:text="Error Title"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/grid_4"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_6"
+                app:layout_constraintStart_toEndOf="@+id/ivErrorIcon" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvText"
+                tools:text="Error Text"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                app:layout_constraintStart_toStartOf="@+id/tvTitle"
+                app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+                android:layout_marginTop="@dimen/grid_2"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:text="@string/confirm"
+                android:id="@+id/btnConfirm"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="?colorPrimary"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/grid_4"
+                android:layout_marginBottom="@dimen/grid_4"
+                android:layout_marginEnd="@dimen/grid_4"
+                app:layout_constraintTop_toBottomOf="@id/tvText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

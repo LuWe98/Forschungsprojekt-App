@@ -43,7 +43,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         setOnLongClickListener(this)
     }
 
-    private val targetRect = Rect()
+    private val targetRect = RectF()
     private val transformationSource = PointF()
     private val transformationTarget = PointF()
     private val lastClickCoordinates = PointF()
@@ -92,7 +92,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         textPaint.textSize = scale * BASE_TEXT_SIZE
         val textPadding = scale * BASE_TEXT_PADDING
 
-        visibleFileRect(targetRect)
+        visibleFileRectF(targetRect)
 
         bars.filter {
             targetRect.containsPartial(it.rect)
@@ -195,7 +195,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         return true
     }
 
-    private fun sourceToRectCoordinates(source: RectF, target: Rect = targetRect) {
+    private fun sourceToRectCoordinates(source: RectF, target: RectF = targetRect) {
         transformationSource.set(source.left, source.top)
         sourceToViewCoord(transformationSource, transformationTarget)
         val top = transformationTarget.y
@@ -204,6 +204,6 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         sourceToViewCoord(transformationSource, transformationTarget)
         val right = transformationTarget.x
         val bottom = transformationTarget.y
-        target.set(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
+        target.set(left, top, right, bottom)
     }
 }

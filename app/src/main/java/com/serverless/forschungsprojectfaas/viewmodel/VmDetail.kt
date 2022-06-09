@@ -6,7 +6,6 @@ import android.graphics.RectF
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.serverless.forschungsprojectfaas.OwnApplication
 import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher.FragmentResult
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
@@ -28,7 +27,6 @@ import kotlin.math.max
 
 @HiltViewModel
 class VmDetail @Inject constructor(
-    private val app: OwnApplication,
     private val navDispatcher: NavigationEventDispatcher,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle,
@@ -68,10 +66,10 @@ class VmDetail @Inject constructor(
         .flowOn(IO)
         .distinctUntilChanged()
 
-    val evaluatedBarResultsStateFlow = nonNullPileFlow
-        .map(PileWithBatches::evaluatedPileResult::get)
+    val evaluatedRowEntriesStateFlow = nonNullPileFlow
+        .map(PileWithBatches::rowEvaluationEntries::get)
         .flowOn(IO)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
     private val selectedBarIdsMutableStateFlow: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
@@ -118,6 +116,8 @@ class VmDetail @Inject constructor(
     fun onImageClicked(bar: Bar?, point: PointF) {
         bar?.let {
             log("ON BAR CLICKED $bar")
+            //selectedBarIdsMutableStateFlow.value = pileStateFlow.value!!.bars.findBarsNextTo(bar, 2).map { it.barId }.toSet()
+
             selectedBarIdsMutableStateFlow.value = selectedBarIds.toMutableSet().apply {
                 if (isBarSelected(bar)) {
                     remove(bar.barId)
@@ -275,5 +275,18 @@ class VmDetail @Inject constructor(
         if(selectedIds.size != 2) return false
         val ids = selectedIds.toList()
         return pileStateFlow.value?.bars?.areBarsInSameRow(ids[0], ids[1]) ?: false
+    }
+
+
+    fun onPileEvaluationDialogBackPressed(){
+        launch {
+            navDispatcher.dispatch(NavigationEvent.NavigateBack)
+        }
+    }
+
+    fun onPileEvaluationExportButtonClicked(){
+        launch {
+            navDispatcher.dispatch(NavigationEvent.NavigateToExportPileEvaluationResult(pileStateFlow.value?.asPileEvaluation))
+        }
     }
 }

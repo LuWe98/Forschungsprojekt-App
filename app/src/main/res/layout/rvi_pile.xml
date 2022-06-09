@@ -30,7 +30,7 @@
                     android:textSize="15sp"
                     android:textColor="?colorOnPrimary"
                     android:background="@drawable/background_round_corners_18_5dp"
-                    android:backgroundTint="@color/niceBlack"
+                    android:backgroundTint="@color/ndw_blue"
                     android:textStyle="bold"
                     android:fontFamily="@font/mallanna_regular"
                     android:layout_marginStart="@dimen/grid_5"

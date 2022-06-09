@@ -3,8 +3,8 @@ package com.serverless.forschungsprojectfaas.model.room.junctions
 import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.serverless.forschungsprojectfaas.extensions.asEvaluatedPileResult
-import com.serverless.forschungsprojectfaas.model.EvaluatedPileResult
+import com.serverless.forschungsprojectfaas.extensions.asEvaluatedRowEntries
+import com.serverless.forschungsprojectfaas.model.PileEvaluation
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import kotlinx.parcelize.Parcelize
@@ -37,6 +37,8 @@ data class PileWithBatches(
             }
         }
 
-    val evaluatedPileResult get(): List<EvaluatedPileResult> = bars.asEvaluatedPileResult(batches)
+    val rowEvaluationEntries get() = bars.asEvaluatedRowEntries(batches)
+
+    val asPileEvaluation get(): PileEvaluation = PileEvaluation(pile, rowEvaluationEntries)
 
 }

@@ -102,7 +102,7 @@
                 android:layout_margin="@dimen/grid_8"
                 android:src="@drawable/ic_add"
                 app:tint="@color/white"
-                android:backgroundTint="@color/hfuDarkerGreen"/>
+                android:backgroundTint="?colorPrimary"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

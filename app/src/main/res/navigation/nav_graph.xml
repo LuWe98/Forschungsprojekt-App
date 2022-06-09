@@ -105,6 +105,31 @@
             android:id="@+id/bsdfRowMappingResults"
             android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfRowMappingResults"
             android:label="BsdfRowMappingResults"
-            tools:layout="@layout/bsdf_row_mapping_results"/>
+            tools:layout="@layout/bsdf_pile_evaluation" />
+    <dialog
+            android:id="@+id/dfExportBarEvaluationResults"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfExportPileEvaluationResults"
+            android:label="DfExportBarEvaluationResults"
+            tools:layout="@layout/df_export_csv_file">
+        <argument
+                android:name="pileEvaluation"
+                app:nullable="true"
+                app:argType="com.serverless.forschungsprojectfaas.model.PileEvaluation" />
+    </dialog>
+    <action
+            android:id="@+id/action_global_dfExportBarEvaluationResults"
+            app:destination="@id/dfExportBarEvaluationResults" />
+    <dialog
+            android:id="@+id/dfAlert"
+            android:name="com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAlert"
+            android:label="DfAlert"
+            tools:layout="@layout/df_alert">
+        <argument
+                android:name="alertMessage"
+                app:argType="com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAlert$AlertMessage" />
+    </dialog>
+    <action
+            android:id="@+id/action_global_dfAlert"
+            app:destination="@id/dfAlert" />
 
 </navigation>

@@ -11,6 +11,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAddEditBatchArgs
+import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAlert
 import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -40,9 +41,13 @@ class VmAddEditBatch @Inject constructor(
     val dialogTitleRes get() = if (isAddMode) R.string.addBatch else R.string.editBatch
 
 
-    private var _caption: String = parsedBatch?.caption ?: ""
+    private var _firstBatchLetter: String = parsedBatch?.caption?.substring(0, 1) ?: ""
 
-    val caption get() = _caption
+    val firstBatchLetter get() = _firstBatchLetter
+
+    private var _secondBatchLetter: String = parsedBatch?.caption?.substring(1) ?: ""
+
+    val secondBatchLetter get() = _secondBatchLetter
 
     private val colorMutableStateFlow = MutableStateFlow(parsedBatch?.colorInt ?: Color.CYAN)
 
@@ -50,8 +55,12 @@ class VmAddEditBatch @Inject constructor(
 
     private val color get() = colorMutableStateFlow.value
 
-    fun onCaptionTextChanged(newCaption: String) {
-        _caption = newCaption
+    fun onFirstBatchLetterChanged(text: String) {
+        _firstBatchLetter = text
+    }
+
+    fun onSecondBatchLetterChanged(text: String) {
+        _secondBatchLetter = text
     }
 
     fun onCancelButtonClicked() {
@@ -78,17 +87,18 @@ class VmAddEditBatch @Inject constructor(
     }
 
     fun onConfirmButtonClicked() = launch {
-        if (caption.isBlank()) {
-            eventChannel.send(AddEditBatchEvent.ShowMessageSnackBar(R.string.errorCaptionCannotBeEmpty))
+        if (firstBatchLetter.isBlank() || secondBatchLetter.isBlank()) {
+            //eventChannel.send(AddEditBatchEvent.ShowMessageSnackBar(R.string.errorCaptionCannotBeEmpty))
+            navDispatcher.dispatch(NavigationEvent.NavigateToAlertDialog(DfAlert.AlertMessage.ADD_EDIT_BATCH_CAPTION_IS_EMPTY))
             return@launch
         }
-
+        val caption = firstBatchLetter + secondBatchLetter
         roomRepo.findBatchWithCaption(caption)?.let {
             if(it.batchId == parsedBatch?.batchId) {
                 return@let
             }
-
-            eventChannel.send(AddEditBatchEvent.ShowMessageSnackBar(R.string.errorCaptionAlreadyUsed))
+            //eventChannel.send(AddEditBatchEvent.ShowMessageSnackBar(R.string.errorCaptionAlreadyUsed))
+            navDispatcher.dispatch(NavigationEvent.NavigateToAlertDialog(DfAlert.AlertMessage.ADD_EDIT_BATCH_CAPTION_ALREADY_USED))
             return@launch
         }
 
@@ -99,6 +109,24 @@ class VmAddEditBatch @Inject constructor(
             roomRepo.update(batch)
         }
         navDispatcher.dispatch(NavigationEvent.NavigateBack)
+    }
+
+
+    fun convertToValidText(text: String, textBefore: String): String = when {
+        text.isEmpty() -> text
+        text.length > 1 -> when (textBefore.length) {
+            1 -> {
+                when (text.indexOf(textBefore)) {
+                    -1 -> text[0].toString()
+                    0 -> text[1].toString()
+                    else -> text[0].toString()
+                }
+            }
+            else -> text[0].toString()
+        }
+        !text.matches("^[a-zA-Z]".toRegex()) -> ""
+        text[0].isLowerCase() -> text.uppercase()
+        else -> text
     }
 
     sealed class AddEditBatchEvent {

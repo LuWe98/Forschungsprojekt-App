@@ -9,6 +9,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doBeforeTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -39,6 +40,13 @@ inline fun SeekBar.onProgressChanged(crossinline action: (Int, Boolean) -> Unit)
 inline fun EditText.onTextChanged(crossinline action: (String) -> (Unit)) {
     doOnTextChanged { text, _, _, _ -> action.invoke(text.toString()) }
 }
+
+inline fun EditText.onTextChanged(crossinline action: (String, String) -> (Unit)) {
+    var textBefore = ""
+    doBeforeTextChanged { text, _, _, _ -> textBefore = text?.toString() ?: "" }
+    doOnTextChanged { text, _, _, _ -> action.invoke(text.toString(), textBefore) }
+}
+
 
 fun RecyclerView.disableChangeAnimation() {
     (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false

@@ -14,7 +14,7 @@
 
     <!-- Light Splash Theme -->
     <style name="Theme.QuizApp.Splash.Dark" parent="Theme.Forschungsprojekt.Splash.Light">
-        <item name="windowSplashScreenBackground">@color/hfuDarkGreen</item>
+        <item name="windowSplashScreenBackground">@color/ndw_blue</item>
     </style>
 
 

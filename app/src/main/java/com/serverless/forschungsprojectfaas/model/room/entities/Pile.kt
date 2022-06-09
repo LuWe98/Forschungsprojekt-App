@@ -30,7 +30,7 @@ data class Pile(
     val title: String,
     @ColumnInfo(name = TIMESTAMP_COLUMN)
     val timestamp: Long = System.currentTimeMillis(),
-    @ColumnInfo(name = COMPRESSED_PICTURE_COLUMN)
+    @ColumnInfo(name = PICTURE_URI_COLUMN)
     val pictureUri: Uri,
     @ColumnInfo(name = EVALUATION_STATUS_COLUMN)
     val pileStatus: PileStatus = PileStatus.NOT_EVALUATED
@@ -46,7 +46,7 @@ data class Pile(
         const val ID_COLUMN = "pileId"
         const val TITLE_COLUMN = "title"
         const val TIMESTAMP_COLUMN = "timestamp"
-        const val COMPRESSED_PICTURE_COLUMN = "picture"
+        const val PICTURE_URI_COLUMN = "picture"
         const val EVALUATION_STATUS_COLUMN = "evaluationStatus"
     }
 

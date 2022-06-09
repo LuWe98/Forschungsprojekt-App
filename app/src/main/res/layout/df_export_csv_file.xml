@@ -16,7 +16,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:id="@+id/tvTitle"
-                tools:text="@string/addBatch"
+                android:text="@string/exportToCsv"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -27,73 +27,65 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginHorizontal="@dimen/grid_6" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/btnDelete"
-                app:srcCompat="@drawable/ic_delete"
-                app:layout_constraintTop_toTopOf="@+id/tvTitle"
+        <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:hint="@string/fileName"
+                android:textSize="16sp"
+                android:paddingHorizontal="@dimen/grid_5"
+                android:paddingVertical="@dimen/grid_2"
+                android:background="@drawable/background_round_corners_10dp"
+                android:backgroundTint="?android:colorBackground"
+                android:id="@+id/etFileName"
+                android:inputType="textMultiLine"
+                android:layout_marginTop="@dimen/grid_4"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                android:drawablePadding="@dimen/grid_5"
+                android:drawableStart="@drawable/ic_insert_file"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="@dimen/grid_6"
-                android:padding="5dp"
-                app:tint="@color/niceRed"
-                android:visibility="gone"
-                tools:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/tvTitle" />
+                app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:hint="-"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:background="@drawable/background_round_corners_10dp"
-                android:backgroundTint="?android:colorBackground"
-                android:id="@+id/etBatchFirst"
-                android:inputType="textMultiLine"
-                android:layout_marginStart="@dimen/grid_6"
-                android:maxLength="2"
-                android:lines="1"
-                android:maxLines="1"
-                app:layout_constraintStart_toEndOf="@+id/colorCircle"
-                app:layout_constraintBottom_toBottomOf="@+id/colorCircle"
-                app:layout_constraintTop_toTopOf="@+id/colorCircle" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:hint="-"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:background="@drawable/background_round_corners_10dp"
-                android:backgroundTint="?android:colorBackground"
-                android:id="@+id/etBatchSecond"
-                android:inputType="textMultiLine"
-                android:layout_marginStart="@dimen/grid_3"
-                android:maxLength="2"
-                android:lines="1"
-                android:maxLines="1"
-                app:layout_constraintStart_toEndOf="@+id/etBatchFirst"
-                app:layout_constraintBottom_toBottomOf="@+id/colorCircle"
-                app:layout_constraintTop_toTopOf="@+id/colorCircle" />
-
-        <com.google.android.material.card.MaterialCardView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:id="@+id/colorCircle"
-                app:strokeWidth="3dp"
-                app:strokeColor="@color/lightBackgroundColor"
-                app:cardBackgroundColor="@color/niceRed"
-                app:cardCornerRadius="50dp"
-                android:layout_marginStart="@dimen/grid_6"
-                android:layout_marginTop="@dimen/grid_6"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="55dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/etFileName"
+                android:layout_marginTop="@dimen/grid_3"
+                android:background="@drawable/ripple_background_round_corners_10dp"
+                android:backgroundTint="?android:colorBackground"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                android:id="@+id/includeHeadersLayout" >
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/includeHeadersCheckbox"
+                    android:clickable="false"
+                    android:focusable="false"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="@dimen/grid_4"
+                    android:checked="true"
+                    android:buttonTint="?colorPrimary"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toEndOf="@id/includeHeadersCheckbox"
+                    android:text="@string/includeHeaderInformation"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                app:layout_constraintTop_toBottomOf="@+id/colorCircle"
+                app:layout_constraintTop_toBottomOf="@+id/includeHeadersLayout"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginTop="@dimen/grid_6"
                 android:background="?android:colorBackground" />

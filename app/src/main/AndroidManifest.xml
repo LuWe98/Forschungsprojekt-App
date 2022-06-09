@@ -22,7 +22,7 @@
         <activity
                 android:name=".view.ActivityMain"
                 android:exported="true"
-                android:theme="@style/Theme.Forschungsprojekt"
+                android:theme="@style/Theme.Forschungsprojekt.Splash"
                 tools:ignore="LockedOrientationActivity"
                 android:screenOrientation="portrait">
             <intent-filter>

@@ -23,6 +23,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/btn_export"
+                app:srcCompat="@drawable/ic_insert_file"
+                android:layout_margin="@dimen/grid_6"
+                android:padding="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

@@ -85,6 +85,7 @@ class VmHome @Inject constructor(
         when(result.selectedItem) {
             PictureMoreOptions.DELETE -> onDeletePileEntrySelected(result.calledOnPile)
             PictureMoreOptions.OPEN -> onRvaItemClicked(result.calledOnPile)
+            PictureMoreOptions.EXPORT -> onExportToCsvClicked(result.calledOnPile)
         }
     }
 
@@ -107,4 +108,9 @@ class VmHome @Inject constructor(
         orderByMutableStateFlow.value = result.selectedItem
     }
 
+    private fun onExportToCsvClicked(pile: Pile) = launch {
+        localRepository.getPileWithBatches(pile.pileId).let {
+            navDispatcher.dispatch(NavigateToExportPileEvaluationResult(it.asPileEvaluation))
+        }
+    }
 }

@@ -7,7 +7,9 @@ import com.serverless.forschungsprojectfaas.dispatcher.base.DispatchEvent
 import com.serverless.forschungsprojectfaas.dispatcher.base.Dispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
 import com.serverless.forschungsprojectfaas.extensions.currentDestinationId
+import com.serverless.forschungsprojectfaas.extensions.log
 import com.serverless.forschungsprojectfaas.extensions.navController
+import com.serverless.forschungsprojectfaas.model.PileEvaluation
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.serverless.forschungsprojectfaas.model.room.junctions.PileWithBatches
@@ -17,6 +19,7 @@ import com.serverless.forschungsprojectfaas.view.fragments.FragmentDetailDirecti
 import com.serverless.forschungsprojectfaas.view.fragments.FragmentHomeDirections
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.BsdfBatchSelectionDirections
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAddEditBatchDirections
+import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAlert
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import javax.inject.Inject
 
@@ -81,6 +84,18 @@ class NavigationEventDispatcher @Inject constructor(
 
         class NavigateToSelectionDialog(selectionRequestType: SelectionRequestType<*>): NavigationEvent({
             navController.navigate(NavGraphDirections.actionGlobalBsdfSelection(selectionRequestType))
+        })
+
+        class NavigateToExportPileEvaluationResult(pileEvaluation: PileEvaluation? = null) : NavigationEvent({
+            if(navController.currentDestinationId != R.id.dfExportBarEvaluationResults) {
+                navController.navigate(NavGraphDirections.actionGlobalDfExportBarEvaluationResults(pileEvaluation))
+            }
+        })
+
+        class NavigateToAlertDialog(message: DfAlert.AlertMessage): NavigationEvent({
+            if(navController.currentDestinationId != R.id.dfAlert) {
+                navController.navigate(NavGraphDirections.actionGlobalDfAlert(message))
+            }
         })
     }
 }

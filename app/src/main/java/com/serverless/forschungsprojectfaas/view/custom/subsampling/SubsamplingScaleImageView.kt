@@ -76,7 +76,7 @@ open class SubsamplingScaleImageView : View {
     private var fullImageSampleSize = 0
 
     // Map of zoom level to tile grid
-    private var tileMap: MutableMap<Int, List<Tile>>? = null
+    private var tileMap: MutableMap<Int, List<ImageTile>>? = null
 
     // Overlay tile boundaries and other info
     private var debug = false
@@ -233,7 +233,7 @@ open class SubsamplingScaleImageView : View {
     private var quickScaleVStart: PointF? = null
 
     // Scale and center animation tracking
-    private var anim: Anim? = null
+    private var anim: ImageAnim? = null
 
     /**
      * Call to find whether the view is initialised, has dimensions, and will display an image on
@@ -994,10 +994,10 @@ open class SubsamplingScaleImageView : View {
             for ((key, value) in tileMap!!) {
                 if (key == sampleSize || hasMissingTiles) {
                     for (tile in value) {
-                        sourceToViewRect(tile.sRect!!, tile.vRect!!)
+                        sourceToViewRect(tile.sRect!!, tile.vRect)
                         if (!tile.loading && tile.bitmap != null) {
                             if (tileBgPaint != null) {
-                                canvas.drawRect(tile.vRect!!, tileBgPaint!!)
+                                canvas.drawRect(tile.vRect, tileBgPaint!!)
                             }
                             if (mMatrix == null) {
                                 mMatrix = Matrix()
@@ -1017,47 +1017,47 @@ open class SubsamplingScaleImageView : View {
                             when (requiredRotation) {
                                 ORIENTATION_0 -> setMatrixArray(
                                     dstArray,
-                                    tile.vRect!!.left.toFloat(),
-                                    tile.vRect!!.top.toFloat(),
-                                    tile.vRect!!.right.toFloat(),
-                                    tile.vRect!!.top.toFloat(),
-                                    tile.vRect!!.right.toFloat(),
-                                    tile.vRect!!.bottom.toFloat(),
-                                    tile.vRect!!.left.toFloat(),
-                                    tile.vRect!!.bottom.toFloat()
+                                    tile.vRect.left.toFloat(),
+                                    tile.vRect.top.toFloat(),
+                                    tile.vRect.right.toFloat(),
+                                    tile.vRect.top.toFloat(),
+                                    tile.vRect.right.toFloat(),
+                                    tile.vRect.bottom.toFloat(),
+                                    tile.vRect.left.toFloat(),
+                                    tile.vRect.bottom.toFloat()
                                 )
                                 ORIENTATION_90 -> setMatrixArray(
                                     dstArray,
-                                    tile.vRect!!.right.toFloat(),
-                                    tile.vRect!!.top.toFloat(),
-                                    tile.vRect!!.right.toFloat(),
-                                    tile.vRect!!.bottom.toFloat(),
-                                    tile.vRect!!.left.toFloat(),
-                                    tile.vRect!!.bottom.toFloat(),
-                                    tile.vRect!!.left.toFloat(),
-                                    tile.vRect!!.top.toFloat()
+                                    tile.vRect.right.toFloat(),
+                                    tile.vRect.top.toFloat(),
+                                    tile.vRect.right.toFloat(),
+                                    tile.vRect.bottom.toFloat(),
+                                    tile.vRect.left.toFloat(),
+                                    tile.vRect.bottom.toFloat(),
+                                    tile.vRect.left.toFloat(),
+                                    tile.vRect.top.toFloat()
                                 )
                                 ORIENTATION_180 -> setMatrixArray(
                                     dstArray,
-                                    tile.vRect!!.right.toFloat(),
-                                    tile.vRect!!.bottom.toFloat(),
-                                    tile.vRect!!.left.toFloat(),
-                                    tile.vRect!!.bottom.toFloat(),
-                                    tile.vRect!!.left.toFloat(),
-                                    tile.vRect!!.top.toFloat(),
-                                    tile.vRect!!.right.toFloat(),
-                                    tile.vRect!!.top.toFloat()
+                                    tile.vRect.right.toFloat(),
+                                    tile.vRect.bottom.toFloat(),
+                                    tile.vRect.left.toFloat(),
+                                    tile.vRect.bottom.toFloat(),
+                                    tile.vRect.left.toFloat(),
+                                    tile.vRect.top.toFloat(),
+                                    tile.vRect.right.toFloat(),
+                                    tile.vRect.top.toFloat()
                                 )
                                 ORIENTATION_270 -> setMatrixArray(
                                     dstArray,
-                                    tile.vRect!!.left.toFloat(),
-                                    tile.vRect!!.bottom.toFloat(),
-                                    tile.vRect!!.left.toFloat(),
-                                    tile.vRect!!.top.toFloat(),
-                                    tile.vRect!!.right.toFloat(),
-                                    tile.vRect!!.top.toFloat(),
-                                    tile.vRect!!.right.toFloat(),
-                                    tile.vRect!!.bottom.toFloat()
+                                    tile.vRect.left.toFloat(),
+                                    tile.vRect.bottom.toFloat(),
+                                    tile.vRect.left.toFloat(),
+                                    tile.vRect.top.toFloat(),
+                                    tile.vRect.right.toFloat(),
+                                    tile.vRect.top.toFloat(),
+                                    tile.vRect.right.toFloat(),
+                                    tile.vRect.bottom.toFloat()
                                 )
                             }
                             mMatrix!!.setPolyToPoly(srcArray, 0, dstArray, 0, 4)
@@ -1065,16 +1065,16 @@ open class SubsamplingScaleImageView : View {
                                 canvas.drawBitmap(it, mMatrix!!, bitmapPaint)
                             }
                             if (debug) {
-                                canvas.drawRect(tile.vRect!!, debugLinePaint!!)
+                                canvas.drawRect(tile.vRect, debugLinePaint!!)
                             }
                         } else if (tile.loading && debug) {
-                            canvas.drawText("LOADING", (tile.vRect!!.left + px(5)).toFloat(), (tile.vRect!!.top + px(35)).toFloat(), debugTextPaint!!)
+                            canvas.drawText("LOADING", (tile.vRect.left + px(5)).toFloat(), (tile.vRect.top + px(35)).toFloat(), debugTextPaint!!)
                         }
                         if (tile.visible && debug) {
                             canvas.drawText(
                                 "ISS " + tile.sampleSize + " RECT " + tile.sRect!!.top + "," + tile.sRect!!.left + "," + tile.sRect!!.bottom + "," + tile.sRect!!.right,
-                                (tile.vRect!!.left + px(5)).toFloat(),
-                                (tile.vRect!!.top + px(15)).toFloat(),
+                                (tile.vRect.left + px(5)).toFloat(),
+                                (tile.vRect.top + px(15)).toFloat(),
                                 debugTextPaint!!
                             )
                         }
@@ -1341,7 +1341,7 @@ open class SubsamplingScaleImageView : View {
     /**
      * Determine whether tile is visible.
      */
-    private fun tileVisible(tile: Tile): Boolean {
+    private fun tileVisible(tile: ImageTile): Boolean {
         val sVisLeft = viewToSourceX(0f)
         val sVisRight = viewToSourceX(width.toFloat())
         val sVisTop = viewToSourceY(0f)
@@ -1505,19 +1505,21 @@ open class SubsamplingScaleImageView : View {
                 sTileHeight = sHeight() / yTiles
                 subTileHeight = sTileHeight / sampleSize
             }
-            val tileGrid: MutableList<Tile> = ArrayList(xTiles * yTiles)
+            val tileGrid: MutableList<ImageTile> = ArrayList(xTiles * yTiles)
             for (x in 0 until xTiles) {
                 for (y in 0 until yTiles) {
-                    tileGrid.add(Tile(
-                        sampleSize = sampleSize,
-                        visible = sampleSize == fullImageSampleSize,
-                        sRect = Rect(
-                            x * sTileWidth,
-                            y * sTileHeight,
-                            if (x == xTiles - 1) sWidth() else (x + 1) * sTileWidth,
-                            if (y == yTiles - 1) sHeight() else (y + 1) * sTileHeight
+                    tileGrid.add(
+                        ImageTile(
+                            sampleSize = sampleSize,
+                            visible = sampleSize == fullImageSampleSize,
+                            sRect = Rect(
+                                x * sTileWidth,
+                                y * sTileHeight,
+                                if (x == xTiles - 1) sWidth() else (x + 1) * sTileWidth,
+                                if (y == yTiles - 1) sHeight() else (y + 1) * sTileHeight
+                            )
                         )
-                    ))
+                    )
                 }
             }
             tileMap?.set(sampleSize, tileGrid)
@@ -1559,7 +1561,7 @@ open class SubsamplingScaleImageView : View {
                     val dimensions = decoder!!.init(context, source!!)
                     var sWidth = dimensions.x
                     var sHeight = dimensions.y
-                    val exifOrientation = view.getExifOrientation(context, sourceUri)
+                    val exifOrientation = view.getImageOrientation(context, sourceUri)
                     if (view.sRegion != null) {
                         view.sRegion!!.left = 0.coerceAtLeast(view.sRegion!!.left)
                         view.sRegion!!.top = 0.coerceAtLeast(view.sRegion!!.top)
@@ -1634,12 +1636,12 @@ open class SubsamplingScaleImageView : View {
     private class TileLoadTask constructor(
         view: SubsamplingScaleImageView,
         decoder: ImageRegionDecoder?,
-        tile: Tile
+        tile: ImageTile
     ) : AsyncTask<Void?, Void?, Bitmap?>() {
 
         private val viewRef: WeakReference<SubsamplingScaleImageView> = WeakReference(view)
         private val decoderRef: WeakReference<ImageRegionDecoder?> = WeakReference(decoder)
-        private val tileRef: WeakReference<Tile> = WeakReference(tile)
+        private val tileRef: WeakReference<ImageTile> = WeakReference(tile)
         private var exception: Exception? = null
 
         init {
@@ -1751,7 +1753,7 @@ open class SubsamplingScaleImageView : View {
                 if (context != null && decoderFactory != null && view != null) {
                     view.debug("BitmapLoadTask.doInBackground")
                     bitmap = decoderFactory.make().decode(context, source!!)
-                    return view.getExifOrientation(context, sourceUri)
+                    return view.getImageOrientation(context, sourceUri)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to load bitmap", e)
@@ -1841,7 +1843,7 @@ open class SubsamplingScaleImageView : View {
      * This will only work for external files, not assets, resources or other URIs.
      */
     @AnyThread
-    private fun getExifOrientation(context: Context, sourceUri: String): ImageOrientation {
+    private fun getImageOrientation(context: Context, sourceUri: String): ImageOrientation {
         var exifOrientation = ORIENTATION_0
         if (sourceUri.startsWith(ContentResolver.SCHEME_CONTENT)) {
             var cursor: Cursor? = null
@@ -1876,46 +1878,6 @@ open class SubsamplingScaleImageView : View {
 
     private fun execute(asyncTask: AsyncTask<*, *, *>) {
         asyncTask.executeOnExecutor(executor)
-    }
-
-    private data class Tile(
-        var sRect: Rect? = null,
-        var sampleSize: Int = 0,
-        var bitmap: Bitmap? = null,
-        var loading: Boolean = false,
-        var visible: Boolean = false,
-        // Volatile fields instantiated once then updated before use to reduce GC.
-        var vRect: Rect = Rect(),
-        var fileSRect: Rect? = Rect(sRect)
-    )
-
-    private class Anim {
-        // Scale at start of anim
-        var scaleStart = 0f
-
-        // Scale at end of anim (target)
-        var scaleEnd = 0f
-
-        // Source center point at start
-        var sCenterStart: PointF? = null
-
-        // Source center point at end, adjusted for pan limits
-        var sCenterEnd: PointF? = null
-
-        // Source center point that was requested, without adjustment
-        var sCenterEndRequested: PointF? = null
-
-        // View point that was double tapped
-        var vFocusStart: PointF? = null
-
-        // Where the view focal point should be moved to during the anim
-        var vFocusEnd: PointF? = null
-        var duration: Long = 500 // How long the anim takes
-        var interruptible = true // Whether the anim can be interrupted by a touch
-        var easing = EASE_IN_OUT_QUAD // Easing style
-        var origin = ORIGIN_ANIM // Animation origin (API, double tap or fling)
-        var time = System.currentTimeMillis() // Start time
-        var listener: OnAnimationEventListener? = null
     }
 
     private class ScaleAndTranslate(var scale: Float, val vTranslate: PointF)
@@ -1956,20 +1918,15 @@ open class SubsamplingScaleImageView : View {
     /**
      * Use canvas max bitmap width and height instead of the default 2048, to avoid redundant tiling.
      */
-    private fun getMaxBitmapDimensions(canvas: Canvas): Point {
-        return Point(canvas.maximumBitmapWidth.coerceAtMost(maxTileWidth), canvas.maximumBitmapHeight.coerceAtMost(maxTileHeight))
-    }
+    private fun getMaxBitmapDimensions(canvas: Canvas): Point =
+        Point(canvas.maximumBitmapWidth.coerceAtMost(maxTileWidth), canvas.maximumBitmapHeight.coerceAtMost(maxTileHeight))
 
     /**
      * Get source width taking rotation into account.
      */
     private fun sWidth(): Int {
         val rotation = requiredRotation
-        return if (rotation == ORIENTATION_90 || rotation == ORIENTATION_270) {
-            sHeight
-        } else {
-            sWidth
-        }
+        return if (rotation == ORIENTATION_90 || rotation == ORIENTATION_270) sHeight else sWidth
     }
 
     /**
@@ -1977,11 +1934,7 @@ open class SubsamplingScaleImageView : View {
      */
     private fun sHeight(): Int {
         val rotation = requiredRotation
-        return if (rotation == ORIENTATION_90 || rotation == ORIENTATION_270) {
-            sWidth
-        } else {
-            sHeight
-        }
+        return if (rotation == ORIENTATION_90 || rotation == ORIENTATION_270) sWidth else sHeight
     }
 
     /**
@@ -1998,16 +1951,21 @@ open class SubsamplingScaleImageView : View {
         }
     }
 
+    @AnyThread
+    private fun fileSRectF(sRect: RectF?, target: RectF?) {
+        when (requiredRotation) {
+            ORIENTATION_0 -> target!!.set(sRect!!)
+            ORIENTATION_90 -> target!![sRect!!.top, sHeight - sRect.right, sRect.bottom] = sHeight - sRect.left
+            ORIENTATION_180 -> target!![sWidth - sRect!!.right, sHeight - sRect.bottom, sWidth - sRect.left] = sHeight - sRect.top
+            else -> target!![sWidth - sRect!!.bottom, sRect.left, sWidth - sRect.top] = sRect.right
+        }
+    }
+
     /**
      * Determines the rotation to be applied to tiles, based on EXIF orientation or chosen setting.
      */
-    @get:AnyThread
     private val requiredRotation: ImageOrientation
-        get() = if (orientation == ORIENTATION_USE_EXIF) {
-            sOrientation
-        } else {
-            orientation
-        }
+        get() = if (orientation == ORIENTATION_USE_EXIF) sOrientation else orientation
 
     /**
      * Pythagoras distance between two points.
@@ -2034,20 +1992,16 @@ open class SubsamplingScaleImageView : View {
     /**
      * Convert screen to source x coordinate.
      */
-    private fun viewToSourceX(vx: Float): Float {
-        return if (vTranslate == null) {
-            Float.NaN
-        } else (vx - vTranslate!!.x) / scale
-    }
+    private fun viewToSourceX(vx: Float): Float = if (vTranslate == null) {
+        Float.NaN
+    } else (vx - vTranslate!!.x) / scale
 
     /**
      * Convert screen to source y coordinate.
      */
-    private fun viewToSourceY(vy: Float): Float {
-        return if (vTranslate == null) {
-            Float.NaN
-        } else (vy - vTranslate!!.y) / scale
-    }
+    private fun viewToSourceY(vy: Float): Float = if (vTranslate == null) {
+        Float.NaN
+    } else (vy - vTranslate!!.y) / scale
 
     /**
      * Converts a rectangle within the view to the corresponding rectangle from the source file, taking
@@ -2065,12 +2019,27 @@ open class SubsamplingScaleImageView : View {
         if (vTranslate == null || !isReady) {
             return
         }
-        fRect[viewToSourceX(vRect.left.toFloat()).toInt(), viewToSourceY(vRect.top.toFloat()).toInt(), viewToSourceX(vRect.right.toFloat()).toInt()] =
-            viewToSourceY(vRect.bottom.toFloat()).toInt()
+        fRect[
+                viewToSourceX(vRect.left.toFloat()).toInt(),
+                viewToSourceY(vRect.top.toFloat()).toInt(),
+                viewToSourceX(vRect.right.toFloat()).toInt()
+        ] = viewToSourceY(vRect.bottom.toFloat()).toInt()
         fileSRect(fRect, fRect)
-        fRect[Math.max(0, fRect.left), Math.max(0, fRect.top), Math.min(sWidth, fRect.right)] = Math.min(sHeight, fRect.bottom)
+        fRect[0.coerceAtLeast(fRect.left), 0.coerceAtLeast(fRect.top), sWidth.coerceAtMost(fRect.right)] = sHeight.coerceAtMost(fRect.bottom)
         if (sRegion != null) {
             fRect.offset(sRegion!!.left, sRegion!!.top)
+        }
+    }
+
+    fun viewToFileRectF(vRect: RectF, fRect: RectF) {
+        if (vTranslate == null || !isReady) {
+            return
+        }
+        fRect[viewToSourceX(vRect.left), viewToSourceY(vRect.top), viewToSourceX(vRect.right)] = viewToSourceY(vRect.bottom)
+        fileSRectF(fRect, fRect)
+        fRect[0f.coerceAtLeast(fRect.left), 0f.coerceAtLeast(fRect.top), sWidth.toFloat().coerceAtMost(fRect.right)] = sHeight.toFloat().coerceAtMost(fRect.bottom)
+        if (sRegion != null) {
+            fRect.offset(sRegion!!.left.toFloat(), sRegion!!.top.toFloat())
         }
     }
 
@@ -2081,11 +2050,15 @@ open class SubsamplingScaleImageView : View {
      * @param fRect rectangle instance to which the result will be written. Re-use for efficiency.
      */
     fun visibleFileRect(fRect: Rect) {
-        if (vTranslate == null || !isReady) {
-            return
-        }
+        if (vTranslate == null || !isReady) return
         fRect[0, 0, width] = height
         viewToFileRect(fRect, fRect)
+    }
+
+    fun visibleFileRectF(fRect: RectF) {
+        if (vTranslate == null || !isReady) return
+        fRect[0f, 0f, width.toFloat()] = height.toFloat()
+        viewToFileRectF(fRect, fRect)
     }
 
     /**
@@ -2093,9 +2066,7 @@ open class SubsamplingScaleImageView : View {
      * @param vxy view X/Y coordinate.
      * @return a coordinate representing the corresponding source coordinate.
      */
-    fun viewToSourceCoord(vxy: PointF): PointF? {
-        return viewToSourceCoord(vxy.x, vxy.y, PointF())
-    }
+    fun viewToSourceCoord(vxy: PointF): PointF? = viewToSourceCoord(vxy.x, vxy.y, PointF())
 
     /**
      * Convert screen coordinate to source coordinate.
@@ -2103,9 +2074,7 @@ open class SubsamplingScaleImageView : View {
      * @param sTarget target object for result. The same instance is also returned.
      * @return source coordinates. This is the same instance passed to the sTarget param.
      */
-    fun viewToSourceCoord(vxy: PointF, sTarget: PointF): PointF? {
-        return viewToSourceCoord(vxy.x, vxy.y, sTarget)
-    }
+    fun viewToSourceCoord(vxy: PointF, sTarget: PointF): PointF? = viewToSourceCoord(vxy.x, vxy.y, sTarget)
     /**
      * Convert screen coordinate to source coordinate.
      * @param vx view X coordinate.
@@ -2121,9 +2090,7 @@ open class SubsamplingScaleImageView : View {
      */
     @JvmOverloads
     fun viewToSourceCoord(vx: Float, vy: Float, sTarget: PointF = PointF()): PointF? {
-        if (vTranslate == null) {
-            return null
-        }
+        if (vTranslate == null) return null
         sTarget[viewToSourceX(vx)] = viewToSourceY(vy)
         return sTarget
     }
@@ -2131,29 +2098,25 @@ open class SubsamplingScaleImageView : View {
     /**
      * Convert source to view x coordinate.
      */
-    private fun sourceToViewX(sx: Float): Float {
-        return if (vTranslate == null) {
-            Float.NaN
-        } else sx * scale + vTranslate!!.x
-    }
+    private fun sourceToViewX(sx: Float): Float = if (vTranslate == null) {
+        Float.NaN
+    } else sx * scale + vTranslate!!.x
+
 
     /**
      * Convert source to view y coordinate.
      */
-    private fun sourceToViewY(sy: Float): Float {
-        return if (vTranslate == null) {
-            Float.NaN
-        } else sy * scale + vTranslate!!.y
-    }
+    private fun sourceToViewY(sy: Float): Float = if (vTranslate == null) {
+        Float.NaN
+    } else sy * scale + vTranslate!!.y
+
 
     /**
      * Convert source coordinate to view coordinate.
      * @param sxy source coordinates to convert.
      * @return view coordinates.
      */
-    fun sourceToViewCoord(sxy: PointF?): PointF? {
-        return sourceToViewCoord(sxy!!.x, sxy.y, PointF())
-    }
+    fun sourceToViewCoord(sxy: PointF?): PointF? = sourceToViewCoord(sxy!!.x, sxy.y, PointF())
 
     /**
      * Convert source coordinate to view coordinate.
@@ -2161,9 +2124,8 @@ open class SubsamplingScaleImageView : View {
      * @param vTarget target object for result. The same instance is also returned.
      * @return view coordinates. This is the same instance passed to the vTarget param.
      */
-    fun sourceToViewCoord(sxy: PointF, vTarget: PointF): PointF? {
-        return sourceToViewCoord(sxy.x, sxy.y, vTarget)
-    }
+    fun sourceToViewCoord(sxy: PointF, vTarget: PointF): PointF? = sourceToViewCoord(sxy.x, sxy.y, vTarget)
+
     /**
      * Convert source coordinate to view coordinate.
      * @param sx source X coordinate.
@@ -2179,9 +2141,7 @@ open class SubsamplingScaleImageView : View {
      */
     @JvmOverloads
     fun sourceToViewCoord(sx: Float, sy: Float, vTarget: PointF = PointF()): PointF? {
-        if (vTranslate == null) {
-            return null
-        }
+        if (vTranslate == null) return null
         vTarget[sourceToViewX(sx)] = sourceToViewY(sy)
         return vTarget
     }
@@ -2232,20 +2192,18 @@ open class SubsamplingScaleImageView : View {
         val vPadding = paddingBottom + paddingTop
         val hPadding = paddingLeft + paddingRight
         return if (minimumScaleType == SCALE_TYPE_CENTER_CROP || minimumScaleType == SCALE_TYPE_START) {
-            Math.max((width - hPadding) / sWidth().toFloat(), (height - vPadding) / sHeight().toFloat())
+            ((width - hPadding) / sWidth().toFloat()).coerceAtLeast((height - vPadding) / sHeight().toFloat())
         } else if (minimumScaleType == SCALE_TYPE_CUSTOM && minScale > 0) {
             minScale
         } else {
-            Math.min((width - hPadding) / sWidth().toFloat(), (height - vPadding) / sHeight().toFloat())
+            ((width - hPadding) / sWidth().toFloat()).coerceAtMost((height - vPadding) / sHeight().toFloat())
         }
     }
 
     /**
      * Adjust a requested scale to be within the allowed limits.
      */
-    private fun limitedScale(targetScale: Float): Float {
-        return maxScale.coerceAtMost(minScale().coerceAtLeast(targetScale))
-    }
+    private fun limitedScale(targetScale: Float): Float = maxScale.coerceAtMost(minScale().coerceAtLeast(targetScale))
 
     /**
      * Apply a selected type of easing.
@@ -2445,9 +2403,7 @@ open class SubsamplingScaleImageView : View {
      * Returns the minimum allowed scale.
      * @return the minimum scale as a source/view pixels ratio.
      */
-    fun getMinScale(): Float {
-        return minScale()
-    }
+    fun getMinScale(): Float = minScale()
 
     /**
      * By default, image tiles are at least as high resolution as the screen. For a retina screen this may not be
@@ -2634,9 +2590,7 @@ open class SubsamplingScaleImageView : View {
      * Check if an image has been set. The image may not have been loaded and displayed yet.
      * @return If an image is currently set.
      */
-    fun hasImage(): Boolean {
-        return uri != null || bitmap != null
-    }
+    fun hasImage(): Boolean = uri != null || bitmap != null
 
     /**
      * {@inheritDoc}
@@ -2680,11 +2634,9 @@ open class SubsamplingScaleImageView : View {
      * @param sCenter Target center point
      * @return [SubsamplingScaleImageView.AnimationBuilder] instance. Call [SubsamplingScaleImageView.AnimationBuilder.start] to start the anim.
      */
-    fun animateCenter(sCenter: PointF?): AnimationBuilder? {
-        return if (!isReady) {
-            null
-        } else AnimationBuilder(sCenter)
-    }
+    fun animateCenter(sCenter: PointF?): AnimationBuilder? = if (!isReady) {
+        null
+    } else AnimationBuilder(sCenter)
 
     /**
      * Creates a scale animation builder, that when started will animate a zoom in or out. If this would move the image
@@ -2692,11 +2644,9 @@ open class SubsamplingScaleImageView : View {
      * @param scale Target scale.
      * @return [SubsamplingScaleImageView.AnimationBuilder] instance. Call [SubsamplingScaleImageView.AnimationBuilder.start] to start the anim.
      */
-    fun animateScale(scale: Float): AnimationBuilder? {
-        return if (!isReady) {
-            null
-        } else AnimationBuilder(scale)
-    }
+    fun animateScale(scale: Float): AnimationBuilder? = if (!isReady) {
+        null
+    } else AnimationBuilder(scale)
 
     /**
      * Creates a scale animation builder, that when started will animate a zoom in or out. If this would move the image
@@ -2705,11 +2655,9 @@ open class SubsamplingScaleImageView : View {
      * @param sCenter Target source center.
      * @return [SubsamplingScaleImageView.AnimationBuilder] instance. Call [SubsamplingScaleImageView.AnimationBuilder.start] to start the anim.
      */
-    fun animateScaleAndCenter(scale: Float, sCenter: PointF?): AnimationBuilder? {
-        return if (!isReady) {
-            null
-        } else AnimationBuilder(scale, sCenter)
-    }
+    fun animateScaleAndCenter(scale: Float, sCenter: PointF?): AnimationBuilder? = if (!isReady) {
+        null
+    } else AnimationBuilder(scale, sCenter)
 
     /**
      * Builder class used to set additional options for a scale animation. Create an instance using [.animateScale],
@@ -2824,43 +2772,22 @@ open class SubsamplingScaleImageView : View {
             val vyCenter = paddingTop + (height - paddingBottom - paddingTop) / 2
             val targetScale = limitedScale(targetScale)
             val targetSCenter = if (panLimited) limitedSCenter(targetSCenter!!.x, targetSCenter.y, targetScale, PointF()) else targetSCenter!!
-            anim = Anim().apply {
-                scaleStart = scale
-                scaleEnd = targetScale
-                time = System.currentTimeMillis()
-                sCenterEndRequested = targetSCenter
-                sCenterStart = center
-                sCenterEnd = targetSCenter
-                vFocusStart = sourceToViewCoord(targetSCenter)
-                vFocusEnd = PointF(
-                    vxCenter.toFloat(),
-                    vyCenter.toFloat()
-                )
-                duration = this@AnimationBuilder.duration
-                interruptible = this@AnimationBuilder.interruptible
-                easing = this@AnimationBuilder.easing
-                origin = this@AnimationBuilder.origin
-                time = System.currentTimeMillis()
-                listener = this@AnimationBuilder.listener
-            }
 
-            anim!!.scaleStart = scale
-            anim!!.scaleEnd = targetScale
-            anim!!.time = System.currentTimeMillis()
-            anim!!.sCenterEndRequested = targetSCenter
-            anim!!.sCenterStart = center
-            anim!!.sCenterEnd = targetSCenter
-            anim!!.vFocusStart = sourceToViewCoord(targetSCenter)
-            anim!!.vFocusEnd = PointF(
-                vxCenter.toFloat(),
-                vyCenter.toFloat()
+            anim = ImageAnim(
+                scaleStart = scale,
+                scaleEnd = targetScale,
+                sCenterEndRequested = targetSCenter,
+                sCenterStart = center,
+                sCenterEnd = targetSCenter,
+                vFocusStart = sourceToViewCoord(targetSCenter),
+                vFocusEnd = PointF(vxCenter.toFloat(), vyCenter.toFloat()),
+                duration = duration,
+                interruptible = interruptible,
+                easing = easing,
+                origin = origin,
+                listener = listener
             )
-            anim!!.duration = duration
-            anim!!.interruptible = interruptible
-            anim!!.easing = easing
-            anim!!.origin = origin
-            anim!!.time = System.currentTimeMillis()
-            anim!!.listener = listener
+
             if (vFocus != null) {
                 // Calculate where translation will be at the end of the anim
                 val vTranslateXEnd = vFocus.x - targetScale * anim!!.sCenterStart!!.x
@@ -2879,89 +2806,12 @@ open class SubsamplingScaleImageView : View {
     }
 
     /**
-     * An event listener for animations, allows events to be triggered when an animation completes,
-     * is aborted by another animation starting, or is aborted by a touch event. Note that none of
-     * these events are triggered if the activity is paused, the image is swapped, or in other cases
-     * where the view's internal state gets wiped or draw events stop.
-     */
-    interface OnAnimationEventListener {
-        /**
-         * The animation has completed, having reached its endpoint.
-         */
-        fun onComplete()
-
-        /**
-         * The animation has been aborted before reaching its endpoint because the user touched the screen.
-         */
-        fun onInterruptedByUser()
-
-        /**
-         * The animation has been aborted before reaching its endpoint because a new animation has been started.
-         */
-        fun onInterruptedByNewAnim()
-    }
-
-    /**
      * Default implementation of [SubsamplingScaleImageView.OnAnimationEventListener] for extension. This does nothing in any method.
      */
     class DefaultOnAnimationEventListener : OnAnimationEventListener {
         override fun onComplete() {}
         override fun onInterruptedByUser() {}
         override fun onInterruptedByNewAnim() {}
-    }
-
-    /**
-     * An event listener, allowing subclasses and activities to be notified of significant events.
-     */
-    interface OnImageEventListener {
-        /**
-         * Called when the dimensions of the image and view are known, and either a preview image,
-         * the full size image, or base layer tiles are loaded. This indicates the scale and translate
-         * are known and the next draw will display an image. This event can be used to hide a loading
-         * graphic, or inform a subclass that it is safe to draw overlays.
-         */
-        fun onReady()
-
-        /**
-         * Called when the full size image is ready. When using tiling, this means the lowest resolution
-         * base layer of tiles are loaded, and when tiling is disabled, the image bitmap is loaded.
-         * This event could be used as a trigger to enable gestures if you wanted interaction disabled
-         * while only a preview is displayed, otherwise for most cases [.onReady] is the best
-         * event to listen to.
-         */
-        fun onImageLoaded()
-
-        /**
-         * Called when a preview image could not be loaded. This method cannot be relied upon; certain
-         * encoding types of supported image formats can result in corrupt or blank images being loaded
-         * and displayed with no detectable error. The view will continue to load the full size image.
-         * @param e The exception thrown. This error is logged by the view.
-         */
-        fun onPreviewLoadError(e: Exception?)
-
-        /**
-         * Indicates an error initiliasing the decoder when using a tiling, or when loading the full
-         * size bitmap when tiling is disabled. This method cannot be relied upon; certain encoding
-         * types of supported image formats can result in corrupt or blank images being loaded and
-         * displayed with no detectable error.
-         * @param e The exception thrown. This error is also logged by the view.
-         */
-        fun onImageLoadError(e: Exception?)
-
-        /**
-         * Called when an image tile could not be loaded. This method cannot be relied upon; certain
-         * encoding types of supported image formats can result in corrupt or blank images being loaded
-         * and displayed with no detectable error. Most cases where an unsupported file is used will
-         * result in an error caught by [.onImageLoadError].
-         * @param e The exception thrown. This error is logged by the view.
-         */
-        fun onTileLoadError(e: Exception?)
-
-        /**
-         * Called when a bitmap set using ImageSource.cachedBitmap is no longer being used by the View.
-         * This is useful if you wish to manage the bitmap after the preview is shown
-         */
-        fun onPreviewReleased()
     }
 
     /**
@@ -2974,29 +2824,6 @@ open class SubsamplingScaleImageView : View {
         override fun onImageLoadError(e: Exception?) {}
         override fun onTileLoadError(e: Exception?) {}
         override fun onPreviewReleased() {}
-    }
-
-    /**
-     * An event listener, allowing activities to be notified of pan and zoom events. Initialisation
-     * and calls made by your code do not trigger events; touch events and animations do. Methods in
-     * this listener will be called on the UI thread and may be called very frequently - your
-     * implementation should return quickly.
-     */
-    interface OnStateChangedListener {
-        /**
-         * The scale has changed. Use with [.getMaxScale] and [.getMinScale] to determine
-         * whether the image is fully zoomed in or out.
-         * @param newScale The new scale.
-         * @param origin Where the event originated from - one of [.ORIGIN_ANIM], [.ORIGIN_TOUCH].
-         */
-        fun onScaleChanged(newScale: Float, origin: Int)
-
-        /**
-         * The source center has been changed. This can be a result of panning or zooming.
-         * @param newCenter The new source center point.
-         * @param origin Where the event originated from - one of [.ORIGIN_ANIM], [.ORIGIN_TOUCH].
-         */
-        fun onCenterChanged(newCenter: PointF?, origin: Int)
     }
 
     /**
@@ -3026,6 +2853,7 @@ open class SubsamplingScaleImageView : View {
         // overrides for the dimensions of the generated tiles
         const val TILE_SIZE_AUTO = Int.MAX_VALUE
         private const val MESSAGE_LONG_CLICK = 1
+
         /**
          * Get the current preferred configuration for decoding bitmaps. [ImageDecoder] and [ImageRegionDecoder]
          * instances can read this and use it when decoding images.

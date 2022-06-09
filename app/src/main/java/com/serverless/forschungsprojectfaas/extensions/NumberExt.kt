@@ -9,9 +9,11 @@ val Number.dp get() = (toFloat() * Resources.getSystem().displayMetrics.density)
 val Int.toHex get(): String = Integer.toHexString(this)
 
 inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
-    var sum: Float = 0f
+    var sum = 0f
     for (element in this) {
         sum += selector(element)
     }
     return sum
 }
+
+fun Float.between(from: Float, to: Float): Boolean = this in from..to

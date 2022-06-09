@@ -16,14 +16,19 @@ sealed class SelectionRequestType<T : Enum<T>>(
 ) : Parcelable {
 
     @Parcelize
-    data class PictureMoreOptionsSelection(val captured: Pile) : SelectionRequestType<PictureMoreOptions>(
-        recyclerViewList = PictureMoreOptions.values().toList(),
-        titleProvider = { captured.title },
-        resultProvider = { SelectionResult.PictureMoreOptionsSelectionResult(captured, it as PictureMoreOptions) }
+    data class PictureMoreOptionsSelection(
+        val pile: Pile,
+        val itemsToDisplay: List<SelectionTypeItemMarker<PictureMoreOptions>> = PictureMoreOptions.values().toList()
+    ) : SelectionRequestType<PictureMoreOptions>(
+        recyclerViewList = itemsToDisplay,
+        titleProvider = { pile.title },
+        resultProvider = { SelectionResult.PictureMoreOptionsSelectionResult(pile, it as PictureMoreOptions) }
     )
 
     @Parcelize
-    data class OrderBySelection(val currentItem: OrderByItem) : SelectionRequestType<OrderByItem>(
+    data class OrderBySelection(
+        val currentItem: OrderByItem
+    ) : SelectionRequestType<OrderByItem>(
         recyclerViewList = OrderByItem.values().toList(),
         titleProvider = { it.getString(R.string.orderBy) },
         resultProvider = { SelectionResult.OrderBySelectionResult(it as OrderByItem) },

@@ -24,7 +24,7 @@
 
 
     <!-- Light Theme Colors -->
-    <color name="lightColorPrimary">@color/hfuDarkGreen</color>
+    <color name="lightColorPrimary">@color/ndw_blue</color>
     <color name="lightColorPrimaryVariant">@color/hfuDarkerGreen</color>
     <color name="lightColorOnPrimary">#ffffff</color>
     <color name="lightColorSecondary">@color/hfuBrightGreen</color>
@@ -43,7 +43,7 @@
 
 
     <!-- Dark Theme Colors -->
-    <color name="darkColorPrimary">@color/hfuDarkGreen</color>
+    <color name="darkColorPrimary">@color/ndw_blue</color>
     <color name="darkColorPrimaryVariant">@color/hfuDarkerGreen</color>
     <color name="darkColorOnPrimary">#2f3034</color>
     <color name="darkColorSecondary">@color/hfuBrightGreen</color>

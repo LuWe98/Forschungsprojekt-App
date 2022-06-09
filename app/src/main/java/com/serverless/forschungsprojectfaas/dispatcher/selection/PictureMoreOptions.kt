@@ -15,6 +15,10 @@ enum class PictureMoreOptions(
         textRes = R.string.open,
         iconRes = R.drawable.ic_open
     ),
+    EXPORT(
+        textRes = R.string.exportToCsv,
+        iconRes = R.drawable.ic_insert_file
+    ),
     DELETE(
         textRes = R.string.delete,
         iconRes = R.drawable.ic_delete

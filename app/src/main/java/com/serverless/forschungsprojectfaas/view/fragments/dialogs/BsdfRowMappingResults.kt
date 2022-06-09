@@ -4,22 +4,23 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.serverless.forschungsprojectfaas.R
-import com.serverless.forschungsprojectfaas.databinding.BsdfRowMappingResultsBinding
+import com.serverless.forschungsprojectfaas.databinding.BsdfPileEvaluationBinding
 import com.serverless.forschungsprojectfaas.extensions.disableChangeAnimation
 import com.serverless.forschungsprojectfaas.extensions.hiltNavDestinationViewModels
+import com.serverless.forschungsprojectfaas.extensions.onClick
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingBottomSheetDialogFragment
-import com.serverless.forschungsprojectfaas.view.recyclerview.RvaTableEntry
+import com.serverless.forschungsprojectfaas.view.recyclerview.RvaEvaluatedRowEntries
 import com.serverless.forschungsprojectfaas.viewmodel.VmDetail
 import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 //TODO -> Das hier noch imlementieren. Ist die zweite Seite des Detail ViewPagers
 @AndroidEntryPoint
-class BsdfRowMappingResults : BindingBottomSheetDialogFragment<BsdfRowMappingResultsBinding>() {
+class BsdfRowMappingResults : BindingBottomSheetDialogFragment<BsdfPileEvaluationBinding>() {
 
     private val vm by hiltNavDestinationViewModels<VmDetail>(R.id.fragmentDetail)
 
-    private lateinit var rva: RvaTableEntry
+    private lateinit var rva: RvaEvaluatedRowEntries
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,7 +32,7 @@ class BsdfRowMappingResults : BindingBottomSheetDialogFragment<BsdfRowMappingRes
     }
 
     private fun initViews() {
-        rva = RvaTableEntry().apply {
+        rva = RvaEvaluatedRowEntries().apply {
 
         }
 
@@ -44,12 +45,15 @@ class BsdfRowMappingResults : BindingBottomSheetDialogFragment<BsdfRowMappingRes
     }
 
     private fun initListeners() {
-
+        binding.apply {
+            btnBack.onClick(vm::onPileEvaluationDialogBackPressed)
+            btnExport.onClick(vm::onPileEvaluationExportButtonClicked)
+        }
     }
 
     private fun initObservers() {
-        vm.evaluatedBarResultsStateFlow.collectWhenStarted(viewLifecycleOwner) { evaluatedBars ->
-            rva.submitList(evaluatedBars)
+        vm.evaluatedRowEntriesStateFlow.collectWhenStarted(viewLifecycleOwner) { evaluatedRowEntries ->
+            rva.submitList(evaluatedRowEntries)
         }
     }
 }

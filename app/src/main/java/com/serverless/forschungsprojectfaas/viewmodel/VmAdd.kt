@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Rect
+import android.graphics.RectF
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -12,12 +14,14 @@ import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
+import androidx.core.graphics.minus
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.AndroidViewModel
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
 import com.serverless.forschungsprojectfaas.extensions.*
+import com.serverless.forschungsprojectfaas.model.BoxDimensions
 import com.serverless.forschungsprojectfaas.model.PileStatus
 import com.serverless.forschungsprojectfaas.model.ktor.ProcessedBox
 import com.serverless.forschungsprojectfaas.model.ktor.ProcessedPilesResponse
@@ -37,6 +41,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
 import java.io.*
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 
 @HiltViewModel
@@ -140,7 +145,6 @@ class VmAdd @Inject constructor(
         }.onSuccess { pile ->
             //TODO -> Die Insertions direkt machen. Und auch direkt zurücknavigieren. Evaluation Status anpassen und im Home Screen anzeigen
             localRepository.insert(pile)
-
             //Das ist wird später durch dynamische
             insertBatchesAndBarsFromResponse(pile)
             navDispatcher.dispatch(NavigationEvent.NavigateBack)
@@ -232,47 +236,26 @@ class VmAdd @Inject constructor(
         )
     }
 
+
     //TODO -> Die checks noch einbauen
     //Checks the boxes of the Response for validity
     // explanation:
     // -> Captions With Single Letter
     // -> Captions wich are lonely unterwegs -> Find the ones that are lonely and find most ones in a row
     private fun runValidityChecks(bars: List<Bar>, batches: List<Batch>): List<Bar> {
-        //response.findEnclosedEmptySpaces()
         val averageBarDimensions = bars.averageBarDimensions
-        val adjustedBarWidths = bars.map {
-            if (it.rect.width() > averageBarDimensions.width * 1.05) {
-                val nearestLeftBar = bars.findClosestLeftBar(it)
-                val nearestRightBar = bars.findClosestRightBar(it)
-                val distanceToLeftBar = it.rect.left - (nearestLeftBar?.rect?.right ?: it.rect.left)
-                val distanceToRightBar = it.rect.right - (nearestRightBar?.rect?.left ?: it.rect.right)
+        return bars
+            .fixBarDimensions(averageBarDimensions)
+            .filterOverlayingBars()
+            .filterIsolatedBars(averageBarDimensions)
+            .adjustBatches(2, 1f, true)
+            .adjustBatches(2, 0.5f, true)
+            .adjustBatches(3, 0.5f, true)
+    }
 
-                val sizeDiff = it.rect.width() - averageBarDimensions.width
-                if (distanceToLeftBar < distanceToRightBar) {
-                    it.copy(rect = it.rect.setLeft(it.rect.left + sizeDiff))
-                } else {
-                    it.copy(rect = it.rect.setRight(it.rect.right - sizeDiff))
-                }
-            } else it
-        }
+    //TODO -> Hier schauen ob es eine Lücke gibt.
+    private fun findHorizontalBarHoles(bars: List<Bar>) {
 
-        val adjustedBarHeight = adjustedBarWidths.map {
-            if (it.rect.height() < averageBarDimensions.height * 0.95) {
-                val nearestTopBar = bars.findClosestTopBar(it)
-                val nearestBottomBar = bars.findClosestBottomBar(it)
-                val distanceToTopBar = it.rect.top - (nearestTopBar?.rect?.bottom ?: it.rect.top)
-                val distanceToBottomBar = it.rect.bottom - (nearestBottomBar?.rect?.top ?: it.rect.bottom)
-
-                val sizeDiff = it.rect.height() - averageBarDimensions.height
-                if (distanceToTopBar > distanceToBottomBar) {
-                    it.copy(rect = it.rect.setTop(it.rect.top + sizeDiff))
-                } else {
-                    it.copy(rect = it.rect.setBottom(it.rect.bottom - sizeDiff))
-                }
-            } else it
-        }
-
-        return adjustedBarHeight
     }
 
 
@@ -293,7 +276,6 @@ class VmAdd @Inject constructor(
 
         // Das ist die emulierte Response! -> Das wird von der Function zurückgeliefert
         return ProcessedPilesResponse(processedBoxes)
-
     }
 
     private fun base64Tests(bitmap: Bitmap) = launch(scope = scope, dispatcher = IO) {
