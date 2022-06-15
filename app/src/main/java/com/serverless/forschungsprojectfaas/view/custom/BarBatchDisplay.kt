@@ -5,8 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.serverless.forschungsprojectfaas.extensions.containsPartial
-import com.serverless.forschungsprojectfaas.extensions.log
+import com.serverless.forschungsprojectfaas.extensions.findBarsInsideBounds
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.junctions.BatchWithBars
@@ -27,14 +26,12 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         private const val ALPHA_COLOR_SWITCH_THRESHOLD = 125
 
         private const val MAX_SCALE = 100f
-        private const val UNKNOWN_INDEX = -1
+        private const val MIN_STROKE = 0.000_000_1f
     }
 
     constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attr: AttributeSet?) : super(context, attr) {
-        initialise()
-    }
+    constructor(context: Context, attr: AttributeSet?) : super(context, attr) { initialise() }
 
     private fun initialise() {
         maxScale = MAX_SCALE
@@ -73,6 +70,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
 
     private val batches = mutableListOf<BatchWithBars>()
     private val bars = mutableListOf<Bar>()
+    private var draggingBar: Bar? = null
 
     var isBarSelected: ((Bar) -> (Boolean))? = null
 
@@ -94,9 +92,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
 
         visibleFileRectF(targetRect)
 
-        bars.filter {
-            targetRect.containsPartial(it.rect)
-        }.forEach { bar ->
+        bars.findBarsInsideBounds(targetRect).forEach { bar ->
             val batch: Batch? = batches.firstOrNull { it.batch?.batchId == bar.batchId }?.batch
             val color = if (isBarSelected?.invoke(bar) == true) Color.RED else batch?.colorInt ?: Constants.UNASSIGNED_BAR_COLOR
             //val fontColor = if (boxPaintAlpha > ALPHA_COLOR_SWITCH_THRESHOLD) Color.WHITE else color
@@ -133,7 +129,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
     }
 
     fun setBoxStroke(stroke: Int) {
-        boxPaintStroke = max(stroke / 10f, 0.000_000_1f)
+        boxPaintStroke = max(stroke / 10f, MIN_STROKE)
         invalidate()
     }
 
@@ -144,10 +140,10 @@ class BarBatchDisplay : SubsamplingScaleImageView,
                 draggingBar?.let { bar ->
                     viewToSourceCoord(event.x, event.y)?.let { newPoint ->
                         bar.rect.set(
-                            newPoint.x - (bar.rect.width() / 2),
-                            newPoint.y - (bar.rect.height() / 2),
-                            newPoint.x + (bar.rect.width() / 2),
-                            newPoint.y + (bar.rect.height() / 2)
+                            newPoint.x - (bar.width / 2),
+                            newPoint.y - (bar.height / 2),
+                            newPoint.x + (bar.width / 2),
+                            newPoint.y + (bar.height / 2)
                         )
                         invalidate()
                     }
@@ -165,28 +161,13 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         return event?.let(::onTouchEvent) ?: false
     }
 
-    private fun findCanvasBarPosition(x: Float = lastClickCoordinates.x, y: Float = lastClickCoordinates.y): Int? {
-        if (x < 0 || y < 0) return null
-        return bars.indexOfFirst { bar ->
-            bar.rect.contains(x, y)
-        }.let { position ->
-            if (position == UNKNOWN_INDEX) null else position
-        }
-    }
-
     private fun findCanvasBar(x: Float = lastClickCoordinates.x, y: Float = lastClickCoordinates.y): Bar? {
-        if (x < 0 || y < 0) return null
-        return bars.firstOrNull { bar ->
-            bar.rect.contains(x, y)
-        }
+        return if (x < 0f || y < 0f) null else bars.firstOrNull { it.rect.contains(x, y) }
     }
 
     override fun onClick(v: View?) {
         onCanvasClicked?.invoke(findCanvasBar(), lastClickCoordinates)
     }
-
-
-    private var draggingBar: Bar? = null
 
     override fun onLongClick(v: View?): Boolean {
         findCanvasBar()?.let {

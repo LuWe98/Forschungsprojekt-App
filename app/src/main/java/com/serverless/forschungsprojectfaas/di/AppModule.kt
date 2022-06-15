@@ -72,8 +72,8 @@ object AppModule {
         }
 
         engine {
-            connectTimeout = 25_000
-            socketTimeout = 25_000
+            connectTimeout = Int.MAX_VALUE
+            socketTimeout = Int.MAX_VALUE
         }
     }
 

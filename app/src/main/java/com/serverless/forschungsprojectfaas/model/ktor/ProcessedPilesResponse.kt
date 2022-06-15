@@ -1,6 +1,6 @@
 package com.serverless.forschungsprojectfaas.model.ktor
 
-import com.serverless.forschungsprojectfaas.extensions.averageRectDimension
+import com.serverless.forschungsprojectfaas.extensions.sumOf
 import com.serverless.forschungsprojectfaas.model.BoxDimensions
 import kotlinx.serialization.Serializable
 
@@ -8,7 +8,11 @@ import kotlinx.serialization.Serializable
 data class ProcessedPilesResponse(
     val processedBoxes: List<ProcessedBox>
 ) {
-    val averageBoxDimensions get(): BoxDimensions = processedBoxes.map(ProcessedBox::rect).averageRectDimension
+    val averageBoxDimensions
+        get() = BoxDimensions(
+            width = processedBoxes.sumOf(ProcessedBox::width) / processedBoxes.size,
+            height = processedBoxes.sumOf(ProcessedBox::height) / processedBoxes.size
+        )
 
 //    //TODO -> Das geht noch nicht richtig
 //    //Finds Enclosing Points inside the rectangles

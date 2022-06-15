@@ -42,10 +42,11 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
-                    android:background="@drawable/background_round_corners_45dp"
+                    android:id="@+id/btnClearSelectedBars"
+                    android:background="@drawable/ripple_background_round_corners_45dp"
                     android:backgroundTint="@color/white"
                     android:layout_marginEnd="@dimen/grid_2"
-                    app:layout_constraintEnd_toStartOf="@id/btnClearSelection"
+                    app:layout_constraintEnd_toStartOf="@id/btnQuickSelectFirstBatch"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
 
@@ -60,7 +61,9 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tvSelectedNumber"
-                        android:id="@+id/ivSelectedBarsIcon" />
+                        android:id="@+id/ivSelectedBarsIcon"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintVertical_bias="0.0" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
@@ -70,24 +73,50 @@
                         android:gravity="center"
                         android:minWidth="30dp"
                         android:paddingEnd="@dimen/grid_2"
+                        android:paddingStart="0dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="35dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="35dp"
-                    app:srcCompat="@drawable/ic_layers_clear"
-                    app:tint="@color/image_view_icon_color_selector"
-                    android:id="@+id/btnClearSelection"
-                    android:padding="7.5dp"
-                    android:background="@drawable/background_round_corners_45dp"
+                    android:id="@+id/btnQuickSelectFirstBatch"
+                    android:background="@drawable/ripple_background_round_corners_45dp"
                     android:backgroundTint="@color/white"
                     android:layout_marginEnd="@dimen/grid_2"
-                    app:layout_constraintEnd_toStartOf="@id/btnSwap"
-                    app:layout_constraintTop_toTopOf="@+id/btn_back"
-                    app:layout_constraintBottom_toBottomOf="@+id/btn_back" />
+                    app:layout_constraintEnd_toStartOf="@+id/btnSwap"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:srcCompat="@drawable/ic_label_outlined"
+                        app:tint="@color/image_view_icon_color_selector"
+                        android:padding="10dp"
+                        android:layout_marginStart="@dimen/grid_1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tvSelectedBatchLabel"
+                        android:id="@+id/ivSelectedBatchLabel"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvSelectedBatchLabel"
+                        tools:text="-"
+                        android:gravity="center"
+                        android:minWidth="20dp"
+                        android:layout_marginEnd="@dimen/grid_2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"

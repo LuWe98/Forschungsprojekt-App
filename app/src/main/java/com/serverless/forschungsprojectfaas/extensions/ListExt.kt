@@ -5,3 +5,5 @@ fun <T> MutableList<T>.setItems(items: List<T>): List<T> {
     addAll(items)
     return this
 }
+
+fun <T> MutableList<T>.addAllChain(items: List<T>): MutableList<T> = apply { addAll(items) }

@@ -23,6 +23,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import kotlin.collections.LinkedHashSet
 import kotlin.math.max
 
 @HiltViewModel
@@ -34,16 +35,18 @@ class VmDetail @Inject constructor(
 
     private val args = FragmentDetailArgs.fromSavedStateHandle(state)
 
-    private val pileStateFlow: StateFlow<PileWithBatches?> = localRepository
+    private val pileWithBatchesStateFlow: StateFlow<PileWithBatches?> = localRepository
         .getPileWithBatchesFlow(args.pile.pileId)
         .flowOn(IO)
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    private val nonNullPileFlow = pileStateFlow
+    private val nonNullPileWithBatchesFlow = pileWithBatchesStateFlow
         .mapNotNull { it }
         .flowOn(IO)
 
-    private val imagePathFlow = nonNullPileFlow
+    private val pileWithBatches: PileWithBatches? = pileWithBatchesStateFlow.value
+
+    private val imagePathFlow = nonNullPileWithBatchesFlow
         .map { it.pile.pictureUri.path }
         .flowOn(IO)
         .distinctUntilChanged()
@@ -52,31 +55,42 @@ class VmDetail @Inject constructor(
         .flowOn(IO)
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    val pileTitleFlow = nonNullPileFlow
+    val pileTitleFlow = nonNullPileWithBatchesFlow
         .map(PileWithBatches::pile / Pile::title)
         .flowOn(IO)
         .distinctUntilChanged()
 
-    val barBatchWithBarsStateFlow = nonNullPileFlow
+    val barBatchWithBarsStateFlow = nonNullPileWithBatchesFlow
         .map(PileWithBatches::batchWithBars::get)
         .flowOn(IO)
 
-    var allBarsFlow = nonNullPileFlow
+    var allBarsFlow = nonNullPileWithBatchesFlow
         .map(PileWithBatches::bars::get)
         .flowOn(IO)
         .distinctUntilChanged()
 
-    val evaluatedRowEntriesStateFlow = nonNullPileFlow
+    val evaluatedRowEntriesStateFlow = nonNullPileWithBatchesFlow
         .map(PileWithBatches::rowEvaluationEntries::get)
         .flowOn(IO)
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
-    private val selectedBarIdsMutableStateFlow: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
+    private val selectedBarIdsMutableStateFlow: MutableStateFlow<LinkedHashSet<String>> = MutableStateFlow(LinkedHashSet())
 
-    val selectedBarIdsStateFlow: StateFlow<Set<String>> = selectedBarIdsMutableStateFlow.asStateFlow()
+    val selectedBarIdsStateFlow: StateFlow<LinkedHashSet<String>> = selectedBarIdsMutableStateFlow.asStateFlow()
 
     private val selectedBarIds get() = selectedBarIdsStateFlow.value
+
+    val batchOfFirstSelectedBarStateFlow: StateFlow<Batch?> = combine(
+        flow = selectedBarIdsMutableStateFlow,
+        flow2 = pileWithBatchesStateFlow
+    ) { barIds: LinkedHashSet<String>, pileWithBatches: PileWithBatches? ->
+        barIds.firstOrNull()?.let { barId ->
+            pileWithBatches?.barsWithBatches?.firstOrNull { it.bar.barId == barId }?.batch
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    val batchOfFirstSelectedBar get() = batchOfFirstSelectedBarStateFlow.value
 
     val selectedBarsStateFlow: StateFlow<List<Bar>> = combine(
         flow = selectedBarIdsMutableStateFlow,
@@ -84,7 +98,6 @@ class VmDetail @Inject constructor(
     ) { ids, bars -> bars.filter { ids.contains(it.barId) } }
         .flowOn(IO)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
 
 
     private val selectedBars get() = selectedBarsStateFlow.value
@@ -124,7 +137,7 @@ class VmDetail @Inject constructor(
                 } else {
                     add(bar.barId)
                 }
-            }
+            } as LinkedHashSet<String>
         } ?: run {
             log("NOT ON BAR CLICKED $point")
         }
@@ -146,7 +159,7 @@ class VmDetail @Inject constructor(
     }
 
     private fun addNewBarToPile(point: PointF) = launch {
-        pileStateFlow.value?.let { pile ->
+        pileWithBatchesStateFlow.value?.let { pile ->
             val averageBarDimensions = pile.bars.averageBarDimensions
             val rectToInsert = RectF(
                 max(point.x - averageBarDimensions.width / 2, 0f),
@@ -167,7 +180,13 @@ class VmDetail @Inject constructor(
      * Die Auswahl aufheben
      */
     fun onClearSelectionClicked() {
-        selectedBarIdsMutableStateFlow.value = emptySet()
+        selectedBarIdsMutableStateFlow.value = LinkedHashSet()
+    }
+
+    fun onQuickChangeBatchButtonClicked(){
+        batchOfFirstSelectedBar?.let {
+            onBatchSelectionResultReceived(FragmentResult.BatchSelectionResult(it.batchId))
+        }
     }
 
     /**
@@ -177,10 +196,10 @@ class VmDetail @Inject constructor(
         if (selectedBarIds.size != 2) return@launch
 
         selectedBars.let { bars ->
-            val barsBetween = pileStateFlow.value?.bars?.findBarsBetween(bars[0], bars[1]) ?: emptyList()
+            val barsBetween = pileWithBatchesStateFlow.value?.bars?.findBarsBetween(bars[0], bars[1]) ?: emptyList()
             selectedBarIdsMutableStateFlow.value = selectedBarIds.toMutableSet().apply {
                 addAll(barsBetween.map(Bar::barId))
-            }
+            } as LinkedHashSet<String>
         }
     }
 
@@ -274,7 +293,7 @@ class VmDetail @Inject constructor(
     fun areBarsInSameRow(selectedIds: Set<String>) : Boolean {
         if(selectedIds.size != 2) return false
         val ids = selectedIds.toList()
-        return pileStateFlow.value?.bars?.areBarsInSameRow(ids[0], ids[1]) ?: false
+        return pileWithBatchesStateFlow.value?.bars?.areBarsInSameRow(ids[0], ids[1]) ?: false
     }
 
 
@@ -286,7 +305,7 @@ class VmDetail @Inject constructor(
 
     fun onPileEvaluationExportButtonClicked(){
         launch {
-            navDispatcher.dispatch(NavigationEvent.NavigateToExportPileEvaluationResult(pileStateFlow.value?.asPileEvaluation))
+            navDispatcher.dispatch(NavigationEvent.NavigateToExportPileEvaluationResult(pileWithBatchesStateFlow.value?.asPileEvaluation))
         }
     }
 }

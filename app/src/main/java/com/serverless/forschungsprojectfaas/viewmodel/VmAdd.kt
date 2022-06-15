@@ -4,24 +4,17 @@ import android.app.Application
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Rect
-import android.graphics.RectF
-import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
-import androidx.core.graphics.minus
-import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.AndroidViewModel
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
 import com.serverless.forschungsprojectfaas.extensions.*
-import com.serverless.forschungsprojectfaas.model.BoxDimensions
 import com.serverless.forschungsprojectfaas.model.PileStatus
 import com.serverless.forschungsprojectfaas.model.ktor.ProcessedBox
 import com.serverless.forschungsprojectfaas.model.ktor.ProcessedPilesResponse
@@ -41,7 +34,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
 import java.io.*
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 
 @HiltViewModel
@@ -104,10 +96,8 @@ class VmAdd @Inject constructor(
 
     fun onFilePickerResultReceived(result: ActivityResult) = launch(IO) {
         result.data?.data?.let { uri ->
-            val inputStream = app.contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            rotationMutableStateFlow.value = uriToExifDegrees(uri)
-            bitmapMutableStateFlow.value = bitmap
+            bitmapMutableStateFlow.value = uri.loadBitmap(app)
+            rotationMutableStateFlow.value = uri.toExifDegrees(app)
         }
     }
 
@@ -117,15 +107,7 @@ class VmAdd @Inject constructor(
 
     //TODO -> Hier dann das Senden an den Server für die Auswertung
     fun onSaveButtonClicked() = launch {
-        if (currentBitmap == null) {
-            fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorNoBitmapSelected))
-            return@launch
-        }
-
-        if (title.isBlank()) {
-            fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorTitleIsMissing))
-            return@launch
-        }
+        if (!validateInput()) return@launch
 
         navDispatcher.dispatch(NavigationEvent.NavigateToLoadingDialog(R.string.evaluating))
 
@@ -138,40 +120,35 @@ class VmAdd @Inject constructor(
                 pictureUri = rotatedBitmap.saveToInternalStorage(app),
                 pileStatus = PileStatus.NOT_EVALUATED
             )
-
             //TODO -> Im Application Scope eine coroutine Aufrufen um ein Ergebnis zu erhalten.
-        }.also {
-            navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
         }.onSuccess { pile ->
             //TODO -> Die Insertions direkt machen. Und auch direkt zurücknavigieren. Evaluation Status anpassen und im Home Screen anzeigen
             localRepository.insert(pile)
             //Das ist wird später durch dynamische
-            insertBatchesAndBarsFromResponse(pile)
+            insertBatchesAndBarsOfResponse(pile)
+
+            navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
             navDispatcher.dispatch(NavigationEvent.NavigateBack)
         }.onFailure {
+            navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
             fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorCouldNotSafeFile))
         }
     }
 
-    fun onTitleChanged(newTitle: String) {
-        _title = newTitle
+    private suspend fun validateInput(): Boolean {
+        if (currentBitmap == null) {
+            fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorNoBitmapSelected))
+            return false
+        }
+        if (title.isBlank()) {
+            fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorTitleIsMissing))
+            return false
+        }
+        return true
     }
 
-    private fun uriToExifDegrees(uri: Uri): Int {
-        val exif = if (Build.VERSION.SDK_INT > 23) {
-            val stream = app.contentResolver.openInputStream(uri) ?: return 0
-            ExifInterface(stream)
-        } else {
-            val path = uri.path ?: return 0
-            ExifInterface(path)
-        }
-
-        return when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> 90
-            ExifInterface.ORIENTATION_ROTATE_180 -> 180
-            ExifInterface.ORIENTATION_ROTATE_270 -> 270
-            else -> 0
-        }
+    fun onTitleChanged(newTitle: String) {
+        _title = newTitle
     }
 
     private fun takePicture() = launch {
@@ -201,7 +178,7 @@ class VmAdd @Inject constructor(
     }
 
 
-    private suspend fun insertBatchesAndBarsFromResponse(pile: Pile) = withContext(IO) {
+    private suspend fun insertBatchesAndBarsOfResponse(pile: Pile) = withContext(IO) {
         // Das ist die emulierte Response! -> Das wird von der Function zurückgeliefert
         val response = generateFunctionResponse()
 
@@ -232,7 +209,7 @@ class VmAdd @Inject constructor(
         //Inserted die Daten in einer Transaktion -> Nur alle Insert Operationen gelingen oder keine.
         localRepository.insertBatchesAndBars(
             batches = batchesToInsert,
-            bars = runValidityChecks(barsToInsert, batchesToInsert)
+            bars = runValidityChecks(barsToInsert, localBatches + batchesToInsert)
         )
     }
 
@@ -244,19 +221,62 @@ class VmAdd @Inject constructor(
     // -> Captions wich are lonely unterwegs -> Find the ones that are lonely and find most ones in a row
     private fun runValidityChecks(bars: List<Bar>, batches: List<Batch>): List<Bar> {
         val averageBarDimensions = bars.averageBarDimensions
-        return bars
+        val batchMap = batches.associateBy(Batch::batchId)
+
+        return bars.filterOverlappingBars(0.85f)
             .fixBarDimensions(averageBarDimensions)
-            .filterOverlayingBars()
             .filterIsolatedBars(averageBarDimensions)
-            .adjustBatches(2, 1f, true)
-            .adjustBatches(2, 0.5f, true)
-            .adjustBatches(3, 0.5f, true)
+            .adjustBatchIdsIfPossible(2, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(5)
+            .adjustSpacesBetweenBatchGroups(4)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+            .adjustLonelyBarsBetween(3, 1f, batchMap)
+            .adjustBatchIdsIfPossible(1, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+            .adjustLonelyBarsBetween(3, 0.75f, batchMap)
+            .adjustBatchIdsIfPossible(1, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+            .adjustLonelyBarsBetween(3, 0.5f, batchMap)
+            .adjustBatchIdsIfPossible(1, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+
+
+        /*
+             .fixBarDimensions(averageBarDimensions)
+            .filterOverlappingBars()
+            .filterIsolatedBars(averageBarDimensions)
+            .adjustBatchIdsIfPossible(2, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(5)
+            .adjustSpacesBetweenBatchGroups(4)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+            .adjustLonelyBarsBetween(3, 1f, batchMap)
+            .adjustLonelyBarsBetween(3, 0.75f, batchMap)
+            .adjustBatchIdsIfPossible(1, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+            .adjustLonelyBarsBetween(3, 0.5f, batchMap)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+         */
     }
 
-    //TODO -> Hier schauen ob es eine Lücke gibt.
-    private fun findHorizontalBarHoles(bars: List<Bar>) {
-
-    }
 
 
     //Die Methode ist nur dafür da, um eine beispielhafte Response eines Function Aufrufes zu simulieren

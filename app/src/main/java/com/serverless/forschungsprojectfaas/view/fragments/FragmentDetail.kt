@@ -1,10 +1,8 @@
 package com.serverless.forschungsprojectfaas.view.fragments
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -92,7 +90,10 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
 
             btnBack.onClick(vm::onBackButtonClicked)
             btnConnect.onClick(vm::onSelectBarsInLineClicked)
-            btnClearSelection.onClick(vm::onClearSelectionClicked)
+
+            btnClearSelectedBars.onClick(vm::onClearSelectionClicked)
+            btnQuickSelectFirstBatch.onClick(vm::onQuickChangeBatchButtonClicked)
+
             btnSwap.onClick(vm::onSwapBatchOfSelectedBarsClicked)
             btnDelete.onClick(vm::onDeleteSelectedBarsClicked)
             btnShowRowMappingScreen.onClick(vm::onShowRowMappingDialogClicked)
@@ -106,17 +107,10 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
                 iv.setBoxStroke(progress)
             }
 
-            progressWidth.onProgressChanged { progress, isUserInput ->
-                vm.onWidthProgressChanged(progress, isUserInput)
-            }
-
-            progressHeight.onProgressChanged { progress, isUserInput ->
-                vm.onHeightProgressChanged(progress, isUserInput)
-            }
-
-            btnExpandSheet.onClick(::toggleSheet)
-
+            progressWidth.onProgressChanged(vm::onWidthProgressChanged)
+            progressHeight.onProgressChanged(vm::onHeightProgressChanged)
             etSearchQuery.onTextChanged(vm::onBatchSearchQueryChanged)
+            btnExpandSheet.onClick(::toggleSheet)
 
             behavior.addBottomSheetCallback(bottomSheetBehaviour)
         }
@@ -166,6 +160,16 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
             binding.tvSticksAmount.text = if (bars.isEmpty()) "-" else bars.size.toString()
         }
 
+        vm.batchOfFirstSelectedBarStateFlow.collectWhenStarted(viewLifecycleOwner) { batch ->
+            binding.apply {
+                ivSelectedBatchLabel.isEnabled = batch != null
+                tvSelectedBatchLabel.isEnabled = batch != null
+                btnQuickSelectFirstBatch.isEnabled = batch != null
+                ivSelectedBatchLabel.setImageDrawable(if(batch == null) R.drawable.ic_label_outlined else R.drawable.ic_label)
+                tvSelectedBatchLabel.text = batch?.caption ?: "-"
+            }
+        }
+
         vm.selectedBarIdsStateFlow.collectWhenStarted(viewLifecycleOwner) { selectedIds ->
             binding.apply {
                 tvSelectedNumber.text = selectedIds.size.toString()
@@ -174,9 +178,9 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
                 selectedIds.isNotEmpty().let { isNotEmpty ->
                     tvSelectedNumber.isEnabled = isNotEmpty
                     ivSelectedBarsIcon.isEnabled = isNotEmpty
-                    btnClearSelection.isEnabled = isNotEmpty
                     btnSwap.isEnabled = isNotEmpty
                     btnDelete.isEnabled = isNotEmpty
+                    btnClearSelectedBars.isEnabled = isNotEmpty
                 }
 
                 btnConnect.isEnabled = vm.areBarsInSameRow(selectedIds)
