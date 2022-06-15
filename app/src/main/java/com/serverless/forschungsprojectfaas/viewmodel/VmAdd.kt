@@ -251,30 +251,6 @@ class VmAdd @Inject constructor(
             .adjustBatchIdsIfPossible(3, 0.5f)
             .adjustSpacesBetweenBatchGroups(3)
             .adjustSpacesBetweenBatchGroups(2)
-
-
-        /*
-             .fixBarDimensions(averageBarDimensions)
-            .filterOverlappingBars()
-            .filterIsolatedBars(averageBarDimensions)
-            .adjustBatchIdsIfPossible(2, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
-            .adjustSpacesBetweenBatchGroups(5)
-            .adjustSpacesBetweenBatchGroups(4)
-            .adjustSpacesBetweenBatchGroups(3)
-            .adjustSpacesBetweenBatchGroups(2)
-            .adjustLonelyBarsBetween(3, 1f, batchMap)
-            .adjustLonelyBarsBetween(3, 0.75f, batchMap)
-            .adjustBatchIdsIfPossible(1, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
-            .adjustSpacesBetweenBatchGroups(3)
-            .adjustSpacesBetweenBatchGroups(2)
-            .adjustLonelyBarsBetween(3, 0.5f, batchMap)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
-         */
     }
 
 
