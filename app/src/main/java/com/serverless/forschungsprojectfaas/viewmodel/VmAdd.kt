@@ -6,43 +6,42 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.NavigationEvent
 import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.model.PileStatus
-import com.serverless.forschungsprojectfaas.model.ktor.ProcessedBox
-import com.serverless.forschungsprojectfaas.model.ktor.ProcessedPilesResponse
+import com.serverless.forschungsprojectfaas.model.ktor.ImageInformation
+import com.serverless.forschungsprojectfaas.model.ktor.PotentialBox
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
-import com.serverless.forschungsprojectfaas.model.room.entities.Bar
-import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.client.statement.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.withContext
-import java.io.*
+import java.io.File
 import javax.inject.Inject
 
 
 @HiltViewModel
 class VmAdd @Inject constructor(
     application: Application,
-    private val scope: CoroutineScope,
     private val navDispatcher: NavigationEventDispatcher,
     private val localRepository: LocalRepository,
-    private val remoteRepo: RemoteRepository
+    private val remoteRepo: RemoteRepository,
+    private val applicationScope: CoroutineScope
 ) : AndroidViewModel(application) {
 
     companion object {
@@ -105,33 +104,51 @@ class VmAdd @Inject constructor(
         navDispatcher.dispatch(NavigationEvent.NavigateBack)
     }
 
-    //TODO -> Hier dann das Senden an den Server für die Auswertung
-    fun onSaveButtonClicked() = launch {
+    fun onAddButtonClicked() = launch {
         if (!validateInput()) return@launch
 
-        navDispatcher.dispatch(NavigationEvent.NavigateToLoadingDialog(R.string.evaluating))
+        val rotatedBitmap = currentBitmap!!.rotate(degree = rotationStateFlow.value)
+
+        val pile = Pile(
+            title = _title,
+            pictureUri = rotatedBitmap.saveToInternalStorage(app),
+            pileStatus = PileStatus.NOT_EVALUATED
+        )
+
+        localRepository.insert(pile)
+        navDispatcher.dispatch(NavigationEvent.NavigateBack)
+    }
+
+    //TODO -> Hier dann das Senden an den Server für die Auswertung
+    fun onEvaluateButtonClicked() = launch(scope = applicationScope) {
+        if (!validateInput()) return@launch
+
+        val rotatedBitmap = currentBitmap!!.rotate(degree = rotationStateFlow.value)
+
+        val pileUri = rotatedBitmap.saveToInternalStorage(app)
+
+        val pile = Pile(
+            title = _title,
+            pictureUri = pileUri,
+            pileStatus = PileStatus.EVALUATING
+        )
+
+        localRepository.insert(pile)
+        navDispatcher.dispatch(NavigationEvent.NavigateBack)
 
         runCatching {
-            val rotatedBitmap = currentBitmap!!.rotate(degree = rotationStateFlow.value)
-            //bitmapMutableStateFlow.value = rotatedBitmap
-            //base64Tests(rotatedBitmap)
-            Pile(
-                title = _title,
-                pictureUri = rotatedBitmap.saveToInternalStorage(app),
-                pileStatus = PileStatus.NOT_EVALUATED
+            val imageInformation = ImageInformation(
+                name = pile.title,
+                extension = pileUri.fileExtension ?: "png",
+                image = rotatedBitmap.asBase64String(),
             )
-            //TODO -> Im Application Scope eine coroutine Aufrufen um ein Ergebnis zu erhalten.
-        }.onSuccess { pile ->
-            //TODO -> Die Insertions direkt machen. Und auch direkt zurücknavigieren. Evaluation Status anpassen und im Home Screen anzeigen
-            localRepository.insert(pile)
-            //Das ist wird später durch dynamische
-            insertBatchesAndBarsOfResponse(pile)
-
-            navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
-            navDispatcher.dispatch(NavigationEvent.NavigateBack)
+            remoteRepo.uploadImageForProcessing(imageInformation)
         }.onFailure {
-            navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
-            fragmentMainEventChannel.send(FragmentMainEvent.ShowMessageSnackBar(R.string.errorCouldNotSafeFile))
+            localRepository.updatePileStatus(pile.pileId, PileStatus.FAILED)
+        }.onSuccess { response ->
+            val typeToken = object : TypeToken<List<PotentialBox>>() {}.type
+            val boxes = Gson().fromJson<List<PotentialBox>>(response.bodyAsText(), typeToken)
+            localRepository.insertBatchesAndBarsOfResponse(pile.pileId, boxes)
         }
     }
 
@@ -171,132 +188,8 @@ class VmAdd @Inject constructor(
         null
     }
 
-
     sealed class FragmentMainEvent {
         class LaunchActivityResult(val intent: Intent) : FragmentMainEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : FragmentMainEvent()
     }
-
-
-    private suspend fun insertBatchesAndBarsOfResponse(pile: Pile) = withContext(IO) {
-        // Das ist die emulierte Response! -> Das wird von der Function zurückgeliefert
-        val response = generateFunctionResponse()
-
-        val groupedByCaption = response.processedBoxes.groupBy(ProcessedBox::caption)
-        val localBatches = localRepository.findBatchesWithCaptions(groupedByCaption.keys)
-
-        val batchesToInsert = mutableListOf<Batch>()
-        val barsToInsert = mutableListOf<Bar>()
-
-        groupedByCaption.forEach { (caption, boxes) ->
-            // Es wird gecheckt, ob schon ein Batch mit der Caption in der Datenbank vorhanden ist
-            // Plausibilitätsprüfungen hier durchführen -> Oder auch schon vor dem Group by !
-            val batchId: String? = if (caption.length != 2) {
-                null
-            } else {
-                localBatches.firstOrNull { it.caption == caption } ?: Batch(caption = caption).also(batchesToInsert::add)
-            }?.batchId
-
-            boxes.map { box ->
-                Bar(
-                    batchId = batchId,
-                    pileId = pile.pileId,
-                    rect = box.rect
-                )
-            }.also(barsToInsert::addAll)
-        }
-
-        //Inserted die Daten in einer Transaktion -> Nur alle Insert Operationen gelingen oder keine.
-        localRepository.insertBatchesAndBars(
-            batches = batchesToInsert,
-            bars = runValidityChecks(barsToInsert, localBatches + batchesToInsert)
-        )
-    }
-
-
-    //TODO -> Die checks noch einbauen
-    //Checks the boxes of the Response for validity
-    // explanation:
-    // -> Captions With Single Letter
-    // -> Captions wich are lonely unterwegs -> Find the ones that are lonely and find most ones in a row
-    private fun runValidityChecks(bars: List<Bar>, batches: List<Batch>): List<Bar> {
-        val averageBarDimensions = bars.averageBarDimensions
-        val batchMap = batches.associateBy(Batch::batchId)
-
-        return bars.filterOverlappingBars(0.85f)
-            .fixBarDimensions(averageBarDimensions)
-            .filterIsolatedBars(averageBarDimensions)
-            .adjustBatchIdsIfPossible(2, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
-            .adjustSpacesBetweenBatchGroups(5)
-            .adjustSpacesBetweenBatchGroups(4)
-            .adjustSpacesBetweenBatchGroups(3)
-            .adjustSpacesBetweenBatchGroups(2)
-            .adjustLonelyBarsBetween(3, 1f, batchMap)
-            .adjustBatchIdsIfPossible(1, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
-            .adjustSpacesBetweenBatchGroups(3)
-            .adjustSpacesBetweenBatchGroups(2)
-            .adjustLonelyBarsBetween(3, 0.75f, batchMap)
-            .adjustBatchIdsIfPossible(1, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
-            .adjustSpacesBetweenBatchGroups(3)
-            .adjustSpacesBetweenBatchGroups(2)
-            .adjustLonelyBarsBetween(3, 0.5f, batchMap)
-            .adjustBatchIdsIfPossible(1, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
-            .adjustSpacesBetweenBatchGroups(3)
-            .adjustSpacesBetweenBatchGroups(2)
-    }
-
-
-
-    //Die Methode ist nur dafür da, um eine beispielhafte Response eines Function Aufrufes zu simulieren
-    private fun generateFunctionResponse(): ProcessedPilesResponse {
-        val stream = InputStreamReader(app.assets.open("results.csv"))
-        val processedBoxes: List<ProcessedBox> = BufferedReader(stream).lineSequence().map { line ->
-            line.split(",").let { columns ->
-                ProcessedBox(
-                    caption = columns[0],
-                    left = columns[1].toFloat(),
-                    top = columns[2].toFloat(),
-                    right = columns[3].toFloat(),
-                    bottom = columns[4].toFloat()
-                )
-            }
-        }.toList()
-
-        // Das ist die emulierte Response! -> Das wird von der Function zurückgeliefert
-        return ProcessedPilesResponse(processedBoxes)
-    }
-
-    private fun base64Tests(bitmap: Bitmap) = launch(scope = scope, dispatcher = IO) {
-        log("START")
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-        val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
-        val stringTest = Base64.encodeToString(byteArray, Base64.DEFAULT)
-
-        val file = File(app.filesDir, "my-file-name.txt")
-        FileOutputStream(file).use { stream ->
-            stream.write(byteArray)
-        }
-        log("FILE: $file")
-//                    val response = remoteRepo.invokeTestFunction(stringTest)
-//
-//                    val responseString = response.bodyAsText()
-//                    val base64StringOnly = responseString
-//                        .substringAfter("\"")
-//                        .substringBefore("\"")
-//                        .replace("\\n", "")
-//                        .replace("\\r", "")
-//                    val decoded = Base64.decode(base64StringOnly, Base64.DEFAULT)
-//                    val returnedBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
-//                    bitmapMutableStateFlow.value = returnedBitmap
-    }
-
 }

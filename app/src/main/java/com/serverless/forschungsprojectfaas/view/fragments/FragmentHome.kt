@@ -9,6 +9,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.setFragmentResultEventLis
 import com.serverless.forschungsprojectfaas.extensions.disableChangeAnimation
 import com.serverless.forschungsprojectfaas.extensions.onClick
 import com.serverless.forschungsprojectfaas.extensions.onTextChanged
+import com.serverless.forschungsprojectfaas.extensions.showSnackBar
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingFragment
 import com.serverless.forschungsprojectfaas.view.recyclerview.RvaHome
 import com.serverless.forschungsprojectfaas.viewmodel.VmHome
@@ -61,6 +62,12 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
     private fun initObservers() {
         vm.pilesWithBarCount.collectWhenStarted(viewLifecycleOwner) {
             rva.submitList(it)
+        }
+
+        vm.fragmentHomeEventChannelFlow.collectWhenStarted(viewLifecycleOwner) {
+            when(it) {
+                is VmHome.FragmentHomeEvent.DisplaySnackBar -> showSnackBar(it.messageRes)
+            }
         }
     }
 

@@ -1,17 +1,10 @@
 package com.serverless.forschungsprojectfaas.view
 
-import android.graphics.RectF
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.graphics.minus
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.DispatchEventPublisher
-import com.serverless.forschungsprojectfaas.extensions.area
-import com.serverless.forschungsprojectfaas.extensions.intersectingArea
-import com.serverless.forschungsprojectfaas.extensions.intersectingRect
-import com.serverless.forschungsprojectfaas.extensions.log
 import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

@@ -24,21 +24,9 @@ class RvaHome : BindingListAdapter<PileWithBarCount, RviPileBinding>(PileWithBar
         binding.apply {
             root.onClick {
                 onItemClicked?.invoke( getItem(vh).pile)
-
-//                getItem(vh).pile.let { pile ->
-//                    if(pile.pileStatus == UPLOADED || pile.pileStatus == LOCALLY_CHANGED) {
-//                        onItemClicked?.invoke(pile)
-//                    }
-//                }
             }
             root.onLongClick {
                 onItemLongClicked?.invoke( getItem(vh).pile)
-
-//                getItem(vh).pile.let { pile ->
-//                    if(pile.pileStatus == UPLOADED || pile.pileStatus == LOCALLY_CHANGED) {
-//                        onItemLongClicked?.invoke(pile)
-//                    }
-//                }
             }
             btnMoreOptions.onClick { onMoreOptionsClicked?.invoke(getItem(vh).pile) }
             btnStatus.onClick { onStatusButtonClicked?.invoke(getItem(vh).pile) }
@@ -52,13 +40,13 @@ class RvaHome : BindingListAdapter<PileWithBarCount, RviPileBinding>(PileWithBar
 
             if(item.pile.pileStatus == EVALUATING){
                 tvMark.text = ""
-                btnStatus.isEnabled = false
+                btnStatus.isVisible = false
                 root.isEnabled = false
                 btnMoreOptions.isEnabled = false
                 progress.isVisible = true
             } else {
-                tvMark.text = if(item.count == 0) "-" else item.count.toString()
-                btnStatus.isEnabled = true
+                tvMark.text = if(item.count == 0 || item.count == 1) "-" else item.count.toString()
+                btnStatus.isVisible = true
                 btnMoreOptions.isEnabled = true
                 progress.isVisible = false
                 root.isEnabled = true
@@ -67,4 +55,5 @@ class RvaHome : BindingListAdapter<PileWithBarCount, RviPileBinding>(PileWithBar
             btnStatus.setImageDrawable(item.pile.pileStatus.iconRes)
         }
     }
+
 }

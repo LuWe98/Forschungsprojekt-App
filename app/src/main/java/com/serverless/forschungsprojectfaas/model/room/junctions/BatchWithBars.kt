@@ -3,8 +3,7 @@ package com.serverless.forschungsprojectfaas.model.room.junctions
 import androidx.recyclerview.widget.DiffUtil
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.serverless.forschungsprojectfaas.extensions.div
-import com.serverless.forschungsprojectfaas.extensions.generateDiffItemCallback
+import com.serverless.forschungsprojectfaas.model.ktor.ImageInformationBar
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 
@@ -18,6 +17,16 @@ data class BatchWithBars(
     )
     var bars: List<Bar>
 ) {
+
+    val asImageInformationBars: List<ImageInformationBar> get() = bars.map { bar ->
+        ImageInformationBar(
+            caption = batch?.caption ?: "-",
+            top = bar.top.toDouble(),
+            left = bar.left.toDouble(),
+            right = bar.right.toDouble(),
+            bottom = bar.bottom.toDouble()
+        )
+    }
 
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BatchWithBars>() {

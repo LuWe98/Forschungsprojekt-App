@@ -15,8 +15,12 @@ class RemoteRepository @Inject constructor(
         const val REMOTE_URL = "http://141.28.73.147:$PORT/function"
     }
 
-    suspend fun invokeTestFunction(parameter: String) = client.post("testfunction") {
-        setBody(parameter)
+    suspend fun uploadImageForProcessing(imageInformation: ImageInformation) = client.post("barfunctionentrypoint") {
+        setBody(imageInformation)
+    }
+
+    suspend fun persistUpdatedResults(imageInformation: ImageInformation) = client.post("persistnewresultfunction") {
+        setBody(imageInformation)
     }
 
 }

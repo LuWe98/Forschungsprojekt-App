@@ -82,7 +82,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:$liveCycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$liveCycleVersion")
     implementation("androidx.lifecycle:lifecycle-process:$liveCycleVersion")
-
     val liveCycleVersionOlder: String by project
     implementation("androidx.lifecycle:lifecycle-extensions:$liveCycleVersionOlder")
 
@@ -97,10 +96,7 @@ dependencies {
     //Hilt
     val hiltVersion: String by project
     implementation("com.google.dagger:hilt-android:$hiltVersion")
-    implementation("androidx.camera:camera-view:1.1.0-beta03")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
-    val hiltViewModelVersion: String by project
-//    implementation("androidx.hilt:hilt-lifecycle-viewmodel:$hiltViewModelVersion")
     val hiltAndroidXVersion: String by project
     kapt("androidx.hilt:hilt-compiler:$hiltAndroidXVersion")
     val hiltFragmentVersion: String by project
@@ -141,23 +137,10 @@ dependencies {
     val splashScreenVersion: String by project
     implementation("androidx.core:core-splashscreen:$splashScreenVersion")
 
-
     
-    //TODO -> Braucht man nicht mehr!
-    val cameraxVersion: String by project
-    implementation("androidx.camera:camera-core:$cameraxVersion")
-    implementation("androidx.camera:camera-camera2:$cameraxVersion")
-    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
-    implementation("androidx.camera:camera-video:$cameraxVersion")
-    implementation("androidx.camera:camera-view:$cameraxVersion")
-    implementation("androidx.camera:camera-extensions:$cameraxVersion")
-
-
     //GLIDE for Image display
     implementation("com.github.bumptech.glide:glide:4.13.0")
     kapt("com.github.bumptech.glide:compiler:4.13.0")
-
-
 
     //EIGENE LIBRARY
     implementation("com.github.LucaWeinmann:AndroidCoroutineFlowUtils:1.0.5")
@@ -166,6 +149,10 @@ dependencies {
 
     //Image Scale Library
     implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
+
+
+    //GSON
+    implementation("com.google.code.gson:gson:2.7")
 
     //Testing
     val jUnitVersion: String by project

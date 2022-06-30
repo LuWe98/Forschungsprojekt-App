@@ -16,6 +16,11 @@
     <string name="stickCount">Stick count</string>
     <string name="orderBy">Order by</string>
     <string name="open">Open</string>
+    <string name="uploadChanges">Upload changes</string>
+    <string name="uploadingChanges">Uploading changes…</string>
+    <string name="successChangesWereUploaded">Updated</string>
+    <string name="errorCouldNotUploadUpdate">Could not update</string>
+
     <string name="evaluate">Evaluate</string>
     <string name="evaluating">Evaluating</string>
 

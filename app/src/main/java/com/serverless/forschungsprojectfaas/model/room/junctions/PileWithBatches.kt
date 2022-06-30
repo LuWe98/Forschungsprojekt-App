@@ -5,8 +5,11 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.serverless.forschungsprojectfaas.extensions.asEvaluatedRowEntries
 import com.serverless.forschungsprojectfaas.model.PileEvaluation
+import com.serverless.forschungsprojectfaas.model.ktor.ImageInformation
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -41,4 +44,8 @@ data class PileWithBatches(
 
     val asPileEvaluation get(): PileEvaluation = PileEvaluation(pile, rowEvaluationEntries)
 
+    val asImageInformation get() = ImageInformation(
+        name = pile.title,
+        result = batchWithBars.flatMap(BatchWithBars::asImageInformationBars)
+    )
 }

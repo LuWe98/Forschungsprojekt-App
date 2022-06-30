@@ -2,12 +2,13 @@ package com.serverless.forschungsprojectfaas.model.ktor
 
 import android.graphics.PointF
 import android.graphics.RectF
+import com.serverless.forschungsprojectfaas.extensions.BatchId
+import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import kotlinx.serialization.Serializable
-import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 @Serializable
-data class ProcessedBox(
+data class PotentialBox(
     val caption: String,
     val left: Float,
     val top: Float,
@@ -21,8 +22,9 @@ data class ProcessedBox(
     val centerY get() = bottom - height/2f
     val center get() = PointF(centerX, centerY)
 
-    fun getMiddleXCoordinate(other: ProcessedBox): Float {
-        val diff = (centerX - other.centerX).absoluteValue / 2f
-        return if(centerX < other.centerX) centerX + diff else other.centerX + diff
-    }
+    fun asBar(batchId: BatchId, pileId: String) = Bar(
+        batchId = batchId,
+        pileId = pileId,
+        rect = rect
+    )
 }

@@ -53,6 +53,7 @@ data class Bar(
     val right get() = rect.right
     val top get() = rect.top
     val bottom get() = rect.bottom
+
     fun setBounds(left: Float = rect.left,
                   top: Float = rect.top,
                   right: Float = rect.right,

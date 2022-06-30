@@ -64,15 +64,7 @@ fun List<Bar>.findClosestRightBar(bar: Bar): Bar? = filter {
     (bar.centerX - it.left).absoluteValue
 }
 
-fun List<Bar>.findClosestBarLeftOfWithSameBatch(bar: Bar): Bar? = filter {
-    bar.barId != it.barId
-            && bar.batchId == it.batchId
-            && bar.centerY <= it.bottom
-            && bar.centerY >= it.top
-            && bar.right > it.right
-}.minByOrNull {
-    (bar.centerX - it.right).absoluteValue
-}
+fun List<Bar>.findBarsToSideOf(bar: Bar, limit: Int): List<Bar> = findBarsLeftOf(bar, limit).toMutableList().addAllChain(findBarsRightOf(bar, limit))
 
 fun List<Bar>.findNextTopBar(bar: Bar, barsToIgnore: List<BarId> = emptyList()): Bar? = filter {
     bar.barId != it.barId
@@ -124,8 +116,6 @@ fun List<Bar>.findBarsBetween(barOne: Bar, barTwo: Bar): List<Bar> {
         findBarsLeftOf(right).filter(rightOfLeftBars::contains)
     }
 }
-
-fun List<Bar>.findBarsToSideOf(bar: Bar, limit: Int): List<Bar> = findBarsLeftOf(bar, limit).toMutableList().addAllChain(findBarsRightOf(bar, limit))
 
 fun List<Bar>.findBarsInsideBounds(bounds: RectF) = filter { bounds.isIntersecting(it.rect) }
 
@@ -238,6 +228,8 @@ val List<Bar>.asBarRowColumnMap
         }
         barRowColumnMap
     }
+
+
 
 
 // ---------------- Ab hier kommen die Filterungen um Ergebnisse zu Fixen im Pile ---------------------------------------
@@ -502,37 +494,4 @@ fun List<Bar>.adjustLonelyBarsBetween(
     }
 
     return rowBars.flatten()
-}
-
-
-
-
-
-//Schaut nach links und es reicht aber, dass andere Bars mit gleichen Batches gefunden werden, egal ob die dazwischen
-// -> BSP: A A A A B C Z H G N N N N
-// Alle Labels dazwischen werden ausgetauscht, da es unwahrscheinlich ist, dass dazwischen noch andere sind.
-// Könnte aber auch fehler herbeirufen, wenn dazwischen welche sind, die wenig sind. Mal schauen
-
-fun List<Bar>.findAndFillSpacesBetweenDiff(minBarCountOnEachSide: Int = 4): List<Bar> {
-    return emptyList()
-}
-
-
-
-//TODO -> Finds horizontal Holes in Pile -> Diese sollen dann aufgefüllt werden
-fun List<Bar>.findHorizontalBarHoles(averageBarDimensions: BoxDimensions = this.averageBarDimensions) {
-    val candidates = mapNotNull { bar ->
-        findClosestLeftBar(bar)?.let { leftBar ->
-            val spaceBetween = bar.left - leftBar.right
-            val isValid = spaceBetween > averageBarDimensions.width
-                    && (
-                    findClosestBottomBar(PointF(leftBar.right + spaceBetween / 2f, leftBar.bottom)) != null
-                            || findClosestBottomBar(PointF(leftBar.right, bar.bottom)) != null
-                            || findClosestBottomBar(PointF(bar.left, bar.bottom)) != null
-                    )
-            if (!isValid) return@mapNotNull null
-            Pair(leftBar, bar)
-        }
-    }
-    //TODO -> Weiter
 }

@@ -15,6 +15,14 @@ enum class PictureMoreOptions(
         textRes = R.string.open,
         iconRes = R.drawable.ic_open
     ),
+    UPLOAD_CHANGES(
+        textRes = R.string.uploadChanges,
+        iconRes = R.drawable.ic_rotate_alt
+    ),
+    EVALUATE(
+        textRes = R.string.evaluate,
+        iconRes = R.drawable.ic_cloud_upload
+    ),
     EXPORT(
         textRes = R.string.exportToCsv,
         iconRes = R.drawable.ic_insert_file
@@ -22,6 +30,10 @@ enum class PictureMoreOptions(
     DELETE(
         textRes = R.string.delete,
         iconRes = R.drawable.ic_delete
-    )
+    );
 
+    companion object {
+        val notEvaluatedPileOptions: List<PictureMoreOptions> = listOf(EVALUATE, DELETE)
+        val updatePileOptions: List<PictureMoreOptions> = listOf(OPEN, UPLOAD_CHANGES, EXPORT, DELETE)
+    }
 }

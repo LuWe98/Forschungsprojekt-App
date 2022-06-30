@@ -48,7 +48,8 @@ class FragmentAdd : BindingFragment<FragmentAddBinding>() {
             btnFiles.onClick { onBrowseFolderResult.launch(chooserIntent) }
             btnRotate.onClick(vm::onPictureClicked)
             btnBack.onClick(vm::onBackButtonClicked)
-            btnSave.onClick(vm::onSaveButtonClicked)
+            btnEvaluate.onClick(vm::onEvaluateButtonClicked)
+            btnAdd.onClick(vm::onAddButtonClicked)
             etPictureTitle.onTextChanged(vm::onTitleChanged)
         }
     }

@@ -1,6 +1,9 @@
 package com.serverless.forschungsprojectfaas.model.room
 
 import androidx.room.withTransaction
+import com.serverless.forschungsprojectfaas.extensions.*
+import com.serverless.forschungsprojectfaas.model.PileStatus
+import com.serverless.forschungsprojectfaas.model.ktor.PotentialBox
 import com.serverless.forschungsprojectfaas.model.room.dao.BatchDao
 import com.serverless.forschungsprojectfaas.model.room.dao.BaseDao
 import com.serverless.forschungsprojectfaas.model.room.dao.PileDao
@@ -60,10 +63,109 @@ class LocalRepository @Inject constructor(
     fun getPilesWithBarCount(searchQuery: String): Flow<List<PileWithBarCount>> = pileDao.getPilesWithBarCount(searchQuery)
 
 
+    suspend fun updatePileStatus(pileId: String, status: PileStatus) = pileDao.updatePileStatus(pileId, status)
+
+    suspend fun resetCurrentlyEvaluatingPiles() = pileDao.resetCurrentlyEvaluatingPiles()
+
+
     suspend fun insertBatchesAndBars(batches: List<Batch>, bars: List<Bar>) = withContext(Dispatchers.IO) {
         localDatabase.withTransaction {
             insert(batches)
             insert(bars)
         }
+    }
+
+    suspend fun insertBarOfPile(bar: Bar) = withContext(Dispatchers.IO) {
+        localDatabase.withTransaction {
+            updatePileStatus(bar.pileId, PileStatus.LOCALLY_CHANGED)
+            insert(bar)
+        }
+    }
+
+    suspend fun updateBarOfPile(bar: Bar) = withContext(Dispatchers.IO) {
+        localDatabase.withTransaction {
+            updatePileStatus(bar.pileId, PileStatus.LOCALLY_CHANGED)
+            update(bar)
+        }
+    }
+
+    suspend fun updateBarsOfPile(bars: List<Bar>) = withContext(Dispatchers.IO) {
+        localDatabase.withTransaction {
+            updatePileStatus(bars.firstOrNull()?.pileId ?: "", PileStatus.LOCALLY_CHANGED)
+            update(bars)
+        }
+    }
+
+    suspend fun deleteBarsOfPile(bars: List<Bar>) = withContext(Dispatchers.IO) {
+        localDatabase.withTransaction {
+            updatePileStatus(bars.firstOrNull()?.pileId ?: "", PileStatus.LOCALLY_CHANGED)
+            delete(bars)
+        }
+    }
+
+
+    suspend fun insertBatchesAndBarsOfResponse(pileId: String, results: List<PotentialBox>) = withContext(Dispatchers.IO) {
+        val groupedByCaption = results.groupBy(PotentialBox::caption)
+        val localBatches = findBatchesWithCaptions(groupedByCaption.keys)
+
+        val batchesToInsert = mutableListOf<Batch>()
+        val barsToInsert = mutableListOf<Bar>()
+
+        groupedByCaption.forEach { (caption, boxes) ->
+            val batchId: String? = if (caption.length != 2) {
+                null
+            }
+            else {
+                localBatches.firstOrNull { it.caption == caption } ?: Batch(caption = caption).also(batchesToInsert::add)
+            }?.batchId
+
+            boxes.map { box ->
+                Bar(
+                    batchId = batchId,
+                    pileId = pileId,
+                    rect = box.rect
+                )
+            }.also(barsToInsert::addAll)
+        }
+
+        insertBatchesAndBars(
+            batches = batchesToInsert,
+            bars = runValidityChecks(barsToInsert, localBatches + batchesToInsert)
+        )
+
+        updatePileStatus(pileId, PileStatus.UPLOADED)
+    }
+
+    private fun runValidityChecks(bars: List<Bar>, batches: List<Batch>): List<Bar> {
+        val averageBarDimensions = bars.averageBarDimensions
+        val batchMap = batches.associateBy(Batch::batchId)
+        return bars.filterOverlappingBars(0.85f)
+            .fixBarDimensions(averageBarDimensions)
+            .filterIsolatedBars(averageBarDimensions)
+            .adjustBatchIdsIfPossible(2, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(5)
+            .adjustSpacesBetweenBatchGroups(4)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+            .adjustLonelyBarsBetween(3, 1f, batchMap)
+            .adjustBatchIdsIfPossible(1, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+            .adjustLonelyBarsBetween(3, 0.75f, batchMap)
+            .adjustBatchIdsIfPossible(1, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
+            .adjustLonelyBarsBetween(3, 0.5f, batchMap)
+            .adjustBatchIdsIfPossible(1, 1f)
+            .adjustBatchIdsIfPossible(2, 0.5f)
+            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustSpacesBetweenBatchGroups(3)
+            .adjustSpacesBetweenBatchGroups(2)
     }
 }

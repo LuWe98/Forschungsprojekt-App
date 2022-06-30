@@ -30,7 +30,7 @@ import kotlin.math.max
 class VmDetail @Inject constructor(
     private val navDispatcher: NavigationEventDispatcher,
     private val localRepository: LocalRepository,
-    private val state: SavedStateHandle,
+    state: SavedStateHandle,
 ) : ViewModel() {
 
     private val args = FragmentDetailArgs.fromSavedStateHandle(state)
@@ -46,12 +46,8 @@ class VmDetail @Inject constructor(
 
     private val pileWithBatches: PileWithBatches? = pileWithBatchesStateFlow.value
 
-    private val imagePathFlow = nonNullPileWithBatchesFlow
-        .map { it.pile.pictureUri.path }
-        .flowOn(IO)
-        .distinctUntilChanged()
-
-    val imageBitmapStateFlow = imagePathFlow.map(BitmapFactory::decodeFile)
+    val imageBitmapStateFlow = nonNullPileWithBatchesFlow
+        .map(PileWithBatches::pile / Pile::bitmap)
         .flowOn(IO)
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
@@ -90,7 +86,7 @@ class VmDetail @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val batchOfFirstSelectedBar get() = batchOfFirstSelectedBarStateFlow.value
+    private val batchOfFirstSelectedBar get() = batchOfFirstSelectedBarStateFlow.value
 
     val selectedBarsStateFlow: StateFlow<List<Bar>> = combine(
         flow = selectedBarIdsMutableStateFlow,
@@ -154,7 +150,7 @@ class VmDetail @Inject constructor(
 
     fun onBarDragReleased(bar: Bar) {
         launch {
-            localRepository.update(bar)
+            localRepository.updateBarOfPile(bar)
         }
     }
 
@@ -171,10 +167,9 @@ class VmDetail @Inject constructor(
                 pileId = pile.pile.pileId,
                 rect = rectToInsert
             )
-            localRepository.insert(barToInsert)
+            localRepository.insertBarOfPile(barToInsert)
         }
     }
-
 
     /**
      * Die Auswahl aufheben
@@ -213,7 +208,7 @@ class VmDetail @Inject constructor(
 
     fun onBatchSelectionResultReceived(result: FragmentResult.BatchSelectionResult) = launch {
         selectedBars.let { bars ->
-            localRepository.update(bars.map { bar ->
+            localRepository.updateBarsOfPile(bars.map { bar ->
                 bar.copy(batchId = result.batchId)
             })
         }
@@ -225,7 +220,7 @@ class VmDetail @Inject constructor(
      */
     fun onDeleteSelectedBarsClicked() = launch {
         if (selectedBarIds.isEmpty()) return@launch
-        localRepository.delete(selectedBars)
+        localRepository.deleteBarsOfPile(selectedBars)
         onClearSelectionClicked()
     }
 
@@ -261,7 +256,7 @@ class VmDetail @Inject constructor(
                     bar.rect.centerX() + progress / 2f,
                     bar.rect.bottom
                 )
-                localRepository.update(bar)
+                localRepository.updateBarOfPile(bar)
             }
         }
     }
@@ -271,7 +266,7 @@ class VmDetail @Inject constructor(
 
         launch {
             selectedBars.first().let { bar ->
-                localRepository.update(bar.copy(
+                localRepository.updateBarOfPile(bar.copy(
                     rect = RectF(
                         bar.rect.left,
                         bar.rect.centerY() - (progress / 2f),

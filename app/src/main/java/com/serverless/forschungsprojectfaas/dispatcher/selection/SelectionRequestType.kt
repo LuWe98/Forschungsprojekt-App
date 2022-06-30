@@ -7,7 +7,6 @@ import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher.
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
 import kotlinx.parcelize.Parcelize
 
-
 sealed class SelectionRequestType<T : Enum<T>>(
     val recyclerViewList: List<SelectionTypeItemMarker<T>>,
     val titleProvider: (Context) -> String?,
@@ -18,7 +17,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     @Parcelize
     data class PictureMoreOptionsSelection(
         val pile: Pile,
-        val itemsToDisplay: List<SelectionTypeItemMarker<PictureMoreOptions>> = PictureMoreOptions.values().toList()
+        val itemsToDisplay: List<SelectionTypeItemMarker<PictureMoreOptions>> = PictureMoreOptions.notEvaluatedPileOptions
     ) : SelectionRequestType<PictureMoreOptions>(
         recyclerViewList = itemsToDisplay,
         titleProvider = { pile.title },

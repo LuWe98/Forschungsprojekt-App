@@ -26,3 +26,5 @@ fun Uri.loadBitmap(context: Context): Bitmap {
     val inputStream = context.contentResolver.openInputStream(this)
     return BitmapFactory.decodeStream(inputStream)
 }
+
+val Uri.fileExtension get(): String? = path?.split(".")?.let { it[it.size -1] }
