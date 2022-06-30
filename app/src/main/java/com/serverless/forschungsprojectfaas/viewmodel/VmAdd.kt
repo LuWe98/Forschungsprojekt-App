@@ -22,12 +22,14 @@ import com.serverless.forschungsprojectfaas.model.ktor.PotentialBox
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
+import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfLoading
 import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.statement.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -107,6 +109,8 @@ class VmAdd @Inject constructor(
     fun onAddButtonClicked() = launch {
         if (!validateInput()) return@launch
 
+        navDispatcher.dispatch(NavigationEvent.NavigateToLoadingDialog(R.string.saving))
+
         val rotatedBitmap = currentBitmap!!.rotate(degree = rotationStateFlow.value)
 
         val pile = Pile(
@@ -116,12 +120,17 @@ class VmAdd @Inject constructor(
         )
 
         localRepository.insert(pile)
+
+        delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+        navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
         navDispatcher.dispatch(NavigationEvent.NavigateBack)
     }
 
     //TODO -> Hier dann das Senden an den Server für die Auswertung
     fun onEvaluateButtonClicked() = launch(scope = applicationScope) {
         if (!validateInput()) return@launch
+
+        navDispatcher.dispatch(NavigationEvent.NavigateToLoadingDialog(R.string.saving))
 
         val rotatedBitmap = currentBitmap!!.rotate(degree = rotationStateFlow.value)
 
@@ -134,6 +143,9 @@ class VmAdd @Inject constructor(
         )
 
         localRepository.insert(pile)
+
+        delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+        navDispatcher.dispatch(NavigationEvent.PopLoadingDialog)
         navDispatcher.dispatch(NavigationEvent.NavigateBack)
 
         runCatching {
