@@ -98,7 +98,8 @@ Für den Export dieser Informationen werden dabei lediglich die folgenden Inform
 
 ---
 # Schnittstellen
-Die OpenFaaS-Funktionen werden auf einer VM der Hoschule Furtwangen gehostet und sind zum Stand des Forschungsprojektes ausschließlich über das hochschulinterne <b>VPN</b> erreichbar.
+Die OpenFaaS-Funktionen werden auf einer VM der Hoschule Furtwangen gehostet und sind zum Stand des Forschungsprojektes ausschließlich über das hochschulinterne <b>VPN</b> erreichbar. 
+Somit muss bspw. ein VPN Client auf dem Mobilen Endgerät installiert und gestartet werden um eine Kommunikation zu ermöglichen.
 
 ## barextractorfunction
 **Adresse**: http://141.28.73.147:8080/function/barextractorfunction
