@@ -25,7 +25,7 @@ Auf dem Home-Screen der Android-App stehen die folgenden Funktionen zur Verfügu
 <img src="documentation/HomeScreen.png" width="200"/>
 
 ## Add-Screen
-Auf den Add-Screen hat der Nutzer die Möglichkeit, neue Aufnahmen von Knüppelbildern an die OpenFaaS-Funktionen zu versenden. <br>
+Der Add-Screen bietet dem Nutzer die Möglichkeit, neue Aufnahmen von Knüppelbildern an die OpenFaaS-Funktionen zu versenden. <br>
 Dafür sind die folgenden Informationen erforderlich:
 1. Titel des neu zu erstellenden Eintrags (Über ein einfaches Textfeld zur Identifikation)
 2. Ein Bild des Knüppelhaufens
