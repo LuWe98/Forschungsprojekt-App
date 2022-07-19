@@ -47,7 +47,7 @@ Andernfalls kann es passieren, dass die Knüppel einer falschen <b>Zeile</b> zug
 
 
 ## More Options Dialog
-Dieser Dialog stellt einige Interaktionsmöglichkeiten für bereits erstellte Einträge zur Verfügung:
+Dieser Dialog stellt einige Interaktionsmöglichkeiten für bereits erstellte Einträge dar.
 
 
 <img src="documentation/MoreOptionsDialog.png" width="200"/>
