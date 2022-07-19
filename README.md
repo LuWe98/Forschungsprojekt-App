@@ -61,6 +61,7 @@ Dieser Dialog stellt einige Interaktionsmöglichkeiten für bereits erstellte Ei
 
 ## Details-Screen
 In diesem Screen kann der Nutzer manuelle Anpassungen der Knüppel-Positionen und Beschriftungen vornehmen.<br>
+
 <img src="documentation/DetailsScreen.png" width="200"/>
 
 In dem unteren Bereich des Screens stehen Optionen für die visuelle Hervorhebung der Boxen zur verfügung. <br>
