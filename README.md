@@ -3,7 +3,7 @@ Ergänzend zu der forgestellten [Installationsanleitung für das Knüppelzähler
 dient diese Datei als Guide für die Android-App mit dem folgenden Inhalt:
 
 # Inhalt
-1. Screens und Funktionen
+1. Screens/Dialoge und Funktionen
 2. Schnittstellen
 3. Installation der App
 
