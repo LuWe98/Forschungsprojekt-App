@@ -32,17 +32,17 @@ Dafür sind die folgenden Informationen erforderlich:
 
 <img src="documentation/AddScreen.png" width="200"/>
 
-Für die <b>Bildauswahl</b> stehen zwei Optionen zur Verfügung:
-1. Ein neues Bild aufnehmen mit der <b>Kamera</b> des Mobilen Endgerätes
+Für die <b>Bildauswahl</b> stehen zwei Optionen zur Auswahl:
+1. Ein neues Bild mit der <b>Kamera</b> des Mobilen Endgerätes aufnehmen
 2. Ein Bild aus dem <b>Dateisystem</b> des Mobilen Endgerätes hereinladen
 
 Nach der Auswahl eines Bildes erscheint dieses in der Mitte des Bildschirms. Dem Nutzer stehen nun die folgenden Optionen zur Verfügung:
-1. Mit dem <b>Add</b>-Button wird das Bild lediglich <b>lokal</b> gespeichert.
+1. Mit dem <b>Add</b>-Button wird das Bild lediglich <b>lokal</b> gespeichert (Eine spätere Evaluation ist möglich).
 2. Mit dem <b>Evaluate</b>-Button wird das Bild an eine OpenFaaS-Funktion zur Auswertung versendet. Zusätzlich wird es lokal gespeichert.
 
 
 #### ! Wichtig !
-Damit die Algorithmen der App reibungslos funktionieren können ist es sinnvoll, dass die Balkenbilder möglichst parrallel zum Boden aufgenommen werden.<br>
+Damit die Algorithmen der App reibungslos funktionieren ist es sinnvoll, dass die Knüppel-Bilder möglichst parrallel zum Boden aufgenommen werden.<br>
 Andernfalls kann es passieren, dass die Knüppel einer falschen <b>Zeile</b> zugeordnet werden und somit unerwartete Ergebnisse auftreten.
 
 
