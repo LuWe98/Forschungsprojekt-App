@@ -30,7 +30,7 @@ Dafür sind die folgenden Informationen erforderlich:
 1. Titel des neu zu erstellenden Eintrags (Über ein einfaches Textfeld zur Identifikation)
 2. Ein Bild des Knüppelhaufens
 
-![AddScreen](documentation/AddScreen.png)
+<img src="documentation/AddScreen.png" width="200"/>
 
 Für die <b>Bildauswahl</b> stehen zwei Optionen zur Verfügung:
 1. Ein neues Bild aufnehmen mit der <b>Kamera</b> des Mobilen Endgerätes
@@ -49,7 +49,9 @@ Andernfalls kann es passieren, dass die Knüppel einer falschen <b>Zeile</b> zug
 ## More Options Dialog
 Dieser Dialog stellt einige Interaktionsmöglichkeiten für bereits erstellte Einträge zur Verfügung:
 
-![MoreOptionsDialog](documentation/MoreOptionsDialog.png)
+
+<img src="documentation/MoreOptionsDialog.png" width="200"/>
+
 
 1. <b>Öffnen</b> - Navigiert den Nutzer zum <b>Details-Screen</b> des Eintrags
 2. <b>Änderungen hochladen</b> - Die lokal vorgenommenen Änderungen an den <b>Persister</b> senden
@@ -59,12 +61,12 @@ Dieser Dialog stellt einige Interaktionsmöglichkeiten für bereits erstellte Ei
 
 ## Details-Screen
 In diesem Screen kann der Nutzer manuelle Anpassungen der Knüppel-Positionen und Beschriftungen vornehmen.<br>
-![DetailsScreen](documentation/DetailsScreen.png)
+<img src="documentation/DetailsScreen.png" width="200"/>
 
 In dem unteren Bereich des Screens stehen Optionen für die visuelle Hervorhebung der Boxen zur verfügung. <br>
 Dabei kann der Nutzer die <b>Farbstärke (Opacity)</b> und <b>Breite</b> des Randes der erkannten Knüppel anpassen wodurch Lücken im Knüppelhaufen leicht auszumachen sind <br>
 
-![DetailsScreenLücken](documentation/DetailsScreenLücken.png)
+<img src="documentation/DetailsScreenLücken.png" width="200"/>
 
 Für die Interaktion mit dem Bild stehen dem Nutzer einige Möglichkeiten zur Verfügung:
 * <b>Click</b> auf einen Knüppel - Selektiert den Knüppel und hebt diesen Farblich hervor.<br>
@@ -73,7 +75,7 @@ Für die Interaktion mit dem Bild stehen dem Nutzer einige Möglichkeiten zur Ve
   Dieser kann in einen beliebigen Bereich des Bildes verschoben werden.
 * <b>Long Click</b> auf eine freie Stelle - Erstellt einen neuen Knüppel-Eintrag mit leerer Beschriftung auf der interagierten Fläche.
 
-![DetailsScreenSelected](documentation/DetailsScreenSelected.png)
+<img src="documentation/DetailsScreenSelected.png" width="200"/>
 
 Mit dem Click auf das Burger Menu unten rechts in der Ecke, kann der Nutzer zum <b>Row-Mapping Dialog</b> navigieren.
 
@@ -83,7 +85,7 @@ Mit diesem Dialog ist es möglich, die Knüppel-Positionen und Beschriftungen in
 Dabei werden die Knüppel in der von NDW spezifizierten Form formatiert und angezeigt.<br>
 Die folgende Abbildung stellt diesen Sachverhalt dar:
 
-![Row-MappingDialog](documentation/RowMappingDialog.png)
+<img src="documentation/RowMappingDialog.png" width="200"/>
 
 ## CSV-Export Dialog
 Mit dem CSV-Export Dialog ist es möglich, die Knüppel in der vom Row-Mapping Dialog angezeigten Form als CSV zu exportieren. <br>
@@ -91,7 +93,7 @@ Für den Export dieser Informationen werden dabei lediglich die folgenden Inform
 1. Der <b>Name</b> der Datei (Standardwert ist der Name des Eintrags)
 2. Checkbox (True/False), ob ein <b>Header</b> mit Spaltenbeschriftungen der Datei hinzugefügt werden soll.
 
-![CsvExportDialog](documentation/CsvExportDialog.png)
+<img src="documentation/CsvExportDialog.png" width="200"/>
 
 ---
 # Schnittstellen
