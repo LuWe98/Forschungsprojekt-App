@@ -1,5 +1,5 @@
 # Android-App des Forschungsprojektes
-Ergänzend zu der forgestellten [Installationsanleitung für das Knüppelzähler Forschungsprojekt](https://github.com/jobdk/openfaas-function/blob/master/readme.md)
+Ergänzend zu der vorgestellten [Installationsanleitung für das Knüppelzähler Forschungsprojekt](https://github.com/jobdk/openfaas-function/blob/master/readme.md)
 dient diese Datei als Guide für die Android-App mit dem folgenden Inhalt:
 
 # Inhalt
@@ -33,8 +33,8 @@ Dafür sind die folgenden Informationen erforderlich:
 <img src="documentation/AddScreen.png" width="200"/>
 
 Für die <b>Bildauswahl</b> stehen zwei Optionen zur Auswahl:
-1. Ein neues Bild mit der <b>Kamera</b> des Mobilen Endgerätes aufnehmen
-2. Ein Bild aus dem <b>Dateisystem</b> des Mobilen Endgerätes hereinladen
+1. Ein neues Bild mit der <b>Kamera</b> des mobilen Endgerätes aufnehmen
+2. Ein Bild aus dem <b>Dateisystem</b> des mobilen Endgerätes hereinladen
 
 Nach der Auswahl eines Bildes erscheint dieses in der Mitte des Bildschirms. Dem Nutzer stehen nun die folgenden Optionen zur Verfügung:
 1. Mit dem <b>Add</b>-Button wird das Bild lediglich <b>lokal</b> gespeichert (Eine spätere Evaluation ist möglich).
@@ -42,7 +42,7 @@ Nach der Auswahl eines Bildes erscheint dieses in der Mitte des Bildschirms. Dem
 
 
 #### ! Wichtig !
-Damit die Algorithmen der App reibungslos funktionieren ist es sinnvoll, dass die Knüppel-Bilder möglichst parrallel zum Boden aufgenommen werden.<br>
+Damit die Algorithmen der App reibungslos funktionieren, ist es sinnvoll, dass die Knüppel-Bilder möglichst parallel zum Boden aufgenommen werden.<br>
 Andernfalls kann es passieren, dass die Knüppel einer falschen <b>Zeile</b> zugeordnet werden und somit unerwartete Ergebnisse auftreten.
 
 
@@ -65,20 +65,20 @@ In diesem Screen kann der Nutzer manuelle Anpassungen der Knüppel-Positionen un
 <img src="documentation/DetailsScreen.png" width="200"/>
 
 In dem unteren Bereich des Screens stehen Optionen für die visuelle Hervorhebung der Knüppel zur Verfügung. <br>
-Dabei kann der Nutzer die <b>Farbstärke (Opacity)</b> und <b>Breite</b> des Randes der erkannten Knüppel anpassen wodurch Lücken im Knüppel-Haufen leicht auszumachen sind <br>
+Dabei kann der Nutzer die <b>Farbstärke (Opacity)</b> und <b>Breite</b> des Randes der erkannten Knüppel anpassen, wodurch Lücken im Knüppel-Haufen leicht auszumachen sind <br>
 
 <img src="documentation/DetailsScreenLücken.png" width="200"/>
 
 Für die Interaktion mit dem Bild stehen dem Nutzer einige Möglichkeiten zur Verfügung:
-* <b>Click</b> auf einen Knüppel - Selektiert den Knüppel und hebt diesen Farblich hervor.<br>
+* <b>Klick</b> auf einen Knüppel - Selektiert den Knüppel und hebt diesen Farblich hervor.<br>
   Selektierte Knüppel können gelöscht oder dessen Beschriftung angepasst werden.
-* <b>Long Click</b> auf einen Knüppel - Startet ein Drag and Drop mit dem Knüppel.<br>
+* <b>Lange halten</b> auf einem Knüppel - Startet ein Drag and Drop mit dem Knüppel.<br>
   Dieser kann in einen beliebigen Bereich des Bildes verschoben werden.
-* <b>Long Click</b> auf eine freie Stelle - Erstellt einen neuen Knüppel-Eintrag mit leerer Beschriftung auf der interagierten Fläche.
+* <b>Lange halten</b> auf einer freie Stelle - Erstellt einen neuen Knüppel-Eintrag mit leerer Beschriftung auf der interagierten Fläche.
 
 <img src="documentation/DetailsScreenSelected.png" width="200"/>
 
-Mit dem Click auf das Burger Menu unten rechts in der Ecke, kann der Nutzer zum <b>Row-Mapping Dialog</b> navigieren.
+Mit dem Klick auf das Burgermenu unten rechts in der Ecke, kann der Nutzer zum <b>Row-Mapping Dialog</b> navigieren.
 
 
 ## Row-Mapping Dialog
@@ -99,7 +99,7 @@ Für den Export dieser Informationen werden dabei lediglich die folgenden Inform
 ---
 # Schnittstellen
 Die OpenFaaS-Funktionen werden auf einer VM der Hoschule Furtwangen gehostet und sind zum Stand des Forschungsprojektes ausschließlich über das hochschulinterne <b>VPN</b> erreichbar. 
-Somit muss bspw. ein VPN Client auf dem Mobilen Endgerät installiert und gestartet werden um eine Kommunikation zu ermöglichen.
+Somit muss bspw. ein VPN Client auf dem mobilen Endgerät installiert und gestartet werden, um eine Kommunikation zu ermöglichen.
 
 ## barextractorfunction
 **Adresse**: http://141.28.73.147:8080/function/barextractorfunction
@@ -142,7 +142,7 @@ Gibt den Text und die Koordinaten der erkannten Knüppel zurück:
 ## persistresultfunction
 **Adresse**: http://141.28.73.147:8080/function/persistresultfunction
 
-**Body**:<br>
+**Request-Body**:<br>
 Sendet ein angepasstes Ergebnis an die <b>OpenFaaS-persistresultfunction</b> in dem folgenden Format:
 ```json
 {
@@ -170,18 +170,18 @@ Sendet ein angepasstes Ergebnis an die <b>OpenFaaS-persistresultfunction</b> in 
 }
 ```
 **Response:**<br>
-Gibt zurück, ob der Upload erfolgreich war in Form eines <b>HTTP-Statuscodes</b>.
+Gibt über einen <b>HTTP-Statuscode</b> Information darüber, ob der Upload erfolgreich war.
 
 ---
 # Installation der App
 
 ## Debug-Modus
-Die Installation der Android App auf einem Mobilen Endgerät erfolgt zum Stand des Forschungsprojektes ausschließlich über die IDE Android Studio im Debug-Modus.<br>
+Die Installation der Android App auf einem mobilen Endgerät erfolgt zum Stand des Forschungsprojektes ausschließlich über die IDE Android Studio im Debug-Modus.<br>
 Hierfür müssen die Entwickleroptionen des Android Gerätes aktiviert werden. Die Applikation kann nun mit <b>USB-Debugging</b> oder über <b>WLAN</b> installiert werden. <br>
 Ein Artikel für die Installation einer App auf einem physischen Endgerät im <b>Debug-Modus</b> kann [hier](https://developer.android.com/studio/run/device) gefunden werden.
 
 ## Produktiv-Modus
-Um eine Android-App im Produktiv-Modus nutzen zu können, muss eine <b>APK</b> aus dieser erstellt werden. Dadurch ist es sehr einfach möglich, die App auf mehrere Engeräte zu verteilen.
+Um eine Android-App im Produktiv-Modus nutzen zu können, muss eine <b>APK</b> aus dieser erstellt werden. Dadurch ist es sehr einfach möglich, die App auf mehrere Endgeräte zu verteilen.
 Da für die Erstellung einer <b>APK</b> einige sensible Daten festgelegt werden müssen, wurde diese im Rahmen des Forschungsprojektes nicht erstellt. <br>
 Einen Leitfaden für die Erstellung einer solchen <b>APK</b> kann [hier](https://developer.android.com/studio/publish) gefunden werden. 
   
