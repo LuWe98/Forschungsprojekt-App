@@ -22,7 +22,7 @@ Auf dem Home-Screen der Android-App stehen die folgenden Funktionen zur Verfügu
 2. <b>Interaktion (Öffnen, Löschen, CSV-Export)</b> mit vorhandenen Einträgen (Siehe <b>More Options Dialog</b>)
 3. <b>Suche</b> von Einträgen mit einer einfachen Textsuche
 
-![HomeScreen](documentation/HomeScreen.png)
+![HomeScreen](documentation/HomeScreen.png =100x20)
 
 ## Add-Screen
 Auf den Add-Screen hat der Nutzer die Möglichkeit, neue Aufnahmen von Knüppelbildern an die OpenFaaS-Funktionen zu versenden. <br>
