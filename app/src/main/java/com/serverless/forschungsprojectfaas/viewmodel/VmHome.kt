@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.serverless.forschungsprojectfaas.OwnApplication
+import com.serverless.forschungsprojectfaas.ProjectApplication
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher.SelectionResult
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
@@ -13,13 +13,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.selection.OrderByItem
 import com.serverless.forschungsprojectfaas.dispatcher.selection.PictureMoreOptions
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
-import com.serverless.forschungsprojectfaas.extensions.asBase64String
-import com.serverless.forschungsprojectfaas.extensions.fileExtension
-import com.serverless.forschungsprojectfaas.extensions.loadBitmap
-import com.serverless.forschungsprojectfaas.extensions.log
-import com.serverless.forschungsprojectfaas.model.PileStatus
 import com.serverless.forschungsprojectfaas.model.PileStatus.*
-import com.serverless.forschungsprojectfaas.model.ktor.ImageInformation
 import com.serverless.forschungsprojectfaas.model.ktor.PotentialBox
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
@@ -41,7 +35,7 @@ class VmHome @Inject constructor(
     private val localRepository: LocalRepository,
     private val remoteRepository: RemoteRepository,
     private val applicationScope: CoroutineScope,
-    private val app: OwnApplication
+    private val app: ProjectApplication
 ): ViewModel() {
 
     private val fragmentHomeEventChannel = Channel<FragmentHomeEvent>()

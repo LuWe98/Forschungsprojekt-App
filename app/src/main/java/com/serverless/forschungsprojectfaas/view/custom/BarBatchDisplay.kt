@@ -5,12 +5,14 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.toRect
+import androidx.core.graphics.toRectF
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.serverless.forschungsprojectfaas.extensions.findBarsInsideBounds
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
 import com.serverless.forschungsprojectfaas.model.room.entities.Batch
 import com.serverless.forschungsprojectfaas.model.room.junctions.BatchWithBars
 import com.serverless.forschungsprojectfaas.utils.Constants
-import com.serverless.forschungsprojectfaas.view.custom.subsampling.SubsamplingScaleImageView
 import kotlin.math.max
 
 class BarBatchDisplay : SubsamplingScaleImageView,
@@ -40,7 +42,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         setOnLongClickListener(this)
     }
 
-    private val targetRect = RectF()
+    private val targetRect = Rect()
     private val transformationSource = PointF()
     private val transformationTarget = PointF()
     private val lastClickCoordinates = PointF()
@@ -90,9 +92,9 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         textPaint.textSize = scale * BASE_TEXT_SIZE
         val textPadding = scale * BASE_TEXT_PADDING
 
-        visibleFileRectF(targetRect)
+        visibleFileRect(targetRect)
 
-        bars.findBarsInsideBounds(targetRect).forEach { bar ->
+        bars.findBarsInsideBounds(targetRect.toRectF()).forEach { bar ->
             val batch: Batch? = batches.firstOrNull { it.batch?.batchId == bar.batchId }?.batch
             val color = if (isBarSelected?.invoke(bar) == true) Color.RED else batch?.colorInt ?: Constants.UNASSIGNED_BAR_COLOR
             //val fontColor = if (boxPaintAlpha > ALPHA_COLOR_SWITCH_THRESHOLD) Color.WHITE else color
@@ -176,7 +178,7 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         return true
     }
 
-    private fun sourceToRectCoordinates(source: RectF, target: RectF = targetRect) {
+    private fun sourceToRectCoordinates(source: RectF, target: Rect = targetRect) {
         transformationSource.set(source.left, source.top)
         sourceToViewCoord(transformationSource, transformationTarget)
         val top = transformationTarget.y
@@ -185,6 +187,6 @@ class BarBatchDisplay : SubsamplingScaleImageView,
         sourceToViewCoord(transformationSource, transformationTarget)
         val right = transformationTarget.x
         val bottom = transformationTarget.y
-        target.set(left, top, right, bottom)
+        target.set(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
     }
 }

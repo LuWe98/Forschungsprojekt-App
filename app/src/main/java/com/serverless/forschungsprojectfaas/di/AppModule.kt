@@ -2,7 +2,7 @@ package com.serverless.forschungsprojectfaas.di
 
 import android.content.Context
 import androidx.room.Room
-import com.serverless.forschungsprojectfaas.OwnApplication
+import com.serverless.forschungsprojectfaas.ProjectApplication
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalDatabase
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
@@ -28,7 +28,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApplication(@ApplicationContext context: Context) = context as OwnApplication
+    fun provideApplication(@ApplicationContext context: Context) = context as ProjectApplication
 
     @Provides
     @Singleton

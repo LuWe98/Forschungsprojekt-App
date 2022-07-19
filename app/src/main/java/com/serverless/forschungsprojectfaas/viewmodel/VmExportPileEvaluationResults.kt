@@ -3,19 +3,16 @@ package com.serverless.forschungsprojectfaas.viewmodel
 import android.os.Environment
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.serverless.forschungsprojectfaas.OwnApplication
+import com.serverless.forschungsprojectfaas.ProjectApplication
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.*
-import com.serverless.forschungsprojectfaas.extensions.appFilesDirectory
 import com.serverless.forschungsprojectfaas.extensions.appFilesDirectory2
 import com.serverless.forschungsprojectfaas.extensions.log
 import com.serverless.forschungsprojectfaas.utils.Constants
-import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAlert
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAlert.*
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfExportPileEvaluationResultsArgs
 import com.welu.androidflowutils.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.utils.io.bits.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
@@ -28,7 +25,7 @@ import javax.inject.Inject
 class VmExportPileEvaluationResults @Inject constructor(
     state: SavedStateHandle,
     private val navDispatcher: NavigationEventDispatcher,
-    private val app: OwnApplication
+    private val app: ProjectApplication
 ) : ViewModel() {
 
     private val args = DfExportPileEvaluationResultsArgs.fromSavedStateHandle(state)

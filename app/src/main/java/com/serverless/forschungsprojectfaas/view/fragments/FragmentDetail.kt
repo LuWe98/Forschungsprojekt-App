@@ -7,12 +7,12 @@ import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
+import com.davemorrissey.labs.subscaleview.ImageSource
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.databinding.FragmentDetailBinding
 import com.serverless.forschungsprojectfaas.dispatcher.setFragmentResultEventListener
 import com.serverless.forschungsprojectfaas.extensions.*
-import com.serverless.forschungsprojectfaas.view.custom.subsampling.ImageSource
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingFragment
 import com.serverless.forschungsprojectfaas.view.recyclerview.RvaPileBatches
 import com.serverless.forschungsprojectfaas.viewmodel.VmDetail
