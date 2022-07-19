@@ -1,6 +1,6 @@
 # Android-App des Forschungsprojektes
 Ergänzend zu der forgestellten [Installationsanleitung für das Knüppelzähler Forschungsprojekt](https://github.com/jobdk/openfaas-function/blob/master/readme.md)
-dient diese Datei als Guide mit dem folgenden Inhalt:
+dient diese Datei als Guide für die Android-App mit dem folgenden Inhalt:
 
 # Inhalt
 1. Screens und Funktionen
