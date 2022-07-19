@@ -64,8 +64,8 @@ In diesem Screen kann der Nutzer manuelle Anpassungen der Knüppel-Positionen un
 
 <img src="documentation/DetailsScreen.png" width="200"/>
 
-In dem unteren Bereich des Screens stehen Optionen für die visuelle Hervorhebung der Boxen zur verfügung. <br>
-Dabei kann der Nutzer die <b>Farbstärke (Opacity)</b> und <b>Breite</b> des Randes der erkannten Knüppel anpassen wodurch Lücken im Knüppelhaufen leicht auszumachen sind <br>
+In dem unteren Bereich des Screens stehen Optionen für die visuelle Hervorhebung der Knüppel zur Verfügung. <br>
+Dabei kann der Nutzer die <b>Farbstärke (Opacity)</b> und <b>Breite</b> des Randes der erkannten Knüppel anpassen wodurch Lücken im Knüppel-Haufen leicht auszumachen sind <br>
 
 <img src="documentation/DetailsScreenLücken.png" width="200"/>
 
