@@ -183,7 +183,7 @@ Der Prozentsatz kann dabei als Parameter übergeben werden.
 **Beispiel:**<br>
 *filterOverlappingBars(0.8f)*
 
-<img src="documentation/OverlappingBars.png" width="200"/>
+<img src="documentation/OverlappingBars.png" width="250"/>
 
 #### fixBarDimensions(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
 Diese Funktion passt automatisch die Dimensionen (Breite und Höhe) von erkannten Knüppeln an, wenn diese größer als ein bestimmter Threshold sind. <br>
@@ -194,7 +194,7 @@ Die durchschnittliche BoxDimensions werden dabei von dem jeweiligen Knüppelhauf
 *fixBarDimensions(BoxDimensions(width = 72f, height = 70f), 1.15f)*<br>
 Jegliche Knüppel, die breiter als 72 * 1.15 oder höher als 70 * 1.15 sind werden in die entsprechende Richtung verkleinert.
 
-<img src="documentation/OversizedBars.png" width="200"/>
+<img src="documentation/OversizedBars.png" width="250"/>
 
 
 #### filterIsolatedBars(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
@@ -204,7 +204,7 @@ Als Distanz wird dabei die durschnittliche Breite und Höhe (BoxDimensions) der 
 **Beispiel:**<br>
 *filterIsolatedBars(BoxDimensions(width = 72f, height = 70f), 1.15f)*<br>
 
-<img src="documentation/IsolatedBars.png" width="200"/>
+<img src="documentation/IsolatedBars.png" width="250"/>
 
 #### adjustBatchIdsIfPossible(lookAheadOnEachSide: Int, acceptanceThreshold: Float)
 Diese Funktion passt autoamtisiert die Labels eines Knüppels an, wenn sich um diesen herum (rechts und links) Knüppel mit dem gleichen Label befinden
@@ -213,7 +213,7 @@ und der angegebene acceptanceThreshold überschritten wird.
 **Beispiel:**<br>
 *adjustBatchIdsIfPossible(2, 1f)*<br>
 
-<img src="documentation/AdjustBatchIdsIfPossible.png" width="200"/>
+<img src="documentation/AdjustBatchIdsIfPossible.png" width="250"/>
 
 Ein Knüppel in der untersten Zeile wurde hier als <b>ER</b> erkannt, obwohl es sich um einen <b>FR</b> Knüppel handelt. Da die Funktion mit einem
 <b>lookAheadOnEachSide</b> von 2 und einem <b>acceptanceThreshold</b> von 1 aufgerufen wird, müssen sich 2 links und 2 rechts neben dem Knüppel (ER)
@@ -224,7 +224,7 @@ ausschließlich Knüppel desselben Labels befinden, damit dieser automatisch ang
 
 *adjustBatchIdsIfPossible(2, 0.5f)*<br>
 
-<img src="documentation/AdjustBatchIdsIfPossible_Example2.png" width="200"/>
+<img src="documentation/AdjustBatchIdsIfPossible_Example2.png" width="250"/>
 
 Zwei Knüppel in der untersten Zeile wurden hier als <b>ER</b> erkannt, obwohl es sich um einen <b>FR</b> Knüppel handelt. Da die Funktion mit einem
 <b>lookAheadOnEachSide</b> von 2 und einem <b>acceptanceThreshold</b> von 0.5 aufgerufen wird, müssen sich 2 links und 2 rechts neben einem ER Knüppel
@@ -239,7 +239,7 @@ Diese Funktion passt alle Knüppel an, welche von mindestens <b>minBatchAppearan
 **Beispiel:**<br>
 *adjustSpacesBetweenBatchGroups(5)*
 
-<img src="documentation/AdjustSpacesBetween.png" width="400"/>
+<img src="documentation/AdjustSpacesBetween.png" width="600"/>
 
 In diesem Beispiel befinden sich zwischen 2 FR Knüppelvorkommen noch widersprüchliche Knüppelwerte. Da sowohl rechts als auch links von den widersprüchlichen
 Werten 5 <b>FR</b> Knüppel sind, werden die Label aller Knüppel zwischendrin zu <b>FR</b> angepasst.
@@ -251,7 +251,7 @@ Diese Funktion passt das Label eines Knüppel an, welche sich neben diesem Knüp
 **Beispiel:**<br>
 *adjustLonelyBarsBetween(3, 1f, batchMap)*
 
-<img src="documentation/AdjustLonelyBars.png" width="200"/>
+<img src="documentation/AdjustLonelyBars.png" width="250"/>
 
 --> In diesem Beispiel befindet sich ein als <b>ER</b> erkannter Knüppel zwischen <b>FS</b> und <b>FR</b> Knüppeln. Da das <b>ER</b> mehr
 Überschneidung mit <b>FR</b> als mit <b>FS</b> hat, wird <b>ER</b> zu <b>FR</b> angepasst.
