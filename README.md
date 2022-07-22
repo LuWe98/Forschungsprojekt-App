@@ -43,7 +43,7 @@ Nach der Auswahl eines Bildes erscheint dieses in der Mitte des Bildschirms. Dem
 
 
 #### ! Wichtig !
-Damit die Algorithmen der App reibungslos funktionieren, ist es sinnvoll, dass die Knüppelbilder möglichst parallel zum Boden aufgenommen werden.<br>
+Damit die Algorithmen der App reibungslos funktionieren, ist es sinnvoll, dass die Knüppelbilder möglichst parallel zum Boden aufgenommen werden.
 Andernfalls kann es passieren, dass die Knüppel einer falschen <b>Zeile</b> zugeordnet werden und somit unerwartete Ergebnisse auftreten.
 
 
@@ -186,7 +186,7 @@ Der Prozentsatz kann dabei als Parameter übergeben werden.
 <img src="documentation/OverlappingBars.png" width="250"/>
 
 ### fixBarDimensions(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
-Diese Funktion passt automatisch die Dimensionen (Breite und Höhe) von erkannten Knüppeln an, wenn diese größer als ein bestimmter Threshold sind. <br>
+Diese Funktion passt automatisch die Dimensionen (Breite und Höhe) von erkannten Knüppeln an, wenn diese größer als ein bestimmter Threshold sind.
 Als Threshold wird dabei die durchschnittliche Dimension eines Knüppels (BoxDimensions) verwendet und mit einem averageDimensionMultiplier multipliziert.
 Die durchschnittliche BoxDimensions werden dabei von dem jeweiligen Knüppelhaufen berechnet.
 
@@ -260,11 +260,11 @@ Diese Funktion passt das Label eines Knüppel an, welche sich neben diesem Knüp
 # Installation der App
 
 ## Debug-Modus
-Die Installation der Android App auf einem mobilen Endgerät erfolgt zum Stand des Forschungsprojektes ausschließlich über die IDE Android Studio im Debug-Modus.<br>
-Hierfür müssen die Entwickleroptionen des Android Gerätes aktiviert werden. Die Applikation kann nun mit <b>USB-Debugging</b> oder über <b>WLAN</b> installiert werden. <br>
+Die Installation der Android App auf einem mobilen Endgerät erfolgt zum Stand des Forschungsprojektes ausschließlich über die IDE Android Studio im Debug-Modus.
+Hierfür müssen die Entwickleroptionen des Android Gerätes aktiviert werden. Die Applikation kann nun mit <b>USB-Debugging</b> oder über <b>WLAN</b> installiert werden.
 Ein Artikel für die Installation einer App auf einem physischen Endgerät im <b>Debug-Modus</b> kann [hier](https://developer.android.com/studio/run/device) gefunden werden.
 
 ## Produktiv-Modus
-Um eine Android-App im Produktiv-Modus nutzen zu können, muss eine <b>APK</b> aus dieser erstellt werden. Dadurch ist es sehr einfach möglich, die App auf mehrere Endgeräte zu verteilen.
-Da für die Erstellung einer <b>APK</b> einige sensible Daten festgelegt werden müssen, wurde diese im Rahmen des Forschungsprojektes nicht erstellt. <br>
+Um eine Android-App im Produktiv-Modus nutzen zu können, muss eine <b>APK</b> aus dieser erstellt werden. Dadurch ist es sehr einfach möglich, die App auf mehrere Endgeräte zu verteilen. 
+Da für die Erstellung einer <b>APK</b> einige sensible Daten festgelegt werden müssen, wurde diese im Rahmen des Forschungsprojektes nicht erstellt.
 Einen Leitfaden für die Erstellung einer solchen <b>APK</b> kann [hier](https://developer.android.com/studio/publish) gefunden werden.
