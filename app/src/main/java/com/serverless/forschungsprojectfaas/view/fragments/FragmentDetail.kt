@@ -1,9 +1,7 @@
 package com.serverless.forschungsprojectfaas.view.fragments
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,8 +17,6 @@ import com.serverless.forschungsprojectfaas.viewmodel.VmDetail
 import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 
-//TODO -> Liste reverten, auf der hauptseite sollen nur die Bars agenezigt werden. -> Die Liste wird in einem separaten Fenster angezeigt mit button press
-@RequiresApi(Build.VERSION_CODES.N)
 @AndroidEntryPoint
 class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
 
@@ -30,9 +26,6 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
         private const val MAX_BOX_WIDTH = 150
         private const val SPAN_COUNT = 3
         private const val MAX_ARROW_ROTATION = 180
-
-        private const val MIN_VALUE = 50
-        private const val WHITE_COLOR_FULL = 255 - MIN_VALUE
     }
 
     private val vm: VmDetail by hiltNavDestinationViewModels(R.id.fragmentDetail)
@@ -120,14 +113,6 @@ class FragmentDetail : BindingFragment<FragmentDetailBinding>() {
         override fun onStateChanged(bottomSheet: View, newState: Int) = Unit
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
             binding.btnExpandSheet.rotation = slideOffset * MAX_ARROW_ROTATION
-//                    val color = (WHITE_COLOR_FULL * slideOffset).toInt() + MIN_VALUE
-//                    requireActivity().window.apply {
-//                        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//                        statusBarColor = color
-//                    }
-//                    binding.sheetHeader.setBackgroundColor(Color.rgb(color, color, color))
-
-            //binding.sheetBackgroundDim.alpha = (1 - slideOffset).pow(10)
         }
     }
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.serverless.forschungsprojectfaas.ProjectApplication
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.dispatcher.FragmentResultDispatcher.SelectionResult
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
@@ -14,7 +13,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.selection.OrderByItem
 import com.serverless.forschungsprojectfaas.dispatcher.selection.PictureMoreOptions
 import com.serverless.forschungsprojectfaas.dispatcher.selection.SelectionRequestType
 import com.serverless.forschungsprojectfaas.model.PileStatus.*
-import com.serverless.forschungsprojectfaas.model.ktor.PotentialBox
+import com.serverless.forschungsprojectfaas.model.ktor.ImageInformationBar
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
@@ -34,8 +33,7 @@ class VmHome @Inject constructor(
     private val navDispatcher: NavigationEventDispatcher,
     private val localRepository: LocalRepository,
     private val remoteRepository: RemoteRepository,
-    private val applicationScope: CoroutineScope,
-    private val app: ProjectApplication
+    private val applicationScope: CoroutineScope
 ): ViewModel() {
 
     private val fragmentHomeEventChannel = Channel<FragmentHomeEvent>()
@@ -94,7 +92,6 @@ class VmHome @Inject constructor(
         }
     }
 
-    //TODO -> Aktionen dann durchführen hier
     fun onRvaStatusButtonClicked(pile: Pile) {
         launch {
             when(pile.pileStatus) {
@@ -149,8 +146,8 @@ class VmHome @Inject constructor(
         }.onFailure {
             localRepository.updatePileStatus(pile.pileId, FAILED)
         }.onSuccess { response ->
-            val typeToken = object : TypeToken<List<PotentialBox>>() {}.type
-            val boxes = Gson().fromJson<List<PotentialBox>>(response.bodyAsText(), typeToken)
+            val typeToken = object : TypeToken<List<ImageInformationBar>>() {}.type
+            val boxes = Gson().fromJson<List<ImageInformationBar>>(response.bodyAsText(), typeToken)
             localRepository.insertBatchesAndBarsOfResponse(pile.pileId, boxes)
         }
     }
@@ -172,7 +169,6 @@ class VmHome @Inject constructor(
             fragmentHomeEventChannel.send(FragmentHomeEvent.DisplaySnackBar(R.string.successChangesWereUploaded))
         }
     }
-
 
     sealed class FragmentHomeEvent {
         class DisplaySnackBar(@StringRes val messageRes: Int): FragmentHomeEvent()

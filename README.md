@@ -35,7 +35,7 @@ Dafür sind die folgenden Informationen erforderlich:
 
 Für die <b>Bildauswahl</b> stehen zwei Optionen zur Auswahl:
 1. Ein neues Bild mit der <b>Kamera</b> des mobilen Endgerätes aufnehmen
-2. Ein Bild aus dem <b>Dateisystem</b> des mobilen Endgerätes hereinladen
+2. Ein Bild aus dem <b>Dateisystem</b> des mobilen Endgerätes herein laden
 
 Nach der Auswahl eines Bildes erscheint dieses in der Mitte des Bildschirms. Dem Nutzer stehen nun die folgenden Optionen zur Verfügung:
 1. Mit dem <b>Add</b>-Button wird das Bild lediglich <b>lokal</b> gespeichert (Eine spätere Evaluation ist möglich).
@@ -43,7 +43,7 @@ Nach der Auswahl eines Bildes erscheint dieses in der Mitte des Bildschirms. Dem
 
 
 #### ! Wichtig !
-Damit die Algorithmen der App reibungslos funktionieren, ist es sinnvoll, dass die Knüppel-Bilder möglichst parallel zum Boden aufgenommen werden.<br>
+Damit die Algorithmen der App reibungslos funktionieren, ist es sinnvoll, dass die Knüppelbilder möglichst parallel zum Boden aufgenommen werden.<br>
 Andernfalls kann es passieren, dass die Knüppel einer falschen <b>Zeile</b> zugeordnet werden und somit unerwartete Ergebnisse auftreten.
 
 
@@ -73,9 +73,9 @@ Dabei kann der Nutzer die <b>Farbstärke (Opacity)</b> und <b>Breite</b> des Ran
 Für die Interaktion mit dem Bild stehen dem Nutzer einige Möglichkeiten zur Verfügung:
 * <b>Klick</b> auf einen Knüppel - Selektiert den Knüppel und hebt diesen Farblich hervor.<br>
   Selektierte Knüppel können gelöscht oder dessen Beschriftung angepasst werden.
-* <b>Lange halten</b> auf einem Knüppel - Startet ein Drag and Drop mit dem Knüppel.<br>
+* <b>Lange halten</b> auf einem Knüppel - Startet ein Drag-and-Drop mit dem Knüppel.<br>
   Dieser kann in einen beliebigen Bereich des Bildes verschoben werden.
-* <b>Lange halten</b> auf einer freie Stelle - Erstellt einen neuen Knüppel-Eintrag mit leerer Beschriftung auf der interagierten Fläche.
+* <b>Lange halten</b> auf eine freie Stelle - Erstellt einen neuen Knüppel-Eintrag mit leerer Beschriftung auf der interagierten Fläche.
 
 <img src="documentation/DetailsScreenSelected.png" width="200"/>
 
@@ -99,7 +99,7 @@ Für den Export dieser Informationen werden dabei lediglich die folgenden Inform
 
 ---
 # Schnittstellen
-Die OpenFaaS-Funktionen werden auf einer VM der Hoschule Furtwangen gehostet und sind zum Stand des Forschungsprojektes ausschließlich über das hochschulinterne <b>VPN</b> erreichbar. 
+Die OpenFaaS-Funktionen werden auf einer VM der Hochschule Furtwangen gehostet und sind zum Stand des Forschungsprojektes ausschließlich über das hochschulinterne <b>VPN</b> erreichbar. 
 Somit muss bspw. ein VPN Client auf dem mobilen Endgerät installiert und gestartet werden, um eine Kommunikation zu ermöglichen.
 
 ## barextractorfunction
@@ -206,12 +206,12 @@ Als Distanz wird dabei die durschnittliche Breite und Höhe (BoxDimensions) der 
 
 <img src="documentation/IsolatedBars.png" width="250"/>
 
-### adjustBatchIdsIfPossible(lookAheadOnEachSide: Int, acceptanceThreshold: Float)
-Diese Funktion passt autoamtisiert die Labels eines Knüppels an, wenn sich um diesen herum (rechts und links) Knüppel mit dem gleichen Label befinden
+### adjustBarLabels(lookAheadOnEachSide: Int, acceptanceThreshold: Float)
+Diese Funktion passt automatisiert die Labels eines Knüppels an, wenn sich um diesen herum (rechts und links) Knüppel mit dem gleichen Label befinden
 und der angegebene acceptanceThreshold überschritten wird.
 
 **Beispiel:**<br>
-*adjustBatchIdsIfPossible(2, 1f)*<br>
+*adjustBarLabels(2, 1f)*<br>
 
 <img src="documentation/AdjustBatchIdsIfPossible.png" width="300"/>
 
@@ -222,7 +222,7 @@ ausschließlich Knüppel desselben Labels befinden, damit dieser automatisch ang
 --> Da sich in diesem Beispiel 2 links und 2 rechts neben dem <b>ER</b> Knüppel nur <b>FR</b> Knüppel befinden, wird <b>ER</b> zu <b>FR</b> angepasst
 
 
-*adjustBatchIdsIfPossible(2, 0.5f)*<br>
+*adjustBarLabels(2, 0.5f)*<br>
 
 <img src="documentation/AdjustBatchIdsIfPossible_Example2.png" width="300"/>
 
@@ -242,18 +242,18 @@ Diese Funktion passt alle Knüppel an, welche von mindestens <b>minBatchAppearan
 <img src="documentation/AdjustSpacesBetween.png" width="600"/>
 
 In diesem Beispiel befinden sich zwischen 2 FR Knüppelvorkommen noch widersprüchliche Knüppelwerte. Da sowohl rechts als auch links von den widersprüchlichen
-Werten 5 <b>FR</b> Knüppel sind, werden die Label aller Knüppel zwischendrin zu <b>FR</b> angepasst.
+Werten 5 <b>FR</b> Knüppel sind, werden die Labels aller Knüppel zwischendrin zu <b>FR</b> angepasst.
 
 
-### adjustLonelyBarsBetween(lookAheadOnEachSide: Int, minMostCommonBarThreshold: Float , batchMap: Map<String, Batch>)
+### adjustBarLabelBetweenBatches(lookAheadOnEachSide: Int, minMostCommonBarThreshold: Float , batchMap: Map<String, Batch>)
 Diese Funktion passt das Label eines Knüppel an, welche sich neben diesem Knüppel mit einem anderen Label befinden.
 
 **Beispiel:**<br>
-*adjustLonelyBarsBetween(3, 1f, batchMap)*
+*adjustBarLabelBetweenBatches(3, 1f, batchMap)*
 
 <img src="documentation/AdjustLonelyBars.png" width="300"/>
 
---> In diesem Beispiel befindet sich ein als <b>ER</b> erkannter Knüppel zwischen <b>FS</b> und <b>FR</b> Knüppeln. Da das <b>ER</b> mehr
+--> In diesem Beispiel befindet sich ein als <b>ER</b> erkannter Knüppels zwischen <b>FS</b> und <b>FR</b> Knüppeln. Da das <b>ER</b> mehr
 Überschneidung mit <b>FR</b> als mit <b>FS</b> hat, wird <b>ER</b> zu <b>FR</b> angepasst.
 
 ---
@@ -267,5 +267,4 @@ Ein Artikel für die Installation einer App auf einem physischen Endgerät im <b
 ## Produktiv-Modus
 Um eine Android-App im Produktiv-Modus nutzen zu können, muss eine <b>APK</b> aus dieser erstellt werden. Dadurch ist es sehr einfach möglich, die App auf mehrere Endgeräte zu verteilen.
 Da für die Erstellung einer <b>APK</b> einige sensible Daten festgelegt werden müssen, wurde diese im Rahmen des Forschungsprojektes nicht erstellt. <br>
-Einen Leitfaden für die Erstellung einer solchen <b>APK</b> kann [hier](https://developer.android.com/studio/publish) gefunden werden. 
-  
+Einen Leitfaden für die Erstellung einer solchen <b>APK</b> kann [hier](https://developer.android.com/studio/publish) gefunden werden.

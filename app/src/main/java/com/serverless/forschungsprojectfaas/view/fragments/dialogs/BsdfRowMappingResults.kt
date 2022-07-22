@@ -14,7 +14,6 @@ import com.serverless.forschungsprojectfaas.viewmodel.VmDetail
 import com.welu.androidflowutils.collectWhenStarted
 import dagger.hilt.android.AndroidEntryPoint
 
-//TODO -> Das hier noch imlementieren. Ist die zweite Seite des Detail ViewPagers
 @AndroidEntryPoint
 class BsdfRowMappingResults : BindingBottomSheetDialogFragment<BsdfPileEvaluationBinding>() {
 
@@ -32,9 +31,7 @@ class BsdfRowMappingResults : BindingBottomSheetDialogFragment<BsdfPileEvaluatio
     }
 
     private fun initViews() {
-        rva = RvaEvaluatedRowEntries().apply {
-
-        }
+        rva = RvaEvaluatedRowEntries()
 
         binding.rv.apply {
             layoutManager = LinearLayoutManager(requireContext())

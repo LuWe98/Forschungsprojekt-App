@@ -10,7 +10,6 @@ val RectF.area get() = width() * height()
 
 val RectF.center get(): PointF = PointF(centerX(), centerY())
 
-
 fun RectF.isIntersecting(other: RectF): Boolean = intersectingArea(other) > 0f
 
 fun RectF?.intersectingArea(other: RectF?): Float {

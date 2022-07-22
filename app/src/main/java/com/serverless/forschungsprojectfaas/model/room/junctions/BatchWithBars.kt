@@ -21,10 +21,10 @@ data class BatchWithBars(
     val asImageInformationBars: List<ImageInformationBar> get() = bars.map { bar ->
         ImageInformationBar(
             caption = batch?.caption ?: "-",
-            top = bar.top.toDouble(),
-            left = bar.left.toDouble(),
-            right = bar.right.toDouble(),
-            bottom = bar.bottom.toDouble()
+            top = bar.top,
+            left = bar.left,
+            right = bar.right,
+            bottom = bar.bottom
         )
     }
 

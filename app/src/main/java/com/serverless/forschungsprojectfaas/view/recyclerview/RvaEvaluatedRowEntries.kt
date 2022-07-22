@@ -6,9 +6,7 @@ import com.serverless.forschungsprojectfaas.view.recyclerview.generic.BindingLis
 
 class RvaEvaluatedRowEntries: BindingListAdapter<RowEvaluationEntry, RviTableEntryBinding>(RowEvaluationEntry.DIFF_CALLBACK, RviTableEntryBinding::class) {
 
-    override fun initListeners(binding: RviTableEntryBinding, vh: BindingListAdapterViewHolder) {
-
-    }
+    override fun initListeners(binding: RviTableEntryBinding, vh: BindingListAdapterViewHolder) = Unit
 
     override fun bindViews(binding: RviTableEntryBinding, item: RowEvaluationEntry, position: Int) {
         binding.apply {

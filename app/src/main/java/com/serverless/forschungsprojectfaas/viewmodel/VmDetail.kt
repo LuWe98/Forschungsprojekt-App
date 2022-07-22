@@ -1,6 +1,5 @@
 package com.serverless.forschungsprojectfaas.viewmodel
 
-import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.graphics.RectF
 import androidx.lifecycle.SavedStateHandle
@@ -43,8 +42,6 @@ class VmDetail @Inject constructor(
     private val nonNullPileWithBatchesFlow = pileWithBatchesStateFlow
         .mapNotNull { it }
         .flowOn(IO)
-
-    private val pileWithBatches: PileWithBatches? = pileWithBatchesStateFlow.value
 
     val imageBitmapStateFlow = nonNullPileWithBatchesFlow
         .map(PileWithBatches::pile / Pile::bitmap)
@@ -125,8 +122,6 @@ class VmDetail @Inject constructor(
     fun onImageClicked(bar: Bar?, point: PointF) {
         bar?.let {
             log("ON BAR CLICKED $bar")
-            //selectedBarIdsMutableStateFlow.value = pileStateFlow.value!!.bars.findBarsNextTo(bar, 2).map { it.barId }.toSet()
-
             selectedBarIdsMutableStateFlow.value = selectedBarIds.toMutableSet().apply {
                 if (isBarSelected(bar)) {
                     remove(bar.barId)
@@ -199,7 +194,7 @@ class VmDetail @Inject constructor(
     }
 
     /**
-     * Die Batch zugehörigkeit der Auswahl ändern
+     * Die Batch Zugehörigkeit der Auswahl ändern
      */
     fun onSwapBatchOfSelectedBarsClicked() = launch {
         if (selectedBarIds.isEmpty()) return@launch

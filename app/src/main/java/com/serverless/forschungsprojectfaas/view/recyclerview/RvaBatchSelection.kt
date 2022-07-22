@@ -11,8 +11,6 @@ class RvaBatchSelection: BindingListAdapter<Batch, RviBatchBrowseBinding>(Batch.
 
     var onBatchClicked: ((Batch) -> (Unit))? = null
 
-    var onMoreOptionsClicked: ((Batch) -> (Unit))? = null
-
     var onLongClicked: ((Batch) -> (Unit))? = null
 
     override fun initListeners(binding: RviBatchBrowseBinding, vh: BindingListAdapterViewHolder) {

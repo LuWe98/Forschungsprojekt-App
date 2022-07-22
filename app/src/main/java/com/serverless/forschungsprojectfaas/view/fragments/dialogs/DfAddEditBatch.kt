@@ -2,23 +2,19 @@ package com.serverless.forschungsprojectfaas.view.fragments.dialogs
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doBeforeTextChanged
-import androidx.core.widget.doOnTextChanged
 import com.serverless.forschungsprojectfaas.R
 import com.serverless.forschungsprojectfaas.databinding.DfAddEditBatchBinding
 import com.serverless.forschungsprojectfaas.dispatcher.setFragmentResultEventListener
-import com.serverless.forschungsprojectfaas.extensions.*
+import com.serverless.forschungsprojectfaas.extensions.hiltNavDestinationViewModels
+import com.serverless.forschungsprojectfaas.extensions.onClick
+import com.serverless.forschungsprojectfaas.extensions.onTextChanged
+import com.serverless.forschungsprojectfaas.extensions.showSnackBar
 import com.serverless.forschungsprojectfaas.view.fragments.bindingclasses.BindingDialogFragment
 import com.serverless.forschungsprojectfaas.viewmodel.VmAddEditBatch
-import com.serverless.forschungsprojectfaas.viewmodel.VmAddEditBatch.*
+import com.serverless.forschungsprojectfaas.viewmodel.VmAddEditBatch.AddEditBatchEvent
 import com.welu.androidflowutils.collectWhenStarted
-import com.welu.androidflowutils.launch
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import java.util.*
 
 @AndroidEntryPoint
 class DfAddEditBatch : BindingDialogFragment<DfAddEditBatchBinding>() {

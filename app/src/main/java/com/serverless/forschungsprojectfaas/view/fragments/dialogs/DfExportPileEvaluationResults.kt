@@ -27,7 +27,6 @@ class DfExportPileEvaluationResults: BindingDialogFragment<DfExportCsvFileBindin
     private fun initViews(){
         binding.apply {
             etFileName.setText(vm.fileName)
-
         }
     }
 

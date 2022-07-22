@@ -1,10 +1,8 @@
 package com.serverless.forschungsprojectfaas.extensions
 
-import android.graphics.PointF
 import android.graphics.RectF
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
-import com.serverless.forschungsprojectfaas.model.BarRowColumnInfo
 import com.serverless.forschungsprojectfaas.model.BoxDimensions
 import com.serverless.forschungsprojectfaas.model.RowEvaluationEntry
 import com.serverless.forschungsprojectfaas.model.room.entities.Bar
@@ -64,8 +62,6 @@ fun List<Bar>.findClosestRightBar(bar: Bar): Bar? = filter {
     (bar.centerX - it.left).absoluteValue
 }
 
-fun List<Bar>.findBarsToSideOf(bar: Bar, limit: Int): List<Bar> = findBarsLeftOf(bar, limit).toMutableList().addAllChain(findBarsRightOf(bar, limit))
-
 fun List<Bar>.findNextTopBar(bar: Bar, barsToIgnore: List<BarId> = emptyList()): Bar? = filter {
     bar.barId != it.barId
             && !barsToIgnore.contains(it.barId)
@@ -94,14 +90,6 @@ fun List<Bar>.findClosestBottomBar(bar: Bar): Bar? = filter {
     (bar.centerY - it.top).absoluteValue
 }
 
-fun List<Bar>.findClosestBottomBar(pointF: PointF): Bar? = filter {
-    pointF.y <= it.centerY
-            && pointF.x <= it.right
-            && pointF.x >= it.left
-}.minByOrNull {
-    (pointF.y - it.top).absoluteValue
-}
-
 fun List<Bar>.findBarsBetween(barOne: Bar, barTwo: Bar): List<Bar> {
     val left: Bar
     val right: Bar
@@ -123,30 +111,6 @@ fun List<Bar>.areBarsInSameRow(barIdOne: BarId, barIdTwo: BarId): Boolean = find
     first { it.barId == barIdOne },
     first { it.barId == barIdTwo }
 ).isNotEmpty()
-
-val List<Bar>.rowCount
-    get(): Int {
-        var rowCounter = 0
-        val processedBars = mutableListOf<BarId>()
-        var currentBar: Bar? = maxByOrNull(Bar::rect / RectF::bottom)
-
-        while (currentBar != null) {
-            rowCounter++
-
-            findBarsInRow(
-                bar = currentBar,
-                barsToIgnore = processedBars
-            ).let { barsOfRow ->
-                processedBars.addAll(barsOfRow.map(Bar::barId))
-            }
-            currentBar = findNextTopBar(
-                bar = currentBar,
-                barsToIgnore = processedBars
-            )
-        }
-
-        return rowCounter
-    }
 
 val List<Bar>.mappedToRows
     get(): List<List<Bar>> {
@@ -201,35 +165,6 @@ fun List<Bar>.asEvaluatedRowEntries(batches: Collection<Batch?>): List<RowEvalua
     }
     return results
 }
-
-/**
- * Gibt die Zeile der Bar zurück, in welcher sich diese befindet.
- */
-fun List<Bar>.findRowCountOfBar(barId: BarId): Int? {
-    mappedToRows.forEachIndexed { row, bars ->
-        if (bars.any { it.barId == barId }) {
-            return row
-        }
-    }
-    return null
-}
-
-/**
- * Wird verwendet, um einfach auf die Spalten und Zeilen Informationen einer Bar zugreifen zu können.
- * Die Informationen erhält man über die ID der Bar
- */
-val List<Bar>.asBarRowColumnMap
-    get() : HashMap<BarId, BarRowColumnInfo> = run {
-        val barRowColumnMap = HashMap<BarId, BarRowColumnInfo>()
-        mappedToRows.forEachIndexed { row, bars ->
-            bars.forEachIndexed { column, bar ->
-                barRowColumnMap[bar.barId] = BarRowColumnInfo(bar, row, column)
-            }
-        }
-        barRowColumnMap
-    }
-
-
 
 
 // ---------------- Ab hier kommen die Filterungen um Ergebnisse zu Fixen im Pile ---------------------------------------
@@ -319,7 +254,7 @@ fun List<Bar>.fixBarDimensions(
 /**
  * Adjusts the batches if right and left are the same BatchIds
  */
-fun List<Bar>.adjustBatchIdsIfPossible(
+fun List<Bar>.adjustBarLabels(
     @IntRange(from = 1, to = 10) lookAheadOnEachSide: Int = 2,
     @FloatRange(from = 0.0, to = 1.0) acceptanceThreshold: Float = 0.5f,
     valueNullAsValid: Boolean = false
@@ -338,13 +273,9 @@ fun List<Bar>.adjustBatchIdsIfPossible(
                 batchIdsNextToBar.clear()
 
                 for (shift in 1..lookAheadOnEachSide) {
-                    //TODO -> Hier noch check machen. Wenn bar mehr als X entfernt ist, dann wird es nicht dazu gezählt.
-                    // if(rowBars[rowIndex][columnIndex - shift].right - bar.left < X)
                     if (columnIndex - shift >= 0) {
                         batchIdsNextToBar.add(rowBars[rowIndex][columnIndex - shift].batchId)
                     }
-                    //TODO -> Hier noch check machen. Wenn bar mehr als X entfernt ist, dann wird es nicht dazu gezählt.
-                    // if(rowBars[rowIndex][columnIndex + shift].left - bar.right < X)
                     if (columnIndex + shift < columnCount) {
                         batchIdsNextToBar.add(rowBars[rowIndex][columnIndex + shift].batchId)
                     }
@@ -424,7 +355,7 @@ fun List<Bar>.adjustSpacesBetweenBatchGroups(
 }.flatten()
 
 
-fun List<Bar>.adjustLonelyBarsBetween(
+fun List<Bar>.adjustBarLabelBetweenBatches(
     @IntRange(from = 1, to = 10) lookAheadOnEachSide: Int = 3,
     @FloatRange(from = 0.0, to = 1.0) minMostCommonBarThreshold: Float = 0.75f,
     batchMap: Map<BatchId, Batch>

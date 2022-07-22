@@ -92,16 +92,6 @@ class VmColorSelection @Inject constructor(
         }
     }
 
-    //    fun onHexTextChanged(newHex: String) {
-//        if(!newHex.isValidHex) return
-//        val hexInt = Color.parseColor("#$newHex")
-//        log("TEXT CHANGED HEX $newHex")
-//        redColorMutableStateFlow.value = Color.red(hexInt)
-//        greenColorMutableStateFlow.value = Color.green(hexInt)
-//        blueColorMutableStateFlow.value = Color.blue(hexInt)
-//        alphaColorMutableStateFlow.value = Color.alpha(hexInt)
-//    }
-
     enum class ColorType {
         RED,
         GREEN,

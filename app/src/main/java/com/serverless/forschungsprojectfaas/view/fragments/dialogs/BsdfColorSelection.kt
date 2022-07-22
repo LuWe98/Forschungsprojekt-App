@@ -17,7 +17,7 @@ import com.serverless.forschungsprojectfaas.viewmodel.VmColorSelection
 import com.serverless.forschungsprojectfaas.viewmodel.VmColorSelection.ColorType
 import com.welu.androidflowutils.collectWhenStarted
 
-class BsdfColorSelection() : BindingBottomSheetDialogFragment<BsdfColorSelectionBinding>() {
+class BsdfColorSelection : BindingBottomSheetDialogFragment<BsdfColorSelectionBinding>() {
 
     private val vm by hiltNavDestinationViewModels<VmColorSelection>(R.id.bsdfColorSelection)
 
@@ -67,11 +67,6 @@ class BsdfColorSelection() : BindingBottomSheetDialogFragment<BsdfColorSelection
                 vm.onSeekBarChanged(progress, fromUser, ColorType.ALPHA)
             }
 
-//            etHexValue.addTextChangedListener {
-//                log("CURRENT TEXT = ${it.toString()}")
-//                vm.onHexTextChanged(it.toString())
-//            }
-
             colorCircle.setOnTouchListener(View.OnTouchListener { v, event ->
                 if (event.action != MotionEvent.ACTION_DOWN && event.action != MotionEvent.ACTION_MOVE) return@OnTouchListener true
                 binding.colorCircle.drawToBitmap().let { bitmap ->
@@ -117,16 +112,6 @@ class BsdfColorSelection() : BindingBottomSheetDialogFragment<BsdfColorSelection
 
         vm.hexColorValueFlow.collectWhenStarted(viewLifecycleOwner) { hex ->
             binding.etHexValue.setText(hex)
-
-//            val substring = hex.substring(2, hex.length)
-//            val text = binding.etHexValue.text.toString()
-//            log("SUBSTRING = $substring")
-//            log("TEXT: $text")
-//            if(hex != binding.etHexValue.text.toString() && hex.substring(2, hex.length) != binding.etHexValue.text.toString()) {
-//                log("TEST: $hex")
-//                binding.etHexValue.setText(hex)
-//                binding.etHexValue.setSelection(hex.length)
-//            }
         }
     }
 }

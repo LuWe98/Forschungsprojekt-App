@@ -18,7 +18,7 @@ import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.model.PileStatus
 import com.serverless.forschungsprojectfaas.model.ktor.ImageInformation
-import com.serverless.forschungsprojectfaas.model.ktor.PotentialBox
+import com.serverless.forschungsprojectfaas.model.ktor.ImageInformationBar
 import com.serverless.forschungsprojectfaas.model.ktor.RemoteRepository
 import com.serverless.forschungsprojectfaas.model.room.LocalRepository
 import com.serverless.forschungsprojectfaas.model.room.entities.Pile
@@ -126,7 +126,6 @@ class VmAdd @Inject constructor(
         navDispatcher.dispatch(NavigationEvent.NavigateBack)
     }
 
-    //TODO -> Hier dann das Senden an den Server für die Auswertung
     fun onEvaluateButtonClicked() = launch(scope = applicationScope) {
         if (!validateInput()) return@launch
 
@@ -158,8 +157,8 @@ class VmAdd @Inject constructor(
         }.onFailure {
             localRepository.updatePileStatus(pile.pileId, PileStatus.FAILED)
         }.onSuccess { response ->
-            val typeToken = object : TypeToken<List<PotentialBox>>() {}.type
-            val boxes = Gson().fromJson<List<PotentialBox>>(response.bodyAsText(), typeToken)
+            val typeToken = object : TypeToken<List<ImageInformationBar>>() {}.type
+            val boxes = Gson().fromJson<List<ImageInformationBar>>(response.bodyAsText(), typeToken)
             localRepository.insertBatchesAndBarsOfResponse(pile.pileId, boxes)
         }
     }

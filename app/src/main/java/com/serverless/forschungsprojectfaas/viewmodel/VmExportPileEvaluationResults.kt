@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.serverless.forschungsprojectfaas.ProjectApplication
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher
 import com.serverless.forschungsprojectfaas.dispatcher.NavigationEventDispatcher.*
-import com.serverless.forschungsprojectfaas.extensions.appFilesDirectory2
+import com.serverless.forschungsprojectfaas.extensions.appFilesDirectory
 import com.serverless.forschungsprojectfaas.extensions.log
 import com.serverless.forschungsprojectfaas.utils.Constants
 import com.serverless.forschungsprojectfaas.view.fragments.dialogs.DfAlert.*
@@ -54,9 +54,7 @@ class VmExportPileEvaluationResults @Inject constructor(
     }
 
     fun onConfirmButtonClicked() {
-        if (fileName.isBlank()) {
-            return
-        }
+        if (fileName.isBlank()) return
 
         exportFile?.let { file ->
             args.pileEvaluation?.rowEvaluationEntries?.let { entries ->
@@ -73,18 +71,15 @@ class VmExportPileEvaluationResults @Inject constructor(
                         writer.write("\n")
                     }
                 }
-                log("FILE CREATED!")
                 writer.close()
             }
-            log("FILE: ${file.absoluteFile}")
         }
-        log("OUT OF FILE")
     }
 
     private val exportFile
         get(): File? {
             if (Environment.MEDIA_MOUNTED != Environment.getExternalStorageState()) return null
-            return File(app.appFilesDirectory2, "$fileName${Constants.CSV_FILE_SUFFIX}").let { subFolder ->
+            return File(app.appFilesDirectory, "$fileName${Constants.CSV_FILE_SUFFIX}").let { subFolder ->
                 if (subFolder.createNewFile()) {
                     subFolder
                 } else {

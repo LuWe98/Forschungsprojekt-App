@@ -82,8 +82,6 @@ class BarBatchDisplay : SubsamplingScaleImageView,
 
     var onBoxDragReleased: ((Bar) -> (Unit))? = null
 
-
-    //TODO HIER SCHAUEN WEGEN DER LIBRARY -> Es muss geschaut werden wegen Expetion
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (!isReady) return

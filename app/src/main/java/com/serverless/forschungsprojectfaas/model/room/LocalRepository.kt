@@ -3,7 +3,7 @@ package com.serverless.forschungsprojectfaas.model.room
 import androidx.room.withTransaction
 import com.serverless.forschungsprojectfaas.extensions.*
 import com.serverless.forschungsprojectfaas.model.PileStatus
-import com.serverless.forschungsprojectfaas.model.ktor.PotentialBox
+import com.serverless.forschungsprojectfaas.model.ktor.ImageInformationBar
 import com.serverless.forschungsprojectfaas.model.room.dao.BatchDao
 import com.serverless.forschungsprojectfaas.model.room.dao.BaseDao
 import com.serverless.forschungsprojectfaas.model.room.dao.PileDao
@@ -104,8 +104,8 @@ class LocalRepository @Inject constructor(
     }
 
 
-    suspend fun insertBatchesAndBarsOfResponse(pileId: String, results: List<PotentialBox>) = withContext(Dispatchers.IO) {
-        val groupedByCaption = results.groupBy(PotentialBox::caption)
+    suspend fun insertBatchesAndBarsOfResponse(pileId: String, results: List<ImageInformationBar>) = withContext(Dispatchers.IO) {
+        val groupedByCaption = results.groupBy(ImageInformationBar::caption)
         val localBatches = findBatchesWithCaptions(groupedByCaption.keys)
 
         val batchesToInsert = mutableListOf<Batch>()
@@ -142,29 +142,29 @@ class LocalRepository @Inject constructor(
         return bars.filterOverlappingBars(0.85f)
             .fixBarDimensions(averageBarDimensions,1.15f)
             .filterIsolatedBars(averageBarDimensions,1.25f)
-            .adjustBatchIdsIfPossible(2, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustBarLabels(2, 1f)
+            .adjustBarLabels(2, 0.5f)
+            .adjustBarLabels(3, 0.5f)
             .adjustSpacesBetweenBatchGroups(5)
             .adjustSpacesBetweenBatchGroups(4)
             .adjustSpacesBetweenBatchGroups(3)
             .adjustSpacesBetweenBatchGroups(2)
-            .adjustLonelyBarsBetween(3, 1f, batchMap)
-            .adjustBatchIdsIfPossible(1, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustBarLabelBetweenBatches(3, 1f, batchMap)
+            .adjustBarLabels(1, 1f)
+            .adjustBarLabels(2, 0.5f)
+            .adjustBarLabels(3, 0.5f)
             .adjustSpacesBetweenBatchGroups(3)
             .adjustSpacesBetweenBatchGroups(2)
-            .adjustLonelyBarsBetween(3, 0.75f, batchMap)
-            .adjustBatchIdsIfPossible(1, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustBarLabelBetweenBatches(3, 0.75f, batchMap)
+            .adjustBarLabels(1, 1f)
+            .adjustBarLabels(2, 0.5f)
+            .adjustBarLabels(3, 0.5f)
             .adjustSpacesBetweenBatchGroups(3)
             .adjustSpacesBetweenBatchGroups(2)
-            .adjustLonelyBarsBetween(3, 0.5f, batchMap)
-            .adjustBatchIdsIfPossible(1, 1f)
-            .adjustBatchIdsIfPossible(2, 0.5f)
-            .adjustBatchIdsIfPossible(3, 0.5f)
+            .adjustBarLabelBetweenBatches(3, 0.5f, batchMap)
+            .adjustBarLabels(1, 1f)
+            .adjustBarLabels(2, 0.5f)
+            .adjustBarLabels(3, 0.5f)
             .adjustSpacesBetweenBatchGroups(3)
             .adjustSpacesBetweenBatchGroups(2)
     }

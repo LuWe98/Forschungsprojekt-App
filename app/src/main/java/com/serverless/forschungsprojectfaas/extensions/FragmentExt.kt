@@ -12,22 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-
-fun Fragment.isPermissionGranted(permission: String) = requireContext().isPermissionGranted(permission)
 
 fun Fragment.askForPermission(action: (Boolean) -> (Unit)) = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-    action.invoke(granted)
-}
-
-fun Fragment.askForPermissions(action: (Map<String, Boolean>) -> (Unit)) = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
     action.invoke(granted)
 }
 
@@ -38,18 +26,6 @@ fun Fragment.registerForResult(action: (ActivityResult) -> Unit) = registerForAc
 }
 
 fun Fragment.getThemeColor(@AttrRes themeAttrId: Int) = requireContext().getThemeColor(themeAttrId)
-
-//inline fun Fragment.launch(
-//    dispatcher: CoroutineContext = EmptyCoroutineContext,
-//    scope: CoroutineScope = lifecycleScope,
-//    startDelay: Long = 0,
-//    crossinline block: suspend CoroutineScope.() -> Unit
-//) {
-//    scope.launch(dispatcher) {
-//        delay(startDelay)
-//        block.invoke(this)
-//    }
-//}
 
 @MainThread
 inline fun <reified VM : ViewModel> Fragment.hiltNavDestinationViewModels(
