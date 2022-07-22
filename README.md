@@ -239,7 +239,7 @@ Diese Funktion passt alle Knüppel an, welche von mindestens <b>minBatchAppearan
 **Beispiel:**<br>
 *adjustSpacesBetweenBatchGroups(5)*
 
-<img src="documentation/AdjustSpacesBetween.png" width="200"/>
+<img src="documentation/AdjustSpacesBetween.png" width="300"/>
 
 In diesem Beispiel befinden sich zwischen 2 FR Knüppelvorkommen noch widersprüchliche Knüppelwerte. Da sowohl rechts als auch links von den widersprüchlichen
 Werten 5 <b>FR</b> Knüppel sind, werden die Label aller Knüppel zwischendrin zu <b>FR</b> angepasst.
