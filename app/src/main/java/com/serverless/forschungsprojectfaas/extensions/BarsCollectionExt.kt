@@ -259,28 +259,34 @@ fun List<Bar>.filterOverlappingBars(@FloatRange(from = 0.0, to = 1.0) percentage
     (intersectingArea - duplicateIntersectingArea) < bar.rect.area * percentage
 }
 
+
 /**
  * Filters isolated bars
  */
-fun List<Bar>.filterIsolatedBars(averageBarDimensions: BoxDimensions = this.averageBarDimensions): List<Bar> = RectF().let { searchRect ->
+fun List<Bar>.filterIsolatedBars(
+    averageBarDimensions: BoxDimensions = this.averageBarDimensions,
+    @FloatRange(from = 1.0, to = 2.0) averageDimensionMultiplier: Float = 1.25f
+): List<Bar> = RectF().let { searchRect ->
     filter { bar ->
         searchRect.set(
-            bar.left - averageBarDimensions.width * 1.25f,
-            bar.top - averageBarDimensions.height * 1.25f,
-            bar.right + averageBarDimensions.width * 1.25f,
-            bar.bottom + averageBarDimensions.height * 1.25f
+            bar.left - averageBarDimensions.width * averageDimensionMultiplier,
+            bar.top - averageBarDimensions.height * averageDimensionMultiplier,
+            bar.right + averageBarDimensions.width * averageDimensionMultiplier,
+            bar.bottom + averageBarDimensions.height * averageDimensionMultiplier
         )
         any { bar.barId != it.barId && searchRect.isIntersecting(it.rect) }
     }
 }
 
+
 /**
  * Fixes dimensions of bars
  */
 fun List<Bar>.fixBarDimensions(
-    averageBarDimensions: BoxDimensions = this.averageBarDimensions
+    averageBarDimensions: BoxDimensions = this.averageBarDimensions,
+    @FloatRange(from = 1.0, to = 2.0) averageDimensionMultiplier: Float = 1.15f
 ): List<Bar> = onEach { bar ->
-    if (bar.width > averageBarDimensions.width * 1.05) {
+    if (bar.width > averageBarDimensions.width * averageDimensionMultiplier) {
         val nearestLeftBar = findClosestLeftBar(bar)
         val nearestRightBar = findClosestRightBar(bar)
         val distanceToLeftBar = bar.left - (nearestLeftBar?.right ?: bar.left)
@@ -294,7 +300,7 @@ fun List<Bar>.fixBarDimensions(
         }
     }
 
-    if (bar.height < averageBarDimensions.height * 0.95) {
+    if (bar.height > averageBarDimensions.height * averageDimensionMultiplier) {
         val nearestTopBar = findClosestTopBar(bar)
         val nearestBottomBar = findClosestBottomBar(bar)
         val distanceToTopBar = bar.top - (nearestTopBar?.bottom ?: bar.top)
@@ -308,6 +314,7 @@ fun List<Bar>.fixBarDimensions(
         }
     }
 }
+
 
 /**
  * Adjusts the batches if right and left are the same BatchIds
@@ -417,12 +424,9 @@ fun List<Bar>.adjustSpacesBetweenBatchGroups(
 }.flatten()
 
 
-/**
- * Schaut auf jede Seite eines Bars und wenn links und rechts davon mindestens n gleiche von einer und n gleiche von einer anderen Farbe sind, wird geschaut was besser passt.
- */
 fun List<Bar>.adjustLonelyBarsBetween(
     @IntRange(from = 1, to = 10) lookAheadOnEachSide: Int = 3,
-    @FloatRange(from = 0.0, to = 1.0) minMostCommonBarPortion: Float = 0.75f,
+    @FloatRange(from = 0.0, to = 1.0) minMostCommonBarThreshold: Float = 0.75f,
     batchMap: Map<BatchId, Batch>
 ): List<Bar> {
     val rowBars: MutableList<MutableList<Bar>> = mappedToMutableRows
@@ -451,12 +455,12 @@ fun List<Bar>.adjustLonelyBarsBetween(
                     .groupingBy { it }
                     .eachCount()
                     .toList()
-                    .sortedByDescending { it.second }.let { batchIdCountMap: List<Pair<BatchId?, Int>> ->
+                    .sortedByDescending(Pair<BatchId?, Int>::second).let { batchIdCountMap: List<Pair<BatchId?, Int>> ->
                         if (batchIdCountMap.size < 2) return@let
                         val mostCommonBatchInfo = batchIdCountMap[0]
                         if (mostCommonBatchInfo.second < lookAheadOnEachSide) return@let
                         val secondBatchInfo = batchIdCountMap[1]
-                        if ((secondBatchInfo.second + mostCommonBatchInfo.second).toFloat() / batchIdsNextToBar.size.toFloat() < minMostCommonBarPortion) return@let
+                        if ((secondBatchInfo.second + mostCommonBatchInfo.second).toFloat() / batchIdsNextToBar.size.toFloat() < minMostCommonBarThreshold) return@let
 
                         val bar: Bar = rowBars[rowIndex][columnIndex]
                         val barBatch: Batch = batchMap[bar.batchId] ?: return@let

@@ -140,8 +140,8 @@ class LocalRepository @Inject constructor(
         val averageBarDimensions = bars.averageBarDimensions
         val batchMap = batches.associateBy(Batch::batchId)
         return bars.filterOverlappingBars(0.85f)
-            .fixBarDimensions(averageBarDimensions)
-            .filterIsolatedBars(averageBarDimensions)
+            .fixBarDimensions(averageBarDimensions,1.15f)
+            .filterIsolatedBars(averageBarDimensions,1.25f)
             .adjustBatchIdsIfPossible(2, 1f)
             .adjustBatchIdsIfPossible(2, 0.5f)
             .adjustBatchIdsIfPossible(3, 0.5f)

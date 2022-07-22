@@ -5,7 +5,8 @@ dient diese Datei als Guide für die Android-App mit dem folgenden Inhalt:
 # Inhalt
 1. Screens/Dialoge und Funktionen
 2. Schnittstellen
-3. Installation der App
+3. Plausibilitätsprüfungen
+4. Installation der App
 
 ---
 # Screens/Dialoge und Funktionen
@@ -98,7 +99,7 @@ Für den Export dieser Informationen werden dabei lediglich die folgenden Inform
 
 ---
 # Schnittstellen
-Die OpenFaaS-Funktionen werden auf einer VM der Hoschule Furtwangen gehostet und sind zum Stand des Forschungsprojektes ausschließlich über das hochschulinterne <b>VPN</b> erreichbar. 
+Die OpenFaaS-Funktionen werden auf einer VM der Hoschule Furtwangen gehostet und sind zum Stand des Forschungsprojektes ausschließlich über das hochschulinterne <b>VPN</b> erreichbar.
 Somit muss bspw. ein VPN Client auf dem Mobilen Endgerät installiert und gestartet werden um eine Kommunikation zu ermöglichen.
 
 ## barextractorfunction
@@ -135,7 +136,6 @@ Gibt den Text und die Koordinaten der erkannten Knüppel zurück:
     "right": 139.07223510742188,
     "bottom": 70.78595733642578
   }
-  ...
 ]
 ```
 
@@ -165,12 +165,96 @@ Sendet ein angepasstes Ergebnis an die <b>OpenFaaS-persistresultfunction</b> in 
       "right": 139.07223510742188,
       "bottom": 70.78595733642578
     }
-    ...
   ]
 }
 ```
 **Response:**<br>
 Gibt zurück, ob der Upload erfolgreich war in Form eines <b>HTTP-Statuscodes</b>.
+
+---
+# Plausibilitätsprüfungen
+Es wurden einige Plausibilitätsprüfungen implementiert, um die vom ML-Algorithmus zurückgelieferten Ergebnisse automatisiert zu korrigieren.
+Zu diesem Zweck wurden die folgenden Funktionen entwickelt, welche in beliebiger Reihenfolge und beliebig oft angewendet werden können.
+
+#### filterOverlappingBars(percentage: Float)
+Diese Funktion entfernt erkannte Knüppel, welche Überschneidungen mit anderen Knüppeln besitzen. <br>
+Der Prozentsatz kann dabei als Parameter übergeben werden.
+
+**Beispiel:**<br>
+*filterOverlappingBars(0.8f)*
+
+<img src="documentation/OverlappingBars.png" width="200"/>
+
+#### fixBarDimensions(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
+Diese Funktion passt automatisch die Dimensionen (Breite und Höhe) von erkannten Knüppeln an, wenn diese größer als ein bestimmter Threshold sind. <br>
+Als Threshold wird dabei die durchschnittliche Dimension eines Knüppels (BoxDimensions) verwendet und mit einem averageDimensionMultiplier multipliziert.
+Die durchschnittliche BoxDimensions werden dabei von dem jeweiligen Knüppelhaufen berechnet.
+
+**Beispiel:**<br>
+*fixBarDimensions(BoxDimensions(width = 72f, height = 70f), 1.15f)*<br>
+Jegliche Knüppel, die breiter als 72 * 1.15 oder höher als 70 * 1.15 sind werden in die entsprechende Richtung verkleinert.
+
+<img src="documentation/OversizedBars.png" width="200"/>
+
+
+#### filterIsolatedBars(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
+Diese Funktion entfernt Knüppel, welche keine Knüppel in einer bestimmten Distanz um sich herum besitzen.
+Als Distanz wird dabei die durschnittliche Breite und Höhe (BoxDimensions) der Knüppel verwendet, welche mit einem averageDimensionMultiplier multipliziert werden.<br>
+
+**Beispiel:**<br>
+*filterIsolatedBars(BoxDimensions(width = 72f, height = 70f), 1.15f)*<br>
+
+<img src="documentation/IsolatedBars.png" width="200"/>
+
+#### adjustBatchIdsIfPossible(lookAheadOnEachSide: Int, acceptanceThreshold: Float)
+Diese Funktion passt autoamtisiert die Labels eines Knüppels an, wenn sich um diesen herum (rechts und links) Knüppel mit dem gleichen Label befinden
+und der angegebene acceptanceThreshold überschritten wird.
+
+**Beispiel:**<br>
+*adjustBatchIdsIfPossible(2, 1f)*<br>
+
+<img src="documentation/AdjustBatchIdsIfPossible.png" width="200"/>
+
+Ein Knüppel in der untersten Zeile wurde hier als <b>ER</b> erkannt, obwohl es sich um einen <b>FR</b> Knüppel handelt. Da die Funktion mit einem
+<b>lookAheadOnEachSide</b> von 2 und einem <b>acceptanceThreshold</b> von 1 aufgerufen wird, müssen sich 2 links und 2 rechts neben dem Knüppel (ER)
+ausschließlich Knüppel desselben Labels befinden, damit dieser automatisch angepasst wird (In diesem Beispiel <b>FR</b>). <br>
+
+--> Da sich in diesem Beispiel 2 links und 2 rechts neben dem <b>ER</b> Knüppel nur <b>FR</b> Knüppel befinden, wird <b>ER</b> zu <b>FR</b> angepasst
+
+
+*adjustBatchIdsIfPossible(2, 0.5f)*<br>
+
+<img src="documentation/AdjustBatchIdsIfPossible_Example2.png" width="200"/>
+
+Zwei Knüppel in der untersten Zeile wurden hier als <b>ER</b> erkannt, obwohl es sich um einen <b>FR</b> Knüppel handelt. Da die Funktion mit einem
+<b>lookAheadOnEachSide</b> von 2 und einem <b>acceptanceThreshold</b> von 0.5 aufgerufen wird, müssen sich 2 links und 2 rechts neben einem ER Knüppel
+mehr als (2 + 2) * 0.5 = <b>2</b> Knüppel mit demselben Label befinden.
+
+--> In diesem Beispiel sind neben dem <b>ER</b> Knüppel 3 <b>FR</b> und 1 <b>ER</b> Knüppel und somit mehr als 2 Knüppel eines Labels vorhanden.
+
+
+#### adjustSpacesBetweenBatchGroups(minBatchAppearanceOnEachSide: Int)
+Diese Funktion passt alle Knüppel an, welche von mindestens <b>minBatchAppearanceOnEachSide</b> Knüppeln eingeschlossen werden.
+
+**Beispiel:**<br>
+*adjustSpacesBetweenBatchGroups(5)*
+
+<img src="documentation/AdjustSpacesBetween.png" width="200"/>
+
+In diesem Beispiel befinden sich zwischen 2 FR Knüppelvorkommen noch widersprüchliche Knüppelwerte. Da sowohl rechts als auch links von den widersprüchlichen
+Werten 5 <b>FR</b> Knüppel sind, werden die Label aller Knüppel zwischendrin zu <b>FR</b> angepasst.
+
+
+#### adjustLonelyBarsBetween(lookAheadOnEachSide: Int, minMostCommonBarThreshold: Float , batchMap: Map<String, Batch>)
+Diese Funktion passt das Label eines Knüppel an, welche sich neben diesem Knüppel mit einem anderen Label befinden.
+
+**Beispiel:**<br>
+*adjustLonelyBarsBetween(3, 1f, batchMap)*
+
+<img src="documentation/AdjustLonelyBars.png" width="200"/>
+
+--> In diesem Beispiel befindet sich ein als <b>ER</b> erkannter Knüppel zwischen <b>FS</b> und <b>FR</b> Knüppeln. Da das <b>ER</b> mehr
+Überschneidung mit <b>FR</b> als mit <b>FS</b> hat, wird <b>ER</b> zu <b>FR</b> angepasst.
 
 ---
 # Installation der App

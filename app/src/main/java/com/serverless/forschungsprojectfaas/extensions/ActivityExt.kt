@@ -15,3 +15,5 @@ val ActivityMain.navController get() = navHostFragment.navController
 val ActivityMain.currentNavHostFragment get() = navHostFragment.currentFragment
 
 val NavController.currentDestinationId get(): Int? = currentDestination?.id
+
+
