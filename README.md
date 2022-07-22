@@ -176,7 +176,7 @@ Gibt über einen <b>HTTP-Statuscode</b> Information darüber, ob der Upload erfo
 Es wurden einige Plausibilitätsprüfungen implementiert, um die vom ML-Algorithmus zurückgelieferten Ergebnisse automatisiert zu korrigieren.
 Zu diesem Zweck wurden die folgenden Funktionen entwickelt, welche in beliebiger Reihenfolge und beliebig oft angewendet werden können.
 
-#### filterOverlappingBars(percentage: Float)
+### filterOverlappingBars(percentage: Float)
 Diese Funktion entfernt erkannte Knüppel, welche Überschneidungen mit anderen Knüppeln besitzen. <br>
 Der Prozentsatz kann dabei als Parameter übergeben werden.
 
@@ -185,7 +185,7 @@ Der Prozentsatz kann dabei als Parameter übergeben werden.
 
 <img src="documentation/OverlappingBars.png" width="250"/>
 
-#### fixBarDimensions(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
+### fixBarDimensions(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
 Diese Funktion passt automatisch die Dimensionen (Breite und Höhe) von erkannten Knüppeln an, wenn diese größer als ein bestimmter Threshold sind. <br>
 Als Threshold wird dabei die durchschnittliche Dimension eines Knüppels (BoxDimensions) verwendet und mit einem averageDimensionMultiplier multipliziert.
 Die durchschnittliche BoxDimensions werden dabei von dem jeweiligen Knüppelhaufen berechnet.
@@ -197,7 +197,7 @@ Jegliche Knüppel, die breiter als 72 * 1.15 oder höher als 70 * 1.15 sind werd
 <img src="documentation/OversizedBars.png" width="250"/>
 
 
-#### filterIsolatedBars(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
+### filterIsolatedBars(averageBarDimensions: BoxDimensions, averageDimensionMultiplier: Float)
 Diese Funktion entfernt Knüppel, welche keine Knüppel in einer bestimmten Distanz um sich herum besitzen.
 Als Distanz wird dabei die durschnittliche Breite und Höhe (BoxDimensions) der Knüppel verwendet, welche mit einem averageDimensionMultiplier multipliziert werden.<br>
 
@@ -206,7 +206,7 @@ Als Distanz wird dabei die durschnittliche Breite und Höhe (BoxDimensions) der 
 
 <img src="documentation/IsolatedBars.png" width="250"/>
 
-#### adjustBatchIdsIfPossible(lookAheadOnEachSide: Int, acceptanceThreshold: Float)
+### adjustBatchIdsIfPossible(lookAheadOnEachSide: Int, acceptanceThreshold: Float)
 Diese Funktion passt autoamtisiert die Labels eines Knüppels an, wenn sich um diesen herum (rechts und links) Knüppel mit dem gleichen Label befinden
 und der angegebene acceptanceThreshold überschritten wird.
 
@@ -233,7 +233,7 @@ mehr als (2 + 2) * 0.5 = <b>2</b> Knüppel mit demselben Label befinden.
 --> In diesem Beispiel sind neben dem <b>ER</b> Knüppel 3 <b>FR</b> und 1 <b>ER</b> Knüppel und somit mehr als 2 Knüppel eines Labels vorhanden.
 
 
-#### adjustSpacesBetweenBatchGroups(minBatchAppearanceOnEachSide: Int)
+### adjustSpacesBetweenBatchGroups(minBatchAppearanceOnEachSide: Int)
 Diese Funktion passt alle Knüppel an, welche von mindestens <b>minBatchAppearanceOnEachSide</b> Knüppeln eingeschlossen werden.
 
 **Beispiel:**<br>
@@ -245,7 +245,7 @@ In diesem Beispiel befinden sich zwischen 2 FR Knüppelvorkommen noch widersprü
 Werten 5 <b>FR</b> Knüppel sind, werden die Label aller Knüppel zwischendrin zu <b>FR</b> angepasst.
 
 
-#### adjustLonelyBarsBetween(lookAheadOnEachSide: Int, minMostCommonBarThreshold: Float , batchMap: Map<String, Batch>)
+### adjustLonelyBarsBetween(lookAheadOnEachSide: Int, minMostCommonBarThreshold: Float , batchMap: Map<String, Batch>)
 Diese Funktion passt das Label eines Knüppel an, welche sich neben diesem Knüppel mit einem anderen Label befinden.
 
 **Beispiel:**<br>
