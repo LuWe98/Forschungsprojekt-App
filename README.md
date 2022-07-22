@@ -213,7 +213,7 @@ und der angegebene acceptanceThreshold überschritten wird.
 **Beispiel:**<br>
 *adjustBatchIdsIfPossible(2, 1f)*<br>
 
-<img src="documentation/AdjustBatchIdsIfPossible.png" width="250"/>
+<img src="documentation/AdjustBatchIdsIfPossible.png" width="300"/>
 
 Ein Knüppel in der untersten Zeile wurde hier als <b>ER</b> erkannt, obwohl es sich um einen <b>FR</b> Knüppel handelt. Da die Funktion mit einem
 <b>lookAheadOnEachSide</b> von 2 und einem <b>acceptanceThreshold</b> von 1 aufgerufen wird, müssen sich 2 links und 2 rechts neben dem Knüppel (ER)
@@ -224,7 +224,7 @@ ausschließlich Knüppel desselben Labels befinden, damit dieser automatisch ang
 
 *adjustBatchIdsIfPossible(2, 0.5f)*<br>
 
-<img src="documentation/AdjustBatchIdsIfPossible_Example2.png" width="250"/>
+<img src="documentation/AdjustBatchIdsIfPossible_Example2.png" width="300"/>
 
 Zwei Knüppel in der untersten Zeile wurden hier als <b>ER</b> erkannt, obwohl es sich um einen <b>FR</b> Knüppel handelt. Da die Funktion mit einem
 <b>lookAheadOnEachSide</b> von 2 und einem <b>acceptanceThreshold</b> von 0.5 aufgerufen wird, müssen sich 2 links und 2 rechts neben einem ER Knüppel
@@ -251,7 +251,7 @@ Diese Funktion passt das Label eines Knüppel an, welche sich neben diesem Knüp
 **Beispiel:**<br>
 *adjustLonelyBarsBetween(3, 1f, batchMap)*
 
-<img src="documentation/AdjustLonelyBars.png" width="250"/>
+<img src="documentation/AdjustLonelyBars.png" width="300"/>
 
 --> In diesem Beispiel befindet sich ein als <b>ER</b> erkannter Knüppel zwischen <b>FS</b> und <b>FR</b> Knüppeln. Da das <b>ER</b> mehr
 Überschneidung mit <b>FR</b> als mit <b>FS</b> hat, wird <b>ER</b> zu <b>FR</b> angepasst.
